@@ -1,0 +1,5 @@
+{
+  "description": "A Scrabble-style definition guessing game.",
+  "requestFramePermissions": [],
+  "name": "Lexicon Game"
+}
