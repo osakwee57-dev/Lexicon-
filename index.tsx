@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -97,6 +96,89 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
   ]
 };
 
+// --- Sound Utility ---
+
+const SoundManager = {
+  ctx: null as AudioContext | null,
+  init: () => {
+    if (!SoundManager.ctx) {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioCtx) {
+        SoundManager.ctx = new AudioCtx();
+      }
+    }
+    if (SoundManager.ctx?.state === 'suspended') {
+      SoundManager.ctx.resume().catch(() => {});
+    }
+    return SoundManager.ctx;
+  },
+  playWin: () => {
+    const ctx = SoundManager.init();
+    if (!ctx) return;
+    
+    // Applause (Filtered White Noise)
+    const bufferSize = ctx.sampleRate * 2.0; 
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.5;
+    }
+    
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'lowpass';
+    noiseFilter.frequency.value = 1000;
+    
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0, ctx.currentTime);
+    noiseGain.gain.linearRampToValueAtTime(0.8, ctx.currentTime + 0.1);
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 2.0);
+    
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    noise.start();
+    
+    // Victory Chime
+    [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => { 
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.05 + (i * 0.08));
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+        
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + (i * 0.08));
+        osc.stop(ctx.currentTime + 1.5);
+    });
+  },
+  playError: () => {
+    const ctx = SoundManager.init();
+    if (!ctx) return;
+    
+    // Buzzer Sound
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(120, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(60, ctx.currentTime + 0.3);
+    
+    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.3);
+  }
+};
+
 // --- Styles ---
 
 const styles = `
@@ -148,7 +230,7 @@ const styles = `
   .header-top {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
   }
 
@@ -160,9 +242,21 @@ const styles = `
     color: var(--accent);
   }
 
+  .score-container {
+    text-align: right;
+  }
+
   .score-board {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: bold;
+    color: white;
+  }
+
+  .high-score {
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin-top: 2px;
+    font-weight: 600;
   }
 
   .level-selector {
@@ -491,11 +585,20 @@ const App = () => {
     difficulty: 'Medium'
   });
   
+  const [highScore, setHighScore] = useState(0);
+  
   const seenWordsRef = useRef<string[]>([]);
-  const difficultyRef = useRef<Difficulty>('Medium'); // Keep ref to use inside callback
+  const difficultyRef = useRef<Difficulty>('Medium'); 
+
+  // Load High Score on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('lexicon_highscore');
+    if (stored) {
+        setHighScore(parseInt(stored, 10));
+    }
+  }, []);
 
   const fetchNewWord = useCallback(async () => {
-    // Reset board but keep score and difficulty
     setGameState(prev => ({ 
       ...prev, 
       status: 'loading', 
@@ -506,20 +609,14 @@ const App = () => {
       definition: '' 
     }));
     
-    // Simulate loading to feel like a game processing
     await new Promise(resolve => setTimeout(resolve, 500));
 
     try {
       const currentDifficulty = difficultyRef.current;
       const candidates = LOCAL_DICTIONARY[currentDifficulty];
       
-      // Filter out recently seen words to avoid immediate repetition
-      // In a real app with 300k words, we might track more.
-      // With this smaller offline set, we just try to avoid the last 5.
       const available = candidates.filter(c => !seenWordsRef.current.slice(-5).includes(c.word));
-      
       const pool = available.length > 0 ? available : candidates;
-      
       const randomEntry = pool[Math.floor(Math.random() * pool.length)];
       
       const word = randomEntry.word.toUpperCase();
@@ -549,7 +646,6 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // Initial fetch
     fetchNewWord();
   }, [fetchNewWord]);
 
@@ -557,16 +653,17 @@ const App = () => {
   const handleRackTileClick = (tile: Tile) => {
     if (gameState.status !== 'playing') return;
 
-    // Find first empty slot
+    // Initialize AudioContext if needed on user interaction
+    SoundManager.init();
+
     const firstEmptyIndex = gameState.placedTiles.findIndex(t => t === null);
-    if (firstEmptyIndex === -1) return; // No space
+    if (firstEmptyIndex === -1) return; 
 
     const newPlaced = [...gameState.placedTiles];
     newPlaced[firstEmptyIndex] = tile;
 
     const newRack = gameState.rackTiles.filter(t => t.id !== tile.id);
 
-    // Calculate current score of placed tiles
     const currentScore = newPlaced.reduce((acc, t) => acc + (t ? t.value : 0), 0);
 
     setGameState(prev => ({
@@ -582,16 +679,18 @@ const App = () => {
   const handlePlacedTileClick = (index: number) => {
     if (gameState.status !== 'playing') return;
     
+    // Initialize AudioContext if needed on user interaction
+    SoundManager.init();
+    
     const tile = gameState.placedTiles[index];
     if (!tile) return;
-    if (tile.isHint) return; // Cannot move hint tiles
+    if (tile.isHint) return; 
 
     const newPlaced = [...gameState.placedTiles];
     newPlaced[index] = null;
 
     const newRack = [...gameState.rackTiles, tile];
     
-    // Update score
     const currentScore = newPlaced.reduce((acc, t) => acc + (t ? t.value : 0), 0);
 
     setGameState(prev => ({
@@ -604,10 +703,10 @@ const App = () => {
 
   const useHint = () => {
     if (gameState.status !== 'playing') return;
+    SoundManager.init();
     
     const { word, placedTiles, rackTiles } = gameState;
     
-    // Find first slot that is incorrect or empty
     let targetIndex = -1;
     for (let i = 0; i < word.length; i++) {
         if (!placedTiles[i] || placedTiles[i]?.letter !== word[i]) {
@@ -616,43 +715,37 @@ const App = () => {
         }
     }
 
-    if (targetIndex === -1) return; // Already solved mostly?
+    if (targetIndex === -1) return;
 
     const targetLetter = word[targetIndex];
     let tileToMove: Tile | undefined;
     let newRack = [...rackTiles];
     let newPlaced = [...placedTiles];
     
-    // 1. Look in Rack
     const rackIndex = newRack.findIndex(t => t.letter === targetLetter);
     if (rackIndex !== -1) {
         tileToMove = newRack[rackIndex];
         newRack.splice(rackIndex, 1);
     } else {
-        // 2. Look in Placed (incorrectly placed somewhere else)
-        // Find a tile with the letter that ISN'T in the correct spot
         const placedIndex = newPlaced.findIndex((t, idx) => 
             t?.letter === targetLetter && (idx !== targetIndex && newPlaced[idx]?.letter !== word[idx])
         );
         
         if (placedIndex !== -1) {
             tileToMove = newPlaced[placedIndex]!;
-            newPlaced[placedIndex] = null; // Remove from old spot
+            newPlaced[placedIndex] = null; 
         }
     }
 
     if (tileToMove) {
-        // Mark as hint so it can't be moved back
         const hintTile = { ...tileToMove, isHint: true };
         
-        // If there was something in the target slot (incorrect tile), move it back to rack
         if (newPlaced[targetIndex]) {
             newRack.push(newPlaced[targetIndex]!);
         }
 
         newPlaced[targetIndex] = hintTile;
         
-        // Deduct points from total score
         setGameState(prev => ({
             ...prev,
             placedTiles: newPlaced,
@@ -663,12 +756,12 @@ const App = () => {
 
         setTimeout(() => setGameState(prev => ({...prev, message: ''})), 1500);
 
-        // Check if this solved it
         checkWinCondition(newPlaced, word);
     }
   };
 
   const shuffleRack = () => {
+    SoundManager.init();
     setGameState(prev => ({
       ...prev,
       rackTiles: shuffleArray(prev.rackTiles)
@@ -681,15 +774,26 @@ const App = () => {
     const formedWord = currentPlaced.map(t => t?.letter).join('');
     
     if (formedWord === targetWord) {
+      // WIN
+      SoundManager.playWin();
       const wordScore = currentPlaced.reduce((acc, t) => acc + (t ? t.value : 0), 0);
+      const newTotalScore = gameState.totalScore + wordScore;
+      
+      // Update High Score
+      if (newTotalScore > highScore) {
+          setHighScore(newTotalScore);
+          localStorage.setItem('lexicon_highscore', newTotalScore.toString());
+      }
       
       setGameState(prev => ({
         ...prev,
         status: 'won',
         message: `Correct! +${wordScore} points`,
-        totalScore: prev.totalScore + wordScore
+        totalScore: newTotalScore
       }));
     } else {
+      // LOSE / WRONG ATTEMPT
+      SoundManager.playError();
       setGameState(prev => ({
         ...prev,
         message: 'Not quite...'
@@ -704,7 +808,6 @@ const App = () => {
     const newDiff = e.target.value as Difficulty;
     setGameState(prev => ({ ...prev, difficulty: newDiff }));
     difficultyRef.current = newDiff;
-    // Don't auto fetch, let user finish or skip
   };
 
   const skipWord = () => {
@@ -719,7 +822,10 @@ const App = () => {
         <header className="header">
           <div className="header-top">
              <div className="game-title">LEXICON</div>
-             <div className="score-board">Score: {gameState.totalScore}</div>
+             <div className="score-container">
+                <div className="score-board">Score: {gameState.totalScore}</div>
+                <div className="high-score">Best: {highScore}</div>
+             </div>
           </div>
           
           <div className="level-selector">
