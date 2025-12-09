@@ -10,7 +10,7 @@ const SCRABBLE_SCORES: Record<string, number> = {
 };
 
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
-type GameMode = 'scrabble' | 'crossword';
+type GameMode = 'scrabble' | 'spelling';
 
 // Fallback Dictionary for Offline/Error Mode
 interface WordEntry {
@@ -139,6 +139,7 @@ const styles = `
     --danger: #e57373;
     --tab-inactive: rgba(0,0,0,0.3);
     --tab-active: rgba(255,255,255,0.2);
+    --spelling-bg: #fff9c4;
   }
 
   body {
@@ -393,101 +394,133 @@ const styles = `
     z-index: -1;
   }
 
-  /* CROSSWORD MODE STYLES */
-  .crossword-grid {
-    display: grid;
-    gap: 2px;
-    background: #000;
-    padding: 4px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  /* SPELLING GAME STYLES */
+  .spelling-container {
+    background: var(--spelling-bg);
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
   }
 
-  .cw-cell {
-    width: 36px;
-    height: 36px;
-    background: white;
-    position: relative;
+  .spelling-container.won {
+    background: #d cedc8;
+  }
+  
+  .spelling-container.error {
+    animation: shake 0.5s;
+    border: 2px solid var(--danger);
+  }
+
+  @keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+  }
+
+  .audio-btn-large {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--wood-color);
+    border: 4px solid #fff;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    margin-bottom: 10px;
+    transition: transform 0.1s, background 0.2s;
   }
 
-  .cw-cell.black {
-    background: #000;
+  .audio-btn-large:active {
+    transform: scale(0.95);
   }
   
-  .cw-cell input {
-    width: 100%;
-    height: 100%;
-    border: none;
-    text-align: center;
+  .audio-btn-large:hover {
+    background: var(--wood-dark);
+  }
+
+  .audio-icon {
+    font-size: 3rem;
+    color: white;
+  }
+
+  .phonetic-display {
+    font-family: 'Lucida Sans Unicode', 'Arial Unicode MS', 'sans-serif';
     font-size: 1.2rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    background: transparent;
-    padding: 0;
-    color: #000;
-    font-family: inherit;
-    border-radius: 0;
+    color: #5d4037;
+    background: rgba(255, 255, 255, 0.4);
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    font-style: italic;
   }
 
-  .cw-cell input:focus {
-    background: #e3f2fd;
-    outline: none;
-  }
-
-  .cw-cell.correct input {
-    background: #c8e6c9;
-    color: #1b5e20;
-  }
-
-  .cw-cell.incorrect input {
-    background: #ffcdd2;
-  }
-
-  .cw-clues {
+  .spelling-input {
     width: 100%;
-    background: rgba(255,255,255,0.95);
-    border-radius: 8px;
+    max-width: 300px;
     padding: 15px;
-    box-sizing: border-box;
-    color: #333;
-    max-height: 250px;
-    overflow-y: auto;
-  }
-
-  .cw-clue-section-title {
-    font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 2rem;
+    text-align: center;
+    border: none;
+    border-bottom: 3px solid var(--wood-color);
+    background: transparent;
     color: var(--wood-dark);
-    border-bottom: 2px solid var(--accent);
-    margin-bottom: 8px;
-    padding-bottom: 2px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    letter-spacing: 5px;
+    outline: none;
+    text-transform: uppercase;
+    margin-bottom: 20px;
   }
 
-  .cw-clue-item {
-    font-size: 0.9rem;
-    margin-bottom: 6px;
-    line-height: 1.3;
+  .spelling-input::placeholder {
+    color: rgba(0,0,0,0.2);
+    letter-spacing: 0;
   }
 
-  .cw-clue-item strong {
-    color: var(--wood-color);
+  .hint-section {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
-  .cw-current-clue {
-    background: var(--accent);
-    color: #3e2700;
+  .hint-text {
+    color: var(--wood-dark);
+    font-style: italic;
+    font-size: 1.1rem;
+    background: rgba(255,255,255,0.5);
     padding: 10px;
     border-radius: 8px;
-    margin-bottom: 15px;
-    text-align: center;
+    max-width: 90%;
+  }
+
+  .word-reveal {
+    font-size: 2rem;
+    color: var(--bg-color);
     font-weight: bold;
-    width: 100%;
-    box-sizing: border-box;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 0 #fff;
   }
 
   /* Buttons & Controls */
@@ -530,6 +563,13 @@ const styles = `
   .btn-hint {
     background: #ffb74d;
     color: #4e342e;
+  }
+  
+  .btn-audio-small {
+    background: var(--wood-color);
+    color: white;
+    padding: 8px 16px;
+    font-size: 0.9rem;
   }
 
   .btn:disabled {
@@ -626,22 +666,21 @@ interface ScrabbleState {
   seenWords: string[];
 }
 
-// Crossword Game Types
-interface CrosswordData {
-  grid: (string | null)[][]; // char or null (block)
-  clues: {
-    across: Record<string, string>; // number -> text
-    down: Record<string, string>;
-  };
-  numbers: (number | null)[][]; // numbers for cells
+// Spelling Game Types
+interface SpellingWordData {
+    word: string;
+    definition: string;
+    sentence: string;
+    phonetic: string;
 }
 
-interface CrosswordState {
-  puzzle: CrosswordData | null;
-  userGrid: string[][]; // User inputs
-  status: 'loading' | 'playing' | 'won' | 'error';
-  message: string;
-  currentClue: string;
+interface SpellingState {
+    data: SpellingWordData | null;
+    input: string;
+    status: 'loading' | 'playing' | 'won' | 'error';
+    message: string;
+    showDefinition: boolean;
+    showSentence: boolean;
 }
 
 // --- Logic Helpers ---
@@ -688,13 +727,19 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const model = difficulty === 'Hard' ? 'gemini-3-pro-preview' : 'gemini-2.5-flash';
         
-        // Use Longman Advanced Dictionary style vocabulary
+        // Use full lexicon prompt for "5 million words" feel
         const prompt = `
-          Pick a single random English word and its definition from a vocabulary of 300,000+ words (Longman Advanced Dictionary style).
+          Pick a single random English word and its definition.
+          Source Material: The entire English lexicon (approx 5 million words). 
+          Instructions:
+          - Access the full breadth of the English language.
+          - Do not limit yourself to common words unless difficulty is Easy.
+          - Ensure extreme variety. Avoid repeating common words.
+          
           Difficulty Level: ${difficulty}.
-          ${difficulty === 'Easy' ? 'Word length 4-5 letters. Common words.' : ''}
-          ${difficulty === 'Medium' ? 'Word length 6-7 letters. Standard vocabulary.' : ''}
-          ${difficulty === 'Hard' ? 'Word length 8-12 letters. Complex, academic, or obscure words.' : ''}
+          ${difficulty === 'Easy' ? 'Word length 4-5 letters. Common everyday words.' : ''}
+          ${difficulty === 'Medium' ? 'Word length 6-8 letters. Standard to Advanced vocabulary.' : ''}
+          ${difficulty === 'Hard' ? 'Word length 8-15 letters. Obscure, scientific, archaic, or literary words are encouraged.' : ''}
           
           Do NOT use these words: ${seenWordsRef.current.slice(-20).join(', ')}.
           
@@ -938,23 +983,40 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   );
 };
 
-const CrosswordGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
-    const [state, setState] = useState<CrosswordState>({
-        puzzle: null,
-        userGrid: [],
+const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
+    const [state, setState] = useState<SpellingState>({
+        data: null,
+        input: '',
         status: 'loading',
         message: '',
-        currentClue: 'Tap a box to start'
+        showDefinition: false,
+        showSentence: false
     });
+    
+    const inputRef = useRef<HTMLInputElement>(null);
 
-    const gridSize = difficulty === 'Easy' ? 5 : difficulty === 'Medium' ? 7 : 8;
-    const inputsRef = useRef<(HTMLInputElement | null)[][]>([]);
+    // Preload voices to ensure they are available
+    useEffect(() => {
+        const loadVoices = () => { window.speechSynthesis.getVoices(); };
+        loadVoices();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+             window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+    }, []);
 
-    const fetchPuzzle = useCallback(async () => {
-        setState(s => ({ ...s, status: 'loading', message: '', puzzle: null }));
+    const fetchWord = useCallback(async () => {
+        setState(s => ({ 
+            ...s, 
+            status: 'loading', 
+            message: '', 
+            data: null, 
+            input: '', 
+            showDefinition: false, 
+            showSentence: false 
+        }));
 
         if (!process.env.API_KEY) {
-            setState(s => ({ ...s, status: 'error', message: 'API Key required for Crossword Mode' }));
+            setState(s => ({ ...s, status: 'error', message: 'API Key required for Spelling Mode' }));
             return;
         }
 
@@ -962,16 +1024,23 @@ const CrosswordGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, 
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
             const model = 'gemini-2.5-flash';
             
+            // Explicitly requested 5 million+ word corpus access
             const prompt = `
-                Generate a ${gridSize}x${gridSize} crossword puzzle.
-                Difficulty: ${difficulty}.
+                Generate a random English word for a spelling bee.
+                Source: Access the complete English language corpus (approx 5 million words).
                 
-                Requirements:
-                1. "grid": A list of ${gridSize} strings. Each string represents a row. Use uppercase letters for words and '.' (dot) for black squares.
-                2. Ensure words are valid English words.
-                3. "across": A list of clues for words reading across. Each item has "number" and "clue".
-                4. "down": A list of clues for words reading down. Each item has "number" and "clue".
-                5. Numbering must follow standard crossword rules based on the grid layout.
+                Difficulty: ${difficulty}.
+                ${difficulty === 'Easy' ? 'Common words, clear pronunciation, 4-6 letters.' : ''}
+                ${difficulty === 'Medium' ? 'Less common words, 6-9 letters. Avoid overly simple words.' : ''}
+                ${difficulty === 'Hard' ? 'Complex, obscure, scientific, or literary words. 8+ letters. Tap into the full depth of the dictionary.' : ''}
+                
+                Return JSON format:
+                {
+                    "word": "STRING",
+                    "phonetic": "STRING (IPA format, e.g. /kæt/)",
+                    "definition": "STRING",
+                    "sentence": "A sentence containing the word, but replace the word itself with '________'."
+                }
             `;
 
             const response = await ai.models.generateContent({
@@ -982,247 +1051,187 @@ const CrosswordGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, 
                     responseSchema: {
                         type: Type.OBJECT,
                         properties: {
-                            grid: {
-                                type: Type.ARRAY,
-                                items: { type: Type.STRING },
-                                description: "The rows of the grid using letters and dots."
-                            },
-                            across: {
-                                type: Type.ARRAY,
-                                items: {
-                                    type: Type.OBJECT,
-                                    properties: {
-                                        number: { type: Type.INTEGER },
-                                        clue: { type: Type.STRING }
-                                    }
-                                }
-                            },
-                            down: {
-                                type: Type.ARRAY,
-                                items: {
-                                    type: Type.OBJECT,
-                                    properties: {
-                                        number: { type: Type.INTEGER },
-                                        clue: { type: Type.STRING }
-                                    }
-                                }
-                            }
+                            word: { type: Type.STRING },
+                            phonetic: { type: Type.STRING },
+                            definition: { type: Type.STRING },
+                            sentence: { type: Type.STRING }
                         },
-                        required: ['grid', 'across', 'down']
+                        required: ['word', 'phonetic', 'definition', 'sentence']
                     }
                 }
             });
             
             const data = JSON.parse(response.text);
             
-            // Parse Grid - ensure it is square and robust
-            const rawGrid = data.grid || [];
-            const parsedGrid: (string|null)[][] = [];
-
-            for (let i = 0; i < gridSize; i++) {
-                const rowStr = (rawGrid[i] || "").padEnd(gridSize, ".").substring(0, gridSize).toUpperCase();
-                const rowArr = rowStr.split('').map((char: string) => (char === '.' || char === ' ') ? null : char);
-                parsedGrid.push(rowArr);
-            }
-            
-            // Generate Numbers Logic (Standard Crossword Numbering)
-            const numbers = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
-            let currentNumber = 1;
-            
-            for(let r=0; r<gridSize; r++) {
-                for(let c=0; c<gridSize; c++) {
-                    if(parsedGrid[r][c] !== null) {
-                        const isAcrossStart = (c === 0 || parsedGrid[r][c-1] === null) && (c+1 < gridSize && parsedGrid[r][c+1] !== null);
-                        const isDownStart = (r === 0 || parsedGrid[r-1][c] === null) && (r+1 < gridSize && parsedGrid[r+1][c] !== null);
-                        
-                        if (isAcrossStart || isDownStart) {
-                            numbers[r][c] = currentNumber++;
-                        }
-                    }
-                }
-            }
-
-            // Map Clues to Dictionary
-            const clues = {
-                across: {} as Record<string, string>,
-                down: {} as Record<string, string>
-            };
-            
-            if (data.across) data.across.forEach((item: any) => clues.across[item.number] = item.clue);
-            if (data.down) data.down.forEach((item: any) => clues.down[item.number] = item.clue);
-
-            const initialUserGrid = parsedGrid.map((row) => row.map(cell => cell === null ? null : ""));
-
-            setState({
-                puzzle: { grid: parsedGrid, clues, numbers },
-                userGrid: initialUserGrid,
+            setState(s => ({
+                ...s,
+                data: {
+                    word: data.word.trim().toUpperCase(),
+                    phonetic: data.phonetic || '',
+                    definition: data.definition,
+                    sentence: data.sentence
+                },
                 status: 'playing',
-                message: '',
-                currentClue: 'Tap a white box to type'
-            });
+            }));
+            
+            // Auto-play audio slightly after load
+            setTimeout(() => {
+                if (data.word) speak(data.word.trim());
+            }, 800);
 
         } catch (e) {
             console.error(e);
-            setState(s => ({ ...s, status: 'error', message: 'Failed to generate puzzle. Please try again.' }));
+            setState(s => ({ ...s, status: 'error', message: 'Failed to generate word. Please try again.' }));
         }
 
-    }, [difficulty, gridSize]);
+    }, [difficulty]);
 
     useEffect(() => {
-        fetchPuzzle();
-    }, [fetchPuzzle]);
+        fetchWord();
+    }, [fetchWord]);
 
-    const handleInput = (r: number, c: number, val: string) => {
-        const char = val.slice(-1).toUpperCase();
-        const newUserGrid = [...state.userGrid];
-        newUserGrid[r] = [...newUserGrid[r]];
-        newUserGrid[r][c] = char;
+    const speak = (text: string, rate = 0.8) => {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
         
-        setState(s => ({ ...s, userGrid: newUserGrid }));
+        // Force get voices (sometimes helps with lazy loading in browsers)
+        const voices = window.speechSynthesis.getVoices();
+        
+        // Priority: African accents (South Africa 'en-ZA' or Nigeria 'en-NG')
+        const africanVoice = voices.find(v => v.lang === 'en-ZA' || v.lang === 'en-NG');
 
-        // Auto-advance focus (simple right-to-left)
-        if (char && c < gridSize - 1 && state.puzzle?.grid[r][c+1] !== null) {
-            inputsRef.current[r][c+1]?.focus();
+        // Fallback: Generic Male Voices
+        const maleVoice = voices.find(v => v.name.includes("Google UK English Male")) 
+                       || voices.find(v => v.name.includes("Daniel")) 
+                       || voices.find(v => v.name.toLowerCase().includes("male") && v.lang.startsWith("en"));
+
+        if (africanVoice) {
+            utterance.voice = africanVoice;
+            utterance.pitch = 0.5; // Deep, serious tone for 'Wakandan' feel
+            utterance.rate = rate * 0.9; // Measured, deliberate pace
+        } else if (maleVoice) {
+            utterance.voice = maleVoice;
+            utterance.pitch = 0.6; // Deep pitch for 'dark' male voice fallback
+            utterance.rate = rate;
         }
+
+        utterance.lang = 'en-US'; // Default if voice specific lang fails, though voice obj usually overrides
+        
+        window.speechSynthesis.speak(utterance);
     };
 
-    const handleFocus = (r: number, c: number) => {
-        if (!state.puzzle) return;
-        const num = state.puzzle.numbers[r][c];
-        
-        // Simple heuristic to show relevant clue
-        // If it has a number, show that. If not, look left or up to find the "parent" number.
-        let clueText = "";
-        
-        // Try to find across clue for this cell
-        let cPtr = c;
-        while(cPtr >= 0 && state.puzzle.grid[r][cPtr] !== null) {
-            const n = state.puzzle.numbers[r][cPtr];
-            if (n && state.puzzle.clues.across[n]) {
-                clueText = `${n} Across: ${state.puzzle.clues.across[n]}`;
-                break;
-            }
-            cPtr--;
-        }
-
-        // If no across, or just to vary, try down? 
-        // For simplicity in this mini-UI, we prioritize Across, then Down if Across not found.
-        if (!clueText) {
-             let rPtr = r;
-             while(rPtr >= 0 && state.puzzle.grid[rPtr][c] !== null) {
-                 const n = state.puzzle.numbers[rPtr][c];
-                 if (n && state.puzzle.clues.down[n]) {
-                     clueText = `${n} Down: ${state.puzzle.clues.down[n]}`;
-                     break;
-                 }
-                 rPtr--;
-             }
-        }
-        
-        if (clueText) setState(s => ({ ...s, currentClue: clueText }));
+    const handlePlayWord = () => {
+        if (!state.data) return;
+        speak(state.data.word);
+        inputRef.current?.focus();
     };
 
-    const checkPuzzle = () => {
-        if (!state.puzzle) return;
+    const handlePlaySentence = () => {
+        if (!state.data) return;
+        setState(s => ({...s, showSentence: true}));
+        speak(state.data.sentence, 0.9);
+    };
+
+    const handleSubmit = () => {
+        if (!state.data) return;
         
-        let correctCount = 0;
-        let totalCount = 0;
-        let isComplete = true;
-
-        for(let r=0; r<gridSize; r++) {
-            for(let c=0; c<gridSize; c++) {
-                if (state.puzzle.grid[r][c] !== null) {
-                    totalCount++;
-                    if (state.userGrid[r][c] !== state.puzzle.grid[r][c]) {
-                        isComplete = false;
-                    } else {
-                        correctCount++;
-                    }
-                }
-            }
-        }
-
-        if (isComplete) {
+        const cleanInput = state.input.trim().toUpperCase();
+        if (cleanInput === state.data.word) {
             SoundManager.playWin();
-            onScoreUpdate(50); // Bonus for puzzle
-            setState(s => ({ ...s, status: 'won', message: 'Puzzle Solved! +50 pts' }));
+            const score = Math.max(10, state.data.word.length * 2 - (state.showDefinition ? 5 : 0));
+            onScoreUpdate(score);
+            setState(s => ({ ...s, status: 'won', message: `Correct! +${score} pts` }));
         } else {
             SoundManager.playError();
-            setState(s => ({ ...s, message: `${correctCount}/${totalCount} letters correct` }));
+            // Trigger visual shake
+            const container = document.querySelector('.spelling-container');
+            container?.classList.add('error');
+            setTimeout(() => container?.classList.remove('error'), 500);
+            
+            setState(s => ({ ...s, message: 'Try again!' }));
+            setTimeout(() => setState(s => ({ ...s, message: '' })), 2000);
         }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') handleSubmit();
+    };
+    
+    const handleShowDefinition = () => {
+        if (state.showDefinition) return;
+        onScoreUpdate(-5);
+        setState(s => ({...s, showDefinition: true, message: 'Definition revealed (-5 pts)'}));
+        setTimeout(() => setState(s => ({...s, message: ''})), 2000);
     };
 
     if (state.status === 'loading') return <div className="loader"></div>;
     if (state.status === 'error') return (
         <div className="api-warning">
             {state.message} <br/>
-            <button className="btn btn-secondary" style={{marginTop: 10}} onClick={fetchPuzzle}>Retry</button>
+            <button className="btn btn-secondary" style={{marginTop: 10}} onClick={fetchWord}>Retry</button>
         </div>
     );
 
     return (
-        <div style={{width: '100%'}}>
-            <div className="cw-current-clue">
-                {state.currentClue}
-            </div>
+        <div className={`spelling-container ${state.status === 'won' ? 'won' : ''}`}>
+            
+            {state.status === 'won' ? (
+                <div className="word-reveal">
+                    {state.data?.word}
+                </div>
+            ) : (
+                <>
+                  <div className="audio-btn-large" onClick={handlePlayWord} title="Play Word">
+                       <span className="audio-icon">🔊</span>
+                  </div>
+                  {state.data?.phonetic && (
+                      <div className="phonetic-display">
+                          {state.data.phonetic}
+                      </div>
+                  )}
+                </>
+            )}
+            
+            {state.status !== 'won' && (
+                <input 
+                    ref={inputRef}
+                    className="spelling-input"
+                    type="text" 
+                    value={state.input} 
+                    onChange={(e) => setState(s => ({...s, input: e.target.value}))}
+                    onKeyDown={handleKeyDown}
+                    placeholder="TYPE HERE"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck="false"
+                />
+            )}
 
-            <div className="crossword-grid" style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}>
-                {state.puzzle?.grid.map((row, r) => 
-                    row.map((cell, c) => {
-                        const isBlack = cell === null;
-                        const num = state.puzzle?.numbers[r][c];
-                        const isCorrect = state.status === 'won' || (state.userGrid[r][c] && state.userGrid[r][c] === cell); 
-                        
-                        const finalClass = state.status === 'won' ? 'correct' : '';
-                        
-                        return (
-                            <div key={`${r}-${c}`} className={`cw-cell ${isBlack ? 'black' : ''} ${finalClass}`}>
-                                {!isBlack && (
-                                    <>
-                                        {num && <span style={{position:'absolute', top:1, left:1, fontSize: '0.6rem', color:'#666'}}>{num}</span>}
-                                        <input
-                                            ref={el => {
-                                                if (!inputsRef.current[r]) inputsRef.current[r] = [];
-                                                inputsRef.current[r][c] = el;
-                                            }}
-                                            type="text"
-                                            maxLength={1}
-                                            value={state.userGrid[r][c]}
-                                            onChange={(e) => handleInput(r, c, e.target.value)}
-                                            onFocus={() => handleFocus(r,c)}
-                                            disabled={state.status === 'won'}
-                                        />
-                                    </>
-                                )}
-                            </div>
-                        )
-                    })
+            <div className="hint-section">
+                {state.showDefinition && (
+                    <div className="hint-text">{state.data?.definition}</div>
                 )}
-            </div>
-
-            <div className="cw-clues">
-                <div className="cw-clue-section-title">ACROSS</div>
-                {state.puzzle && Object.entries(state.puzzle.clues.across).map(([num, text]) => (
-                    <div key={`a-${num}`} className="cw-clue-item"><strong>{num}.</strong> {text}</div>
-                ))}
-                <div className="cw-clue-section-title" style={{marginTop: 15}}>DOWN</div>
-                {state.puzzle && Object.entries(state.puzzle.clues.down).map(([num, text]) => (
-                    <div key={`d-${num}`} className="cw-clue-item"><strong>{num}.</strong> {text}</div>
-                ))}
-            </div>
-
-            <div className="controls" style={{marginTop: 20}}>
-                {state.status === 'won' ? (
-                     <button className="btn btn-primary" onClick={fetchPuzzle}>New Puzzle</button>
-                ) : (
-                    <>
-                     <button className="btn btn-primary" onClick={checkPuzzle}>Check Puzzle</button>
-                     <button className="btn btn-secondary" onClick={fetchPuzzle}>Skip</button>
-                    </>
+                {state.showSentence && !state.showDefinition && (
+                     <div className="hint-text">"{state.data?.sentence}"</div>
                 )}
             </div>
             
             <div className="message">{state.message}</div>
+
+            <div className="controls">
+                {state.status === 'won' ? (
+                     <button className="btn btn-primary" onClick={fetchWord}>Next Word →</button>
+                ) : (
+                    <>
+                     <button className="btn btn-primary" onClick={handleSubmit}>Check Spelling</button>
+                     <button className="btn btn-audio-small" onClick={handlePlaySentence}>🗣️ Read Sentence</button>
+                     <button className="btn btn-hint" onClick={handleShowDefinition} disabled={state.showDefinition}>📖 Define (-5)</button>
+                     <button className="btn btn-secondary" onClick={fetchWord}>Skip</button>
+                    </>
+                )}
+            </div>
         </div>
     );
 }
@@ -1279,15 +1288,15 @@ const App = () => {
             <div className={`nav-tab ${view === 'scrabble' ? 'active' : ''}`} onClick={() => setView('scrabble')}>
                 Definition Game
             </div>
-            <div className={`nav-tab ${view === 'crossword' ? 'active' : ''}`} onClick={() => setView('crossword')}>
-                Crossword
+            <div className={`nav-tab ${view === 'spelling' ? 'active' : ''}`} onClick={() => setView('spelling')}>
+                Spelling Bee
             </div>
         </div>
 
         {view === 'scrabble' ? (
             <ScrabbleGame difficulty={difficulty} onScoreUpdate={updateScore} />
         ) : (
-            <CrosswordGame difficulty={difficulty} onScoreUpdate={updateScore} />
+            <SpellingGame difficulty={difficulty} onScoreUpdate={updateScore} />
         )}
 
       </div>
