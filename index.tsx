@@ -12,7 +12,7 @@ const SCRABBLE_SCORES: Record<string, number> = {
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
 type GameMode = 'scrabble' | 'spelling';
 
-// Fallback Dictionary for Offline/Error Mode
+// Fallback Dictionary for Offline/Error Mode (Scrabble)
 interface WordEntry {
   word: string;
   definition: string;
@@ -40,6 +40,46 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "PHOENIX", definition: "A mythical bird that regenerates from its own ashes." },
     { word: "SYMPHONY", definition: "An elaborate musical composition for full orchestra." }
   ]
+};
+
+// Fallback Dictionary for Offline/Error Mode (Spelling)
+interface SpellingWordData {
+    word: string;
+    definition: string;
+    sentence: string;
+    phonetic: string;
+}
+
+const SPELLING_LOCAL_DICTIONARY: Record<Difficulty, SpellingWordData[]> = {
+    Easy: [
+        { word: "TIGER", phonetic: "/ˈtaɪɡər/", definition: "A very large solitary cat with a yellow-brown coat striped with black.", sentence: "The ____ roared loudly in the zoo." },
+        { word: "RIVER", phonetic: "/ˈrɪvər/", definition: "A large natural stream of water flowing in a channel to the sea.", sentence: "We went fishing in the ____." },
+        { word: "CLOUD", phonetic: "/klaʊd/", definition: "A visible mass of condensed water vapor floating in the atmosphere.", sentence: "The sun was hidden behind a dark ____." },
+        { word: "PIZZA", phonetic: "/ˈpiːtsə/", definition: "A dish of Italian origin consisting of a flat, round base of dough.", sentence: "We ordered a pepperoni ____ for dinner." },
+        { word: "MUSIC", phonetic: "/ˈmjuːzɪk/", definition: "Vocal or instrumental sounds (or both) combined in such a way as to produce beauty of form.", sentence: "She loves listening to classical ____." },
+        { word: "WATER", phonetic: "/ˈwɔːtər/", definition: "A colorless, transparent, odorless liquid that forms the seas, lakes, rivers, and rain.", sentence: "He drank a glass of cold ____." },
+        { word: "HOUSE", phonetic: "/haʊs/", definition: "A building for human habitation.", sentence: "They live in a big white ____ on the corner." },
+        { word: "SMILE", phonetic: "/smaɪl/", definition: "A pleased, kind, or amused facial expression.", sentence: "She greeted us with a warm ____." }
+    ],
+    Medium: [
+        { word: "JOURNEY", phonetic: "/ˈdʒɜːrni/", definition: "An act of traveling from one place to another.", sentence: "The ____ to the mountain top took three days." },
+        { word: "MYSTERY", phonetic: "/ˈmɪstəri/", definition: "Something that is difficult or impossible to understand or explain.", sentence: "The disappearance of the cookies remains a ____." },
+        { word: "ISLAND", phonetic: "/ˈaɪlənd/", definition: "A piece of land surrounded by water.", sentence: "They took a boat to the tropical ____." },
+        { word: "RHYTHM", phonetic: "/ˈrɪðəm/", definition: "A strong, regular, repeated pattern of movement or sound.", sentence: "The dancer moved to the ____ of the drums." },
+        { word: "VACUUM", phonetic: "/ˈvækjuːm/", definition: "A space entirely devoid of matter.", sentence: "Space is essentially a ____." },
+        { word: "GUITAR", phonetic: "/ɡɪˈtɑːr/", definition: "A stringed musical instrument played by plucking or strumming.", sentence: "He played a song on his acoustic ____." },
+        { word: "CAMERA", phonetic: "/ˈkæmrə/", definition: "A device for recording visual images in the form of photographs, film, or video signals.", sentence: "She took a picture with her new ____." },
+        { word: "FOREST", phonetic: "/ˈfɔːrɪst/", definition: "A large area covered chiefly with trees and undergrowth.", sentence: "Bears live deep in the ____." }
+    ],
+    Hard: [
+        { word: "PHARAOH", phonetic: "/ˈfeəroʊ/", definition: "A ruler in ancient Egypt.", sentence: "The ____ ordered the construction of a pyramid." },
+        { word: "CONSCIENCE", phonetic: "/ˈkɒnʃəns/", definition: "An inner feeling or voice viewed as acting as a guide to the rightness or wrongness of one's behavior.", sentence: "His ____ wouldn't let him lie." },
+        { word: "QUARANTINE", phonetic: "/ˈkwɔːrəntiːn/", definition: "A state, period, or place of isolation in which people or animals that have arrived from elsewhere or been exposed to infectious or contagious disease are placed.", sentence: "The astronauts were put in ____ after returning to Earth." },
+        { word: "HIEROGLYPH", phonetic: "/ˈhaɪərəɡlɪf/", definition: "A stylized picture of an object representing a word, syllable, or sound, as found in ancient Egyptian writing.", sentence: "The archaeologist deciphered the ancient ____." },
+        { word: "CHRYSANTHEMUM", phonetic: "/krɪˈsænθəməm/", definition: "A popular plant of the daisy family, having brightly colored ornamental flowers.", sentence: "She planted a yellow ____ in the garden." },
+        { word: "SOLILOQUY", phonetic: "/səˈlɪləkwi/", definition: "An act of speaking one's thoughts aloud when by oneself or regardless of any hearers.", sentence: "Hamlet's famous ____ begins with 'To be, or not to be'." },
+        { word: "LIEUTENANT", phonetic: "/lɛfˈtɛnənt/", definition: "A deputy or substitute acting for a superior.", sentence: "The ____ took command when the captain fell ill." }
+    ]
 };
 
 // --- Sound Utility ---
@@ -666,14 +706,6 @@ interface ScrabbleState {
   seenWords: string[];
 }
 
-// Spelling Game Types
-interface SpellingWordData {
-    word: string;
-    definition: string;
-    sentence: string;
-    phonetic: string;
-}
-
 interface SpellingState {
     data: SpellingWordData | null;
     input: string;
@@ -789,7 +821,7 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
         }
 
       } catch (e) {
-        console.error("API Error, falling back to local dictionary", e);
+        console.warn("API Error, falling back to local dictionary", e);
       }
     }
 
@@ -1003,93 +1035,7 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
              window.speechSynthesis.onvoiceschanged = loadVoices;
         }
     }, []);
-
-    const fetchWord = useCallback(async () => {
-        setState(s => ({ 
-            ...s, 
-            status: 'loading', 
-            message: '', 
-            data: null, 
-            input: '', 
-            showDefinition: false, 
-            showSentence: false 
-        }));
-
-        if (!process.env.API_KEY) {
-            setState(s => ({ ...s, status: 'error', message: 'API Key required for Spelling Mode' }));
-            return;
-        }
-
-        try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-            const model = 'gemini-2.5-flash';
-            
-            // Explicitly requested 5 million+ word corpus access
-            const prompt = `
-                Generate a random English word for a spelling bee.
-                Source: Access the complete English language corpus (approx 5 million words).
-                
-                Difficulty: ${difficulty}.
-                ${difficulty === 'Easy' ? 'Common words, clear pronunciation, 4-6 letters.' : ''}
-                ${difficulty === 'Medium' ? 'Less common words, 6-9 letters. Avoid overly simple words.' : ''}
-                ${difficulty === 'Hard' ? 'Complex, obscure, scientific, or literary words. 8+ letters. Tap into the full depth of the dictionary.' : ''}
-                
-                Return JSON format:
-                {
-                    "word": "STRING",
-                    "phonetic": "STRING (IPA format, e.g. /kæt/)",
-                    "definition": "STRING",
-                    "sentence": "A sentence containing the word, but replace the word itself with '________'."
-                }
-            `;
-
-            const response = await ai.models.generateContent({
-                model,
-                contents: prompt,
-                config: {
-                    responseMimeType: 'application/json',
-                    responseSchema: {
-                        type: Type.OBJECT,
-                        properties: {
-                            word: { type: Type.STRING },
-                            phonetic: { type: Type.STRING },
-                            definition: { type: Type.STRING },
-                            sentence: { type: Type.STRING }
-                        },
-                        required: ['word', 'phonetic', 'definition', 'sentence']
-                    }
-                }
-            });
-            
-            const data = JSON.parse(response.text);
-            
-            setState(s => ({
-                ...s,
-                data: {
-                    word: data.word.trim().toUpperCase(),
-                    phonetic: data.phonetic || '',
-                    definition: data.definition,
-                    sentence: data.sentence
-                },
-                status: 'playing',
-            }));
-            
-            // Auto-play audio slightly after load
-            setTimeout(() => {
-                if (data.word) speak(data.word.trim());
-            }, 800);
-
-        } catch (e) {
-            console.error(e);
-            setState(s => ({ ...s, status: 'error', message: 'Failed to generate word. Please try again.' }));
-        }
-
-    }, [difficulty]);
-
-    useEffect(() => {
-        fetchWord();
-    }, [fetchWord]);
-
+    
     const speak = (text: string, rate = 0.8) => {
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
@@ -1120,6 +1066,104 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
         
         window.speechSynthesis.speak(utterance);
     };
+
+    const fetchWord = useCallback(async () => {
+        setState(s => ({ 
+            ...s, 
+            status: 'loading', 
+            message: '', 
+            data: null, 
+            input: '', 
+            showDefinition: false, 
+            showSentence: false 
+        }));
+
+        // Try API first if Key is available
+        if (process.env.API_KEY) {
+            try {
+                const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+                const model = 'gemini-2.5-flash';
+                
+                const prompt = `
+                    Generate a random English word for a spelling bee.
+                    Source: Access the complete English language corpus (approx 5 million words).
+                    
+                    Difficulty: ${difficulty}.
+                    ${difficulty === 'Easy' ? 'Common words, clear pronunciation, 4-6 letters.' : ''}
+                    ${difficulty === 'Medium' ? 'Less common words, 6-9 letters. Avoid overly simple words.' : ''}
+                    ${difficulty === 'Hard' ? 'Complex, obscure, scientific, or literary words. 8+ letters. Tap into the full depth of the dictionary.' : ''}
+                    
+                    Return JSON format:
+                    {
+                        "word": "STRING",
+                        "phonetic": "STRING (IPA format, e.g. /kæt/)",
+                        "definition": "STRING",
+                        "sentence": "A sentence containing the word, but replace the word itself with '________'."
+                    }
+                `;
+
+                const response = await ai.models.generateContent({
+                    model,
+                    contents: prompt,
+                    config: {
+                        responseMimeType: 'application/json',
+                        responseSchema: {
+                            type: Type.OBJECT,
+                            properties: {
+                                word: { type: Type.STRING },
+                                phonetic: { type: Type.STRING },
+                                definition: { type: Type.STRING },
+                                sentence: { type: Type.STRING }
+                            },
+                            required: ['word', 'phonetic', 'definition', 'sentence']
+                        }
+                    }
+                });
+                
+                const data = JSON.parse(response.text);
+                
+                setState(s => ({
+                    ...s,
+                    data: {
+                        word: data.word.trim().toUpperCase(),
+                        phonetic: data.phonetic || '',
+                        definition: data.definition,
+                        sentence: data.sentence
+                    },
+                    status: 'playing',
+                }));
+                
+                setTimeout(() => {
+                    if (data.word) speak(data.word.trim());
+                }, 800);
+                
+                return; // Exit if successful
+
+            } catch (e) {
+                console.warn("API failed or not available, switching to offline mode.", e);
+            }
+        }
+
+        // Fallback: Offline Mode
+        await new Promise(r => setTimeout(r, 600)); // Simulate loading for better UX
+        const pool = SPELLING_LOCAL_DICTIONARY[difficulty];
+        const randomItem = pool[Math.floor(Math.random() * pool.length)];
+
+        setState(s => ({
+            ...s,
+            data: randomItem,
+            status: 'playing'
+        }));
+        
+        setTimeout(() => {
+            speak(randomItem.word);
+        }, 800);
+
+    }, [difficulty]);
+
+    useEffect(() => {
+        fetchWord();
+    }, [fetchWord]);
 
     const handlePlayWord = () => {
         if (!state.data) return;
@@ -1163,6 +1207,34 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
         onScoreUpdate(-5);
         setState(s => ({...s, showDefinition: true, message: 'Definition revealed (-5 pts)'}));
         setTimeout(() => setState(s => ({...s, message: ''})), 2000);
+    };
+
+    const handleLetterHint = () => {
+        if (!state.data || state.status !== 'playing') return;
+        
+        const target = state.data.word;
+        const current = state.input.toUpperCase();
+        
+        let idx = 0;
+        // Find the first character that doesn't match or the end of the input
+        while (idx < current.length && idx < target.length && current[idx] === target[idx]) {
+            idx++;
+        }
+
+        if (idx >= target.length) return; // Word is already fully correct or longer
+
+        const chars = current.split('');
+        chars[idx] = target[idx];
+        const newInput = chars.join('');
+
+        onScoreUpdate(-3);
+        setState(s => ({
+            ...s,
+            input: newInput,
+            message: 'Letter Hint (-3 pts)'
+        }));
+        setTimeout(() => setState(s => ({...s, message: ''})), 1500);
+        inputRef.current?.focus();
     };
 
     if (state.status === 'loading') return <div className="loader"></div>;
@@ -1227,6 +1299,7 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
                     <>
                      <button className="btn btn-primary" onClick={handleSubmit}>Check Spelling</button>
                      <button className="btn btn-audio-small" onClick={handlePlaySentence}>🗣️ Read Sentence</button>
+                     <button className="btn btn-hint" onClick={handleLetterHint}>🔤 Letter (-3)</button>
                      <button className="btn btn-hint" onClick={handleShowDefinition} disabled={state.showDefinition}>📖 Define (-5)</button>
                      <button className="btn btn-secondary" onClick={fetchWord}>Skip</button>
                     </>
