@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { GoogleGenAI, Type } from "@google/genai";
-import { Peer } from 'peerjs';
+import { Peer, DataConnection } from 'peerjs';
 
 // --- Configuration & Constants ---
 
@@ -17,6 +17,9 @@ type GameMode = 'scrabble' | 'spelling' | 'multiplayer';
 interface WordEntry {
   word: string;
   definition: string;
+  phonetic?: string;
+  sentence?: string;
+  imageUrl?: string;
 }
 
 interface SpellingWordData {
@@ -158,171 +161,6 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "OBVIATE", definition: "To remove a need or problem." },
     { word: "VITRIOLIC", definition: "Extremely harsh or bitter." },
     { word: "PUSILLANIMOUS", definition: "Cowardly." },
-    // User Added Words (31-60)
-    { word: "ERRATIC", definition: "Unpredictable." },
-    { word: "EXACERBATE", definition: "To make worse." },
-    { word: "FEASIBLE", definition: "Possible or doable." },
-    { word: "FERVENT", definition: "Very passionate." },
-    { word: "FRIVOLOUS", definition: "Not serious; unimportant." },
-    { word: "GALVANIZE", definition: "To inspire to take action." },
-    { word: "GRAVITATE", definition: "To be drawn toward something." },
-    { word: "IMMINENT", definition: "About to happen." },
-    { word: "IMPARTIAL", definition: "Fair, not biased." },
-    { word: "IMPLICIT", definition: "Implied, not directly stated." },
-    { word: "INCESSANT", definition: "Nonstop." },
-    { word: "INCREDULOUS", definition: "Unable to believe." },
-    { word: "INDOLENT", definition: "Lazy." },
-    { word: "INSINUATE", definition: "To hint something negative." },
-    { word: "INSTIGATE", definition: "To start or provoke." },
-    { word: "INTREPID", definition: "Brave, fearless." },
-    { word: "JUDICIOUS", definition: "Wise, sensible." },
-    { word: "LUCID", definition: "Clear and easy to understand." },
-    { word: "MEDIOCRE", definition: "Average, not very good." },
-    { word: "MITIGATE", definition: "To reduce the effect." },
-    { word: "NOVEL", definition: "New and original." },
-    { word: "OBSOLETE", definition: "Outdated." },
-    { word: "OMNIPRESENT", definition: "Present everywhere." },
-    { word: "PERPLEX", definition: "To confuse." },
-    { word: "PRAGMATIC", definition: "Practical." },
-    { word: "PROLIFIC", definition: "Highly productive." },
-    { word: "REITERATE", definition: "To repeat." },
-    { word: "RESILIENT", definition: "Able to recover quickly." },
-    { word: "SCRUTINIZE", definition: "To examine closely." },
-    { word: "TANGIBLE", definition: "Something you can touch or handle." }
-  ]
-};
-
-const SPELLING_LOCAL_DICTIONARY: Record<Difficulty, SpellingWordData[]> = {
-  Easy: [
-    { word: "APPLE", phonetic: "/ˈæp.əl/", definition: "A round fruit with red or green skin.", sentence: "She ate a red _____ for a snack." },
-    { word: "BREAD", phonetic: "/bred/", definition: "Food made of flour, water, and yeast.", sentence: "He made a sandwich with whole wheat _____." },
-    { word: "CHAIR", phonetic: "/tʃeər/", definition: "A seat with a back and legs.", sentence: "Please sit in the _____." },
-    { word: "DANCE", phonetic: "/dæns/", definition: "To move rhythmically to music.", sentence: "They like to _____ at parties." },
-    { word: "HAPPY", phonetic: "/ˈhæp.i/", definition: "Feeling or showing pleasure.", sentence: "The puppy was _____ to see its owner." },
-    // User Added Words (1-30)
-    { word: "ABATE", phonetic: "/əˈbeɪt/", definition: "To reduce or lessen.", sentence: "We waited for the storm to ____." },
-    { word: "ABRIDGE", phonetic: "/əˈbrɪdʒ/", definition: "To shorten a text.", sentence: "The publisher decided to ____ the novel." },
-    { word: "ACCENTUATE", phonetic: "/əkˈsɛntʃueɪt/", definition: "To emphasize.", sentence: "The makeup served to ____ her eyes." },
-    { word: "AFFLUENT", phonetic: "/ˈæfluənt/", definition: "Rich, wealthy.", sentence: "He grew up in an ____ neighborhood." },
-    { word: "ALLUDE", phonetic: "/əˈluːd/", definition: "To indirectly refer to something.", sentence: "She did not ____ to the incident." },
-    { word: "AMELIORATE", phonetic: "/əˈmiːliəreɪt/", definition: "To make something better.", sentence: "They tried to ____ the situation." },
-    { word: "APATHETIC", phonetic: "/ˌæpəˈθɛtɪk/", definition: "Not caring; showing little emotion.", sentence: "The voters were ____ about the election." },
-    { word: "ARDUOUS", phonetic: "/ˈɑːrdʒuəs/", definition: "Very difficult or tiring.", sentence: "It was an ____ climb up the mountain." },
-    { word: "AUSPICIOUS", phonetic: "/ɔːˈspɪʃəs/", definition: "Favorable; showing good signs.", sentence: "It was an ____ start to the new year." },
-    { word: "BANAL", phonetic: "/bəˈnɑːl/", definition: "Boring, not original.", sentence: "The movie's plot was predictable and ____." },
-    { word: "BENIGN", phonetic: "/bɪˈnaɪn/", definition: "Harmless.", sentence: "The tumor turned out to be ____." },
-    { word: "BOLSTER", phonetic: "/ˈboʊlstər/", definition: "To support or strengthen.", sentence: "He needed to ____ his confidence." },
-    { word: "CANDID", phonetic: "/ˈkændɪd/", definition: "Honest and truthful.", sentence: "She gave a ____ opinion." },
-    { word: "CHRONICLE", phonetic: "/ˈkrɒnɪkl/", definition: "To record events in order.", sentence: "The book will ____ the history of the war." },
-    { word: "COHERENT", phonetic: "/koʊˈhɪərənt/", definition: "Clear and logical.", sentence: "He gave a ____ explanation." },
-    { word: "COLLOQUIAL", phonetic: "/kəˈloʊkwiəl/", definition: "Informal language.", sentence: "The phrase is ____ and not used in formal writing." },
-    { word: "CONCUR", phonetic: "/kənˈkɜːr/", definition: "To agree.", sentence: "I ____ with your assessment." },
-    { word: "CONSPICUOUS", phonetic: "/kənˈspɪkjuəs/", definition: "Easily seen or noticed.", sentence: "The red car was ____ in the parking lot." },
-    { word: "CURSORY", phonetic: "/ˈkɜːrsəri/", definition: "Quick and not detailed.", sentence: "He gave the report a ____ glance." },
-    { word: "DAUNTING", phonetic: "/ˈdɔːntɪŋ/", definition: "Intimidating; scary to start.", sentence: "The task ahead seemed ____." },
-    { word: "DEBILITATE", phonetic: "/dɪˈbɪlɪteɪt/", definition: "To weaken.", sentence: "The illness can ____ the body." },
-    { word: "DELINEATE", phonetic: "/dɪˈlɪnieɪt/", definition: "To describe clearly.", sentence: "The map will ____ the property lines." },
-    { word: "DERIVE", phonetic: "/dɪˈraɪv/", definition: "To obtain from a source.", sentence: "Many words ____ from Latin." },
-    { word: "DILIGENT", phonetic: "/ˈdɪlɪdʒənt/", definition: "Hardworking.", sentence: "She is a ____ student." },
-    { word: "DISCERN", phonetic: "/dɪˈsɜːrn/", definition: "To notice or recognize.", sentence: "It was hard to ____ the truth." },
-    { word: "DISCREET", phonetic: "/dɪˈskriːt/", definition: "Careful not to attract attention.", sentence: "Please be ____ about the surprise party." },
-    { word: "ELICIT", phonetic: "/ɪˈlɪsɪt/", definition: "To draw out (information or reaction).", sentence: "The joke failed to ____ a laugh." },
-    { word: "ELUSIVE", phonetic: "/ɪˈluːsɪv/", definition: "Hard to find or catch.", sentence: "The solution remained ____." },
-    { word: "EMULATE", phonetic: "/ˈɛmjuleɪt/", definition: "To imitate to match or surpass.", sentence: "He tried to ____ his hero." },
-    { word: "ENIGMATIC", phonetic: "/ˌɛnɪɡˈmætɪk/", definition: "Mysterious.", sentence: "She gave him an ____ smile." }
-  ],
-  Medium: [
-    { word: "BRIDGE", phonetic: "/brɪdʒ/", definition: "A structure carrying a road across a river.", sentence: "We drove across the Golden Gate _____." },
-    { word: "CANYON", phonetic: "/ˈkæn.jən/", definition: "A deep gorge, typically one with a river.", sentence: "The Grand _____ is huge." },
-    { word: "GALAXY", phonetic: "/ˈɡæl.ək.si/", definition: "A system of millions or billions of stars.", sentence: "Our solar system is in the Milky Way _____." },
-    { word: "HARBOR", phonetic: "/ˈhɑːr.bər/", definition: "A place on the coast where vessels find shelter.", sentence: "The boats were docked in the _____." },
-    { word: "MAGNET", phonetic: "/ˈmæɡ.nət/", definition: "A material that attracts iron.", sentence: "He used a _____ to pick up the nails." },
-    { word: "AMBIGUOUS", phonetic: "/æmˈbɪɡjuəs/", definition: "Not clear; can have more than one meaning.", sentence: "The ending was _____." },
-    { word: "PLAUSIBLE", phonetic: "/ˈplɔːzəbl/", definition: "Seems possible or believable.", sentence: "That seems like a _____ excuse." },
-    { word: "INEVITABLE", phonetic: "/ɪˈnɛvɪtəbl/", definition: "Cannot be avoided.", sentence: "Change is _____." },
-    { word: "METICULOUS", phonetic: "/məˈtɪkjələs/", definition: "Very careful with details.", sentence: "She was _____ in her work." },
-    { word: "TEDIOUS", phonetic: "/ˈtiːdiəs/", definition: "Boring and long.", sentence: "The job was _____." },
-    { word: "HOSTILE", phonetic: "/ˈhɒstaɪl/", definition: "Unfriendly or aggressive.", sentence: "The crowd was _____." },
-    { word: "SUBTLE", phonetic: "/ˈsʌtl/", definition: "Not obvious.", sentence: "There was a _____ difference." },
-    { word: "INFER", phonetic: "/ɪnˈfɜːr/", definition: "To conclude from clues.", sentence: "I can _____ that you are tired." },
-    { word: "MUNDANE", phonetic: "/mʌnˈdeɪn/", definition: "Ordinary, not exciting.", sentence: "It was a _____ day." },
-    { word: "REFRAIN", phonetic: "/rɪˈfreɪn/", definition: "To stop yourself from doing something.", sentence: "Please _____ from smoking." },
-    { word: "ADEQUATE", phonetic: "/ˈædɪkwət/", definition: "Good enough.", sentence: "The food was _____." },
-    { word: "ARBITRARY", phonetic: "/ˈɑːrbɪtrəri/", definition: "Based on random choice, not reason.", sentence: "The rule seemed _____." },
-    { word: "CONVENTIONAL", phonetic: "/kənˈvɛnʃənl/", definition: "Normal, traditional.", sentence: "It was a _____ wedding." },
-    { word: "RELUCTANT", phonetic: "/rɪˈlʌktənt/", definition: "Not wanting to do something.", sentence: "He was _____ to go." },
-    { word: "AMPLE", phonetic: "/ˈæmpl/", definition: "More than enough.", sentence: "We have _____ time." },
-    { word: "BRITTLE", phonetic: "/ˈbrɪtl/", definition: "Easily broken.", sentence: "The bone was _____." },
-    { word: "PONDER", phonetic: "/ˈpɒndər/", definition: "To think deeply.", sentence: "Let me _____ that question." },
-    { word: "RIGID", phonetic: "/ˈrɪdʒɪd/", definition: "Not flexible.", sentence: "The board was _____." },
-    { word: "TRIVIAL", phonetic: "/ˈtrɪviəl/", definition: "Not important.", sentence: "It was a _____ matter." },
-    { word: "PROFOUND", phonetic: "/prəˈfaʊnd/", definition: "Deep or meaningful.", sentence: "That is a _____ thought." },
-    { word: "CUMULATIVE", phonetic: "/ˈkjuːmjələtɪv/", definition: "Increasing by adding over time.", sentence: "The _____ effect was huge." }
-  ],
-  Hard: [
-    { word: "ECLIPSE", phonetic: "/ɪˈklɪps/", definition: "An obscuring of the light from one celestial body.", sentence: "The solar _____ darkened the sky." },
-    { word: "GLACIER", phonetic: "/ˈɡleɪ.ʃər/", definition: "A slowly moving mass of ice.", sentence: "The _____ carved the valley over centuries." },
-    { word: "LABYRINTH", phonetic: "/ˈlæb.ə.rɪnθ/", definition: "A complicated network of passages.", sentence: "Minos built a _____ to hold the Minotaur." },
-    { word: "PHOENIX", phonetic: "/ˈfiː.nɪks/", definition: "A mythical bird that regenerates from ashes.", sentence: "Like a _____, the city rose from the ruins." },
-    { word: "SYMPHONY", phonetic: "/ˈsɪm.fə.ni/", definition: "An elaborate musical composition.", sentence: "Beethoven's Ninth _____ is a masterpiece." },
-    { word: "OBFUSCATE", phonetic: "/ˈɒbfʌskeɪt/", definition: "To make something unclear.", sentence: "Do not _____ the truth." },
-    { word: "PERNICIOUS", phonetic: "/pərˈnɪʃəs/", definition: "Harmful in a subtle way.", sentence: "The rumor had a _____ effect." },
-    { word: "UBIQUITOUS", phonetic: "/juːˈbɪkwɪtəs/", definition: "Found everywhere.", sentence: "Computers are _____ now." },
-    { word: "EPHEMERAL", phonetic: "/əˈfɛmərəl/", definition: "Lasting for a very short time.", sentence: "Beauty is often _____." },
-    { word: "MAGNANIMOUS", phonetic: "/mæɡˈnænɪməs/", definition: "Very generous and forgiving.", sentence: "He was _____ in defeat." },
-    { word: "ESOTERIC", phonetic: "/ˌɛsəˈtɛrɪk/", definition: "Known only by a small group.", sentence: "The topic was _____." },
-    { word: "FASTIDIOUS", phonetic: "/fæˈstɪdiəs/", definition: "Very picky; hard to please.", sentence: "She is _____ about cleaning." },
-    { word: "BELLIGERENT", phonetic: "/bəˈlɪdʒərənt/", definition: "Aggressive or ready to fight.", sentence: "The drunk man was _____." },
-    { word: "EQUANIMITY", phonetic: "/ˌiːkwəˈnɪmɪti/", definition: "Calmness under stress.", sentence: "He bore the insult with _____." },
-    { word: "HEGEMONY", phonetic: "/hɪˈdʒɛməni/", definition: "Dominance or control over others.", sentence: "The country lost its _____." },
-    { word: "PERFUNCTORY", phonetic: "/pərˈfʌŋktəri/", definition: "Done quickly without care.", sentence: "He gave a _____ greeting." },
-    { word: "OBSTINATE", phonetic: "/ˈɒbstɪnət/", definition: "Stubborn and unwilling to change.", sentence: "The donkey was _____." },
-    { word: "SARDONIC", phonetic: "/sɑːrˈdɒnɪk/", definition: "Mocking in a bitter way.", sentence: "He had a _____ grin." },
-    { word: "RECALCITRANT", phonetic: "/rɪˈkælsɪtrənt/", definition: "Refusing to obey rules.", sentence: "The _____ child wouldn't listen." },
-    { word: "SAGACIOUS", phonetic: "/səˈɡeɪʃəs/", definition: "Wise and good at judging.", sentence: "It was a _____ decision." },
-    { word: "INTRANSIGENT", phonetic: "/ɪnˈtrænsɪdʒənt/", definition: "Refusing to compromise.", sentence: "They remained _____." },
-    { word: "ANACHRONISTIC", phonetic: "/əˌnækrəˈnɪstɪk/", definition: "Out of its proper time period.", sentence: "The costume was _____." },
-    { word: "PULCHRITUDE", phonetic: "/ˈpʌlkrɪtjuːd/", definition: "Physical beauty.", sentence: "She was known for her _____." },
-    { word: "DISPARATE", phonetic: "/ˈdɪspərət/", definition: "Very different; not related.", sentence: "They have _____ ideas." },
-    { word: "MENDACIOUS", phonetic: "/mɛnˈdeɪʃəs/", definition: "Lying; not truthful.", sentence: "The statement was _____." },
-    { word: "INDEFATIGABLE", phonetic: "/ˌɪndɪˈfætɪɡəbl/", definition: "Never getting tired.", sentence: "He was an _____ worker." },
-    { word: "EXTEMPORANEOUS", phonetic: "/ɪkˌstɛmpəˈreɪniəs/", definition: "Spoken or done without preparation.", sentence: "It was an _____ speech." },
-    { word: "QUINTESSENTIAL", phonetic: "/ˌkwɪntɪˈsɛnʃl/", definition: "The purest example of something.", sentence: "He is the _____ gentleman." },
-    { word: "CONFLAGRATION", phonetic: "/ˌkɒnfləˈɡreɪʃn/", definition: "A large, destructive fire.", sentence: "The _____ burned the town." },
-    { word: "INSCRUTABLE", phonetic: "/ɪnˈskruːtəbl/", definition: "Impossible to understand.", sentence: "His face was _____." },
-    { word: "PUGNACIOUS", phonetic: "/pʌɡˈneɪʃəs/", definition: "Eager to fight or argue.", sentence: "The dog was _____." },
-    { word: "IMPETUOUS", phonetic: "/ɪmˈpɛtʃuəs/", definition: "Acting quickly without thinking.", sentence: "He made an _____ choice." },
-    { word: "INELUCTABLE", phonetic: "/ˌɪnɪˈlʌktəbl/", definition: "Unavoidable.", sentence: "Fate is _____." },
-    { word: "SUPERCILIOUS", phonetic: "/ˌsuːpərˈsɪliəs/", definition: "Behaving as if better than others.", sentence: "She gave a _____ look." },
-    { word: "GRANDILOQUENT", phonetic: "/ɡrænˈdɪləkwənt/", definition: "Using fancy or exaggerated language.", sentence: "His speech was _____." },
-    { word: "LUGUBRIOUS", phonetic: "/luːˈɡuːbriəs/", definition: "Sad and gloomy.", sentence: "The music was _____." },
-    { word: "INEFFABLE", phonetic: "/ɪnˈɛfəbl/", definition: "Too great to be described with words.", sentence: "The joy was _____." },
-    { word: "OBSEQUIOUS", phonetic: "/əbˈsiːkwiəs/", definition: "Too eager to please or obey.", sentence: "The servant was _____." },
-    { word: "VICISSITUDE", phonetic: "/vɪˈsɪsɪtuːd/", definition: "A sudden change, usually unpleasant.", sentence: "The _____ of fortune." },
-    { word: "ABSTRUSE", phonetic: "/æbˈstruːs/", definition: "Difficult to understand.", sentence: "The text was _____." },
-    { word: "RECONDITE", phonetic: "/ˈrɛkəndaɪt/", definition: "Little-known; obscure.", sentence: "It is a _____ fact." },
-    { word: "CACOPHONY", phonetic: "/kəˈkɒfəni/", definition: "Harsh, unpleasant mixture of sounds.", sentence: "The city was a _____." },
-    { word: "PHLEGMATIC", phonetic: "/flɛɡˈmætɪk/", definition: "Calm and not easily excited.", sentence: "He is _____ by nature." },
-    { word: "OBDURATE", phonetic: "/ˈɒbdjʊrət/", definition: "Very stubborn.", sentence: "She remained _____." },
-    { word: "INIMICAL", phonetic: "/ɪˈnɪmɪkl/", definition: "Harmful or unfriendly.", sentence: "It was _____ to our interests." },
-    { word: "PERSPICACIOUS", phonetic: "/ˌpɜːrspɪˈkeɪʃəs/", definition: "Very smart; able to notice details.", sentence: "She is a _____ observer." },
-    { word: "MUNIFICENT", phonetic: "/mjuːˈnɪfɪsnt/", definition: "Extremely generous.", sentence: "It was a _____ gift." },
-    { word: "PARSIMONIOUS", phonetic: "/ˌpɑːrsɪˈmoʊniəs/", definition: "Very unwilling to spend money.", sentence: "He is _____ with words." },
-    { word: "IMPLACABLE", phonetic: "/ɪmˈplækəbl/", definition: "Cannot be calmed or stopped.", sentence: "He was an _____ foe." },
-    { word: "SYCOPHANT", phonetic: "/ˈsɪkəfænt/", definition: "Someone who flatters to gain favor.", sentence: "He is a total _____." },
-    { word: "ASSIDUOUS", phonetic: "/əˈsɪdjuəs/", definition: "Persistent and hardworking.", sentence: "He was _____ in his duties." },
-    { word: "INSIDIOUS", phonetic: "/ɪnˈsɪdiəs/", definition: "Sneaky and harmful.", sentence: "The habit is _____." },
-    { word: "PERIPATETIC", phonetic: "/ˌpɛrɪpəˈtɛtɪk/", definition: "Traveling from place to place.", sentence: "A _____ lifestyle." },
-    { word: "QUERULOUS", phonetic: "/ˈkwɛrələs/", definition: "Always complaining.", sentence: "The patient was _____." },
-    { word: "REPLETE", phonetic: "/rɪˈpliːt/", definition: "Completely filled.", sentence: "The meal was _____." },
-    { word: "TREPIDATION", phonetic: "/ˌtrɛpɪˈdeɪʃn/", definition: "Fear or worry.", sentence: "He felt _____." },
-    { word: "AMBIVALENT", phonetic: "/æmˈbɪvələnt/", definition: "Having mixed feelings.", sentence: "I am _____ about it." },
-    { word: "JUXTAPOSE", phonetic: "/ˌdʒʌkstəˈpoʊz/", definition: "To place side by side for comparison.", sentence: "Try to _____ the images." },
-    { word: "IMPROVIDENT", phonetic: "/ɪmˈprɒvɪdənt/", definition: "Not planning for the future.", sentence: "He was _____ with money." },
-    { word: "EXECRABLE", phonetic: "/ˈɛksɪkrəbl/", definition: "Extremely bad.", sentence: "The taste was _____." },
-    { word: "OBVIATE", phonetic: "/ˈɒbvieɪt/", definition: "To remove a need or problem.", sentence: "This will _____ the risk." },
-    { word: "VITRIOLIC", phonetic: "/ˌvɪtriˈɒlɪk/", definition: "Extremely harsh or bitter.", sentence: "A _____ attack." },
-    { word: "PUSILLANIMOUS", phonetic: "/ˌpjuːsɪˈlænɪməs/", definition: "Cowardly.", sentence: "A _____ act." },
     // User Added Words (31-60)
     { word: "ERRATIC", phonetic: "/ɪˈrætɪk/", definition: "Unpredictable.", sentence: "His driving was ____." },
     { word: "EXACERBATE", phonetic: "/ɪɡˈzæsərbeɪt/", definition: "To make worse.", sentence: "Stress can ____ the pain." },
@@ -1016,23 +854,27 @@ const styles = `
 
   .player-list {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 10px;
       width: 100%;
       margin-bottom: 20px;
   }
 
-  .player-badge {
-      background: var(--wood-color);
-      color: white;
-      padding: 5px 10px;
-      border-radius: 6px;
+  .player-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f0f0f0;
+      padding: 8px 15px;
+      border-radius: 8px;
       font-weight: bold;
-      font-size: 0.8rem;
   }
-  
-  .player-score {
-      font-size: 1.5rem;
-      font-weight: bold;
+
+  .player-row.active {
+      background: var(--accent);
+      color: #3e2700;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   }
   
   .opponent-view {
@@ -1396,33 +1238,40 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
 
 // --- Multiplayer Types & Component ---
 
+interface Player {
+    id: string;
+    name: string;
+}
+
 interface GameState {
+    players: Player[];
     words: SpellingWordData[];
     currentWordIndex: number;
-    turn: 'host' | 'client';
+    activePlayerIndex: number; // Index in players array
     phase: 'main' | 'steal'; // 'main' attempt or 'steal' attempt after failure
     timeLeft: number;
-    scores: { host: number, client: number };
+    scores: Record<string, number>;
     status: 'waiting' | 'playing' | 'gameover';
 }
 
 const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     const [status, setStatus] = useState<'lobby' | 'hosting' | 'joining' | 'playing' | 'gameover'>('lobby');
     const [role, setRole] = useState<'host' | 'client' | null>(null);
-    const [gameId, setGameId] = useState('');
     const [joinInput, setJoinInput] = useState('');
-    const [connection, setConnection] = useState<any>(null);
+    const [connection, setConnection] = useState<any>(null); // For client
     const [peerId, setPeerId] = useState<string>('');
     const peerRef = useRef<any>(null);
+    const hostConnectionsRef = useRef<Map<string, any>>(new Map()); // For host
 
     // Host Authoritative State
     const [gameState, setGameState] = useState<GameState>({
+        players: [],
         words: [],
         currentWordIndex: 0,
-        turn: 'host',
+        activePlayerIndex: 0,
         phase: 'main',
         timeLeft: 30,
-        scores: { host: 0, client: 0 },
+        scores: {},
         status: 'waiting',
     });
     
@@ -1462,11 +1311,13 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
              });
 
              peer.on('connection', (conn) => {
+                 // Host Logic: Incoming Connection
                  conn.on('open', () => {
-                     setConnection(conn);
-                     setRole('host');
-                     setStatus('hosting');
-                     setupHostConnection(conn);
+                     // Only Host handles incoming connections this way
+                     if (role !== 'host' && status !== 'lobby') return; // Should likely be 'host' or transitioning
+
+                     // Logic moved to a function to access current state via ref or state setter
+                     handleNewConnection(conn, id);
                  });
              });
         };
@@ -1475,22 +1326,72 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
         return () => peerRef.current?.destroy();
     }, []);
 
-    // --- Host Logic ---
-    const setupHostConnection = (conn: any) => {
-        conn.on('data', (data: any) => {
-            if (data.type === 'CLIENT_SUBMIT') {
-                handleWordSubmission(data.word, 'client');
+    // Helper to handle new connections (Host side)
+    const handleNewConnection = (conn: any, myId: string) => {
+         // Determine if we are hosting and if there's space
+         setRole('host');
+         setStatus('hosting');
+         
+         setGameState(prev => {
+             // Limit to 4 players total (1 host + 3 clients)
+             if (prev.players.length >= 4) {
+                 conn.send({ type: 'ERROR', message: 'Game Full' });
+                 setTimeout(() => conn.close(), 500);
+                 return prev;
+             }
+             
+             // Check if already connected (dedupe)
+             if (prev.players.find(p => p.id === conn.peer)) return prev;
+
+             const newPlayerName = `Player ${prev.players.length + 1}`;
+             const newPlayer = { id: conn.peer, name: newPlayerName };
+             
+             // Add connection to map
+             hostConnectionsRef.current.set(conn.peer, conn);
+
+             // Listen for data from this client
+             conn.on('data', (data: any) => {
+                if (data.type === 'CLIENT_SUBMIT') {
+                    handleWordSubmission(data.word, data.playerId);
+                }
+             });
+             
+             conn.on('close', () => {
+                 // Handle disconnect? For now, simplistic approach
+                 hostConnectionsRef.current.delete(conn.peer);
+             });
+
+             // Initialize host player if empty (first time)
+             let currentPlayers = [...prev.players];
+             if (currentPlayers.length === 0) {
+                 currentPlayers.push({ id: myId, name: "Host (You)" });
+             }
+
+             const nextPlayers = [...currentPlayers, newPlayer];
+             const nextScores = { ...prev.scores, [newPlayer.id]: 0, [myId]: 0 }; // Ensure host score init
+
+             // Broadcast new state immediately
+             const newState = { 
+                 ...prev, 
+                 players: nextPlayers,
+                 scores: nextScores
+             };
+             
+             broadcastState(newState);
+             return newState;
+         });
+    };
+
+    const broadcastState = (state: GameState) => {
+        hostConnectionsRef.current.forEach(conn => {
+            if (conn.open) {
+                conn.send({ type: 'STATE_UPDATE', state: state });
             }
         });
     };
 
-    // Send state updates to client whenever gameState changes
-    useEffect(() => {
-        if (role === 'host' && connection && status === 'playing') {
-             connection.send({ type: 'STATE_UPDATE', state: gameState });
-        }
-    }, [gameState, role, connection, status]);
-
+    // --- Host Logic ---
+    
     // Timer Loop (Host Only)
     useEffect(() => {
         if (role !== 'host' || status !== 'playing' || gameState.status !== 'playing') return;
@@ -1501,7 +1402,9 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
                     // Time is up!
                     return handleTurnTimeout(prev);
                 }
-                return { ...prev, timeLeft: prev.timeLeft - 1 };
+                const newState = { ...prev, timeLeft: prev.timeLeft - 1 };
+                broadcastState(newState); // Sync timer
+                return newState;
             });
         }, 1000);
 
@@ -1515,15 +1418,17 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
 
     const switchTurn = (prev: GameState, success: boolean): GameState => {
         let nextState = { ...prev };
+        const playerCount = prev.players.length;
         
         if (success) {
              // Correct answer logic
              const points = prev.phase === 'main' ? 10 : 5; // Half points for steal
-             const winner = prev.turn;
+             const activePlayer = prev.players[prev.activePlayerIndex];
+             const winnerId = prev.phase === 'main' ? activePlayer.id : prev.players[(prev.activePlayerIndex + 1) % playerCount].id;
              
              nextState.scores = {
                  ...prev.scores,
-                 [winner]: prev.scores[winner] + points
+                 [winnerId]: (prev.scores[winnerId] || 0) + points
              };
              
              // Move to next word
@@ -1531,11 +1436,16 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
              nextState.phase = 'main';
              nextState.timeLeft = 30;
              
+             // Rotate active player for next word
+             // The prompt implies a turn-based system. Usually, if P1 finishes (win/loss), P2 starts next.
+             // If P2 stole from P1, P2 just acted. Does P2 start next word? Or P3?
+             // Simplest: "Immediate player" logic suggests rotation. 
+             // Logic: Active Player rotates + 1 regardless of who stole.
+             nextState.activePlayerIndex = (prev.activePlayerIndex + 1) % playerCount;
+
              if (nextState.currentWordIndex >= nextState.words.length) {
                  nextState.status = 'gameover';
              } else {
-                 // Alternate starting player for next word
-                 nextState.turn = nextState.currentWordIndex % 2 === 0 ? 'host' : 'client';
                  speak(nextState.words[nextState.currentWordIndex].word);
              }
 
@@ -1544,30 +1454,42 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
             if (prev.phase === 'main') {
                 // Activate Steal Phase
                 nextState.phase = 'steal';
-                nextState.turn = prev.turn === 'host' ? 'client' : 'host';
-                nextState.timeLeft = 30; // 30s for steal
+                // Steal turn is the NEXT player
+                // activePlayerIndex stays the same, but UI shows "Steal Mode" for next player
+                nextState.timeLeft = 30; 
             } else {
                 // Steal failed too, move to next word
                 nextState.currentWordIndex += 1;
                 nextState.phase = 'main';
                 nextState.timeLeft = 30;
                 
+                // Rotate active player
+                nextState.activePlayerIndex = (prev.activePlayerIndex + 1) % playerCount;
+                
                 if (nextState.currentWordIndex >= nextState.words.length) {
                     nextState.status = 'gameover';
                 } else {
-                    nextState.turn = nextState.currentWordIndex % 2 === 0 ? 'host' : 'client';
                     speak(nextState.words[nextState.currentWordIndex].word);
                 }
             }
         }
         
+        broadcastState(nextState);
         return nextState;
     };
 
-    const handleWordSubmission = (submittedWord: string, playerRole: 'host' | 'client') => {
+    const handleWordSubmission = (submittedWord: string, submitterId: string) => {
         setGameState(prev => {
-             // Validate it is this player's turn
-             if (prev.turn !== playerRole) return prev;
+             // Validate turn
+             const playerCount = prev.players.length;
+             const activeIdx = prev.activePlayerIndex;
+             const stealIdx = (activeIdx + 1) % playerCount;
+
+             let isTurn = false;
+             if (prev.phase === 'main' && prev.players[activeIdx].id === submitterId) isTurn = true;
+             if (prev.phase === 'steal' && prev.players[stealIdx].id === submitterId) isTurn = true;
+
+             if (!isTurn) return prev; // Ignore invalid submissions
 
              const targetWord = prev.words[prev.currentWordIndex].word;
              const isCorrect = submittedWord.toUpperCase().trim() === targetWord;
@@ -1582,32 +1504,50 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
         });
         
         // Reset local input if host
-        if (playerRole === 'host') {
+        if (submitterId === peerId) {
             setInput('');
             setShowDef(false);
         }
     };
 
     const startGameHost = () => {
-        // Generate words
-        const pool = SPELLING_LOCAL_DICTIONARY[difficulty];
+        // Generate words from Medium AND Hard
+        const poolMedium = LOCAL_DICTIONARY['Medium'];
+        const poolHard = LOCAL_DICTIONARY['Hard'];
+        const combinedPool = [...poolMedium, ...poolHard];
+        
         const selected = [];
-        for (let i = 0; i < 5; i++) {
-            selected.push(pool[Math.floor(Math.random() * pool.length)]);
+        for (let i = 0; i < 10; i++) {
+            selected.push(combinedPool[Math.floor(Math.random() * combinedPool.length)]);
         }
         
+        // Ensure Host is in players list properly
+        const currentPlayers = [...gameState.players];
+        if (currentPlayers.length === 0 || currentPlayers[0].id !== peerId) {
+             // Should be there, but safeguard
+             if (!currentPlayers.find(p => p.id === peerId)) {
+                 currentPlayers.unshift({ id: peerId, name: "Host (You)" });
+             }
+        }
+
+        // Initialize scores
+        const initScores: Record<string, number> = {};
+        currentPlayers.forEach(p => initScores[p.id] = 0);
+
         const initialState: GameState = {
+            players: currentPlayers,
             words: selected,
             currentWordIndex: 0,
-            turn: 'host', // Host always starts first word (index 0)
+            activePlayerIndex: 0,
             phase: 'main',
             timeLeft: 30,
-            scores: { host: 0, client: 0 },
+            scores: initScores,
             status: 'playing'
         };
         
         setGameState(initialState);
         setStatus('playing');
+        broadcastState(initialState);
         speak(selected[0].word);
     };
 
@@ -1619,13 +1559,15 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
         conn.on('open', () => {
             setConnection(conn);
             setRole('client');
-            setStatus('playing'); // Switch to game view immediately, wait for updates
+            setStatus('playing'); // Switch to game view, await state
             
             conn.on('data', (data: any) => {
                 if (data.type === 'STATE_UPDATE') {
                     setGameState(data.state);
-                    // Detect word change to speak
-                    // Note: Ideally we track last played index to avoid repeat speaking
+                }
+                if (data.type === 'ERROR') {
+                    setMessage(data.message);
+                    setTimeout(() => setStatus('lobby'), 2000);
                 }
             });
         });
@@ -1637,7 +1579,7 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
 
     const submitWordClient = () => {
         if (connection) {
-            connection.send({ type: 'CLIENT_SUBMIT', word: input });
+            connection.send({ type: 'CLIENT_SUBMIT', word: input, playerId: peerId });
             setInput('');
             setShowDef(false);
         }
@@ -1650,10 +1592,19 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
         return (
             <div className="lobby-card">
                 <h3>Multiplayer Spelling Bee</h3>
-                <p>Connect with a friend to play!</p>
+                <p>Connect with up to 4 players!</p>
                 {peerId ? (
                     <div style={{display:'flex', gap: 10, justifyContent: 'center'}}>
-                        <button className="btn btn-primary" onClick={() => setStatus('hosting')}>Host Game</button>
+                        <button className="btn btn-primary" onClick={() => {
+                            setRole('host');
+                            setStatus('hosting');
+                            // Initialize host in players list immediately
+                            setGameState(prev => ({
+                                ...prev, 
+                                players: [{ id: peerId, name: "Host (You)" }],
+                                scores: { [peerId]: 0 }
+                            }));
+                        }}>Host Game</button>
                         <button className="btn btn-secondary" onClick={() => setStatus('joining')}>Join Game</button>
                     </div>
                 ) : (
@@ -1665,23 +1616,27 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     
     // 2. Hosting Lobby
     if (status === 'hosting') {
-         // If connected, we show start button. If not, show code.
          return (
             <div className="lobby-card">
                 <h3>Hosting Game</h3>
-                {!connection ? (
-                    <>
-                        <p>Share this code:</p>
-                        <div className="lobby-code">{peerId}</div>
-                        <div className="loader"></div>
-                        <p>Waiting for player...</p>
-                    </>
+                <p>Share code: <span className="lobby-code" style={{fontSize: '2rem'}}>{peerId}</span></p>
+                
+                <div className="player-list">
+                    {gameState.players.map((p, i) => (
+                        <div key={p.id} className="player-row">
+                            <span>{p.name}</span>
+                            {p.id === peerId && <span style={{fontSize: '0.8rem', opacity: 0.7}}>HOST</span>}
+                        </div>
+                    ))}
+                    {gameState.players.length < 2 && <div className="loader" style={{margin: '10px auto', width: 20, height: 20}}></div>}
+                </div>
+                
+                {gameState.players.length >= 2 ? (
+                     <button className="btn btn-primary" onClick={startGameHost}>Start Match ({gameState.players.length}/4)</button>
                 ) : (
-                     <>
-                        <p style={{color: '#4caf50', fontWeight: 'bold'}}>Player Connected!</p>
-                        <button className="btn btn-primary" onClick={startGameHost}>Start Match</button>
-                     </>
+                     <p>Waiting for at least 1 more player...</p>
                 )}
+                
                 <button className="btn btn-secondary" style={{marginTop: 10}} onClick={() => setStatus('lobby')}>Back</button>
             </div>
          );
@@ -1704,58 +1659,69 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     if (status === 'playing') {
         
         if (gameState.status === 'gameover') {
+             // Find winner
+             const sortedPlayers = [...gameState.players].sort((a, b) => (gameState.scores[b.id] || 0) - (gameState.scores[a.id] || 0));
+             
              return (
                 <div className="spelling-container">
                     <h2>Game Over!</h2>
-                    <div className="player-list" style={{flexDirection: 'column', gap: 20, alignItems: 'center'}}>
-                        <div className="player-badge" style={{fontSize: '1.5rem'}}>
-                           {role === 'host' ? 'You (Host)' : 'Host'}: {gameState.scores.host}
-                        </div>
-                        <div className="player-badge" style={{fontSize: '1.5rem', background: '#555'}}>
-                           {role === 'client' ? 'You (Guest)' : 'Guest'}: {gameState.scores.client}
-                        </div>
+                    <div className="player-list">
+                        {sortedPlayers.map((p, index) => (
+                            <div key={p.id} className={`player-row ${index === 0 ? 'active' : ''}`}>
+                                <span>{index + 1}. {p.name}</span>
+                                <span>{gameState.scores[p.id] || 0} pts</span>
+                            </div>
+                        ))}
                     </div>
                     
-                    <h3>
-                        {(role === 'host' && gameState.scores.host > gameState.scores.client) ||
-                         (role === 'client' && gameState.scores.client > gameState.scores.host) ? 
-                         "🏆 YOU WON!" : 
-                         gameState.scores.host === gameState.scores.client ? 
-                         "🤝 DRAW!" : 
-                         "💀 YOU LOST!"}
-                    </h3>
+                    <h3>{sortedPlayers[0].id === peerId ? "🏆 YOU WON!" : "Better luck next time!"}</h3>
                     
                     <button className="btn btn-primary" onClick={() => window.location.reload()}>Exit</button>
                 </div>
             );
         }
         
-        // Waiting for host to start the actual round
         if (gameState.status === 'waiting') {
              return (
                  <div className="lobby-card">
                      <h3>Connected!</h3>
-                     <p>Waiting for host to start the game...</p>
+                     <p>Waiting for host to start...</p>
+                     <div className="player-list">
+                        {gameState.players.map(p => (
+                            <div key={p.id} className="player-row">{p.name}</div>
+                        ))}
+                     </div>
                      <div className="loader"></div>
                  </div>
              );
         }
 
-        const isMyTurn = gameState.turn === role;
+        const activePlayer = gameState.players[gameState.activePlayerIndex];
+        const stealIdx = (gameState.activePlayerIndex + 1) % gameState.players.length;
+        const stealPlayer = gameState.players[stealIdx];
+        
+        const isMyTurn = (gameState.phase === 'main' && activePlayer.id === peerId) || 
+                         (gameState.phase === 'steal' && stealPlayer.id === peerId);
+                         
+        const turnName = gameState.phase === 'main' ? activePlayer.name : `${stealPlayer.name} (STEAL)`;
         const currentWord = gameState.words[gameState.currentWordIndex];
         
         return (
             <div className="spelling-container" style={{ border: isMyTurn ? '4px solid var(--accent)' : '4px solid transparent' }}>
                 {/* Scoreboard */}
-                <div className="player-list">
-                    <div style={{opacity: role === 'host' ? 1 : 0.7}}>
-                        <div className="player-badge">HOST {role === 'host' && '(YOU)'}</div>
-                        <div className="player-score">{gameState.scores.host}</div>
-                    </div>
-                     <div style={{opacity: role === 'client' ? 1 : 0.7}}>
-                        <div className="player-badge" style={{background:'#555'}}>GUEST {role === 'client' && '(YOU)'}</div>
-                        <div className="player-score">{gameState.scores.client}</div>
-                    </div>
+                <div className="player-list" style={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 5, justifyContent: 'center'}}>
+                    {gameState.players.map(p => (
+                        <div key={p.id} 
+                             className={`player-badge`}
+                             style={{
+                                 background: p.id === activePlayer.id ? 'var(--accent)' : (gameState.phase === 'steal' && p.id === stealPlayer.id ? '#e57373' : 'var(--wood-color)'),
+                                 color: p.id === activePlayer.id ? '#3e2700' : 'white',
+                                 opacity: (gameState.phase === 'main' && p.id !== activePlayer.id) || (gameState.phase === 'steal' && p.id !== stealPlayer.id) ? 0.6 : 1
+                             }}
+                        >
+                            {p.name}: {gameState.scores[p.id] || 0}
+                        </div>
+                    ))}
                 </div>
 
                 {/* Timer & Turn Indicator */}
@@ -1776,8 +1742,7 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
                     fontWeight: 'bold',
                     marginBottom: 20
                 }}>
-                    {isMyTurn ? "YOUR TURN" : "OPPONENT'S TURN"} 
-                    {gameState.phase === 'steal' && " (STEAL!)"}
+                    {isMyTurn ? "YOUR TURN" : `${turnName}'S TURN`} 
                 </div>
 
                 <div className="word-image-container">
@@ -1801,7 +1766,7 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
                     disabled={!isMyTurn}
                     onKeyDown={e => {
                         if (e.key === 'Enter' && isMyTurn) {
-                            role === 'host' ? handleWordSubmission(input, 'host') : submitWordClient();
+                            role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient();
                         }
                     }}
                 />
@@ -1811,7 +1776,7 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
                 <div className="controls">
                     <button 
                         className="btn btn-primary" 
-                        onClick={() => role === 'host' ? handleWordSubmission(input, 'host') : submitWordClient()}
+                        onClick={() => role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient()}
                         disabled={!isMyTurn}
                     >
                         Submit
@@ -1828,378 +1793,3 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     
     return <div>Loading...</div>;
 };
-
-const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
-    const [state, setState] = useState<SpellingState>({
-        data: null,
-        input: '',
-        status: 'loading',
-        message: '',
-        showDefinition: false,
-        showSentence: false
-    });
-    
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    // Preload voices to ensure they are available
-    useEffect(() => {
-        const loadVoices = () => { window.speechSynthesis.getVoices(); };
-        loadVoices();
-        if (window.speechSynthesis.onvoiceschanged !== undefined) {
-             window.speechSynthesis.onvoiceschanged = loadVoices;
-        }
-    }, []);
-    
-    const speak = (text: string, rate = 0.9) => {
-        if (!window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        
-        const voices = window.speechSynthesis.getVoices();
-        
-        // "Cool Male Voice" - clear, calm, slightly deeper.
-        const coolMaleVoice = voices.find(v => v.name === "Google US English") 
-                           || voices.find(v => v.name === "Google UK English Male")
-                           || voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("male"));
-
-        if (coolMaleVoice) {
-            utterance.voice = coolMaleVoice;
-        }
-
-        utterance.pitch = 0.8; // Slightly deeper to sound "cool"
-        utterance.rate = rate; 
-        utterance.lang = 'en-US';
-
-        window.speechSynthesis.speak(utterance);
-    };
-
-    const fetchWord = useCallback(async () => {
-        setState(s => ({ 
-            ...s, 
-            status: 'loading', 
-            message: '', 
-            data: null, 
-            input: '', 
-            showDefinition: false, 
-            showSentence: false 
-        }));
-
-        // Try API first if Key is available
-        if (process.env.API_KEY) {
-            try {
-                const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-                
-                // 1. Get Word Data
-                const prompt = `
-                    Generate a random English word for a spelling bee.
-                    Source: Access the complete English language corpus (approx 5 million words).
-                    
-                    Difficulty: ${difficulty}.
-                    ${difficulty === 'Easy' ? 'Common words, clear pronunciation, 4-6 letters.' : ''}
-                    ${difficulty === 'Medium' ? 'Less common words, 6-9 letters. Avoid overly simple words.' : ''}
-                    ${difficulty === 'Hard' ? 'Complex, obscure, scientific, or literary words. 8+ letters. Tap into the full depth of the dictionary.' : ''}
-                    
-                    Return JSON format:
-                    {
-                        "word": "STRING",
-                        "phonetic": "STRING (IPA format, e.g. /kæt/)",
-                        "definition": "STRING",
-                        "sentence": "A sentence containing the word, but replace the word itself with '________'."
-                    }
-                `;
-
-                const response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: prompt,
-                    config: {
-                        responseMimeType: 'application/json',
-                        responseSchema: {
-                            type: Type.OBJECT,
-                            properties: {
-                                word: { type: Type.STRING },
-                                phonetic: { type: Type.STRING },
-                                definition: { type: Type.STRING },
-                                sentence: { type: Type.STRING }
-                            },
-                            required: ['word', 'phonetic', 'definition', 'sentence']
-                        }
-                    }
-                });
-                
-                const data = JSON.parse(response.text);
-                
-                // 2. Generate Image (Use Pollinations for consistent illustration)
-                const generatedImageUrl = getPollinationsImage(data.word);
-                
-                setState(s => ({
-                    ...s,
-                    data: {
-                        word: data.word.trim().toUpperCase(),
-                        phonetic: data.phonetic || '',
-                        definition: data.definition,
-                        sentence: data.sentence,
-                        imageUrl: generatedImageUrl
-                    },
-                    status: 'playing',
-                }));
-                
-                setTimeout(() => {
-                    if (data.word) speak(data.word.trim());
-                }, 800);
-                
-                return; // Exit if successful
-
-            } catch (e) {
-                console.warn("API failed or not available, switching to offline mode.", e);
-            }
-        }
-
-        // Fallback: Offline Mode
-        await new Promise(r => setTimeout(r, 600)); // Simulate loading for better UX
-        const pool = SPELLING_LOCAL_DICTIONARY[difficulty];
-        const randomItem = pool[Math.floor(Math.random() * pool.length)];
-        const imageUrl = getPollinationsImage(randomItem.word);
-
-        setState(s => ({
-            ...s,
-            data: { ...randomItem, imageUrl },
-            status: 'playing'
-        }));
-        
-        setTimeout(() => {
-            speak(randomItem.word);
-        }, 800);
-
-    }, [difficulty]);
-
-    useEffect(() => {
-        fetchWord();
-    }, [fetchWord]);
-
-    const handlePlayWord = () => {
-        if (!state.data) return;
-        speak(state.data.word);
-        inputRef.current?.focus();
-    };
-
-    const handlePlaySentence = () => {
-        if (!state.data) return;
-        setState(s => ({...s, showSentence: true}));
-        speak(state.data.sentence, 0.9);
-    };
-
-    const handleSubmit = () => {
-        if (!state.data) return;
-        
-        const cleanInput = state.input.trim().toUpperCase();
-        if (cleanInput === state.data.word) {
-            SoundManager.playWin();
-            const score = Math.max(10, state.data.word.length * 2 - (state.showDefinition ? 5 : 0));
-            onScoreUpdate(score);
-            setState(s => ({ ...s, status: 'won', message: `Correct! +${score} pts` }));
-        } else {
-            SoundManager.playError();
-            // Trigger visual shake
-            const container = document.querySelector('.spelling-container');
-            container?.classList.add('error');
-            setTimeout(() => container?.classList.remove('error'), 500);
-            
-            setState(s => ({ ...s, message: 'Try again!' }));
-            setTimeout(() => setState(s => ({ ...s, message: '' })), 2000);
-        }
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') handleSubmit();
-    };
-    
-    const handleShowDefinition = () => {
-        if (state.showDefinition) return;
-        onScoreUpdate(-5);
-        setState(s => ({...s, showDefinition: true, message: 'Definition revealed (-5 pts)'}));
-        setTimeout(() => setState(s => ({...s, message: ''})), 2000);
-    };
-
-    const handleLetterHint = () => {
-        if (!state.data || state.status !== 'playing') return;
-        
-        const target = state.data.word;
-        const current = state.input.toUpperCase();
-        
-        let idx = 0;
-        // Find the first character that doesn't match or the end of the input
-        while (idx < current.length && idx < target.length && current[idx] === target[idx]) {
-            idx++;
-        }
-
-        if (idx >= target.length) return; // Word is already fully correct or longer
-
-        const chars = current.split('');
-        chars[idx] = target[idx];
-        const newInput = chars.join('');
-
-        onScoreUpdate(-3);
-        setState(s => ({
-            ...s,
-            input: newInput,
-            message: 'Letter Hint (-3 pts)'
-        }));
-        setTimeout(() => setState(s => ({...s, message: ''})), 1500);
-        inputRef.current?.focus();
-    };
-
-    if (state.status === 'loading') return <div className="loader"></div>;
-    if (state.status === 'error') return (
-        <div className="api-warning">
-            {state.message} <br/>
-            <button className="btn btn-secondary" style={{marginTop: 10}} onClick={fetchWord}>Retry</button>
-        </div>
-    );
-
-    return (
-        <div className={`spelling-container ${state.status === 'won' ? 'won' : ''}`}>
-            
-            <div className="word-image-container">
-                {state.data?.imageUrl ? (
-                    <img src={state.data.imageUrl} alt="Hint" className="word-image" />
-                ) : (
-                    <span className="image-placeholder">🖼️</span>
-                )}
-            </div>
-
-            {state.status === 'won' ? (
-                <div className="word-reveal">
-                    {state.data?.word}
-                </div>
-            ) : (
-                <>
-                  <div className="audio-btn-large" onClick={handlePlayWord} title="Play Word">
-                       <span className="audio-icon">🔊</span>
-                  </div>
-                  {state.data?.phonetic && (
-                      <div className="phonetic-display">
-                          {state.data.phonetic}
-                      </div>
-                  )}
-                </>
-            )}
-            
-            {state.status !== 'won' && (
-                <input 
-                    ref={inputRef}
-                    className="spelling-input"
-                    type="text" 
-                    value={state.input} 
-                    onChange={(e) => setState(s => ({...s, input: e.target.value}))}
-                    onKeyDown={handleKeyDown}
-                    placeholder="TYPE HERE"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                    spellCheck="false"
-                />
-            )}
-
-            <div className="hint-section">
-                {state.showDefinition && (
-                    <div className="hint-text">{state.data?.definition}</div>
-                )}
-                {state.showSentence && !state.showDefinition && (
-                     <div className="hint-text">"{state.data?.sentence}"</div>
-                )}
-            </div>
-            
-            <div className="message">{state.message}</div>
-
-            <div className="controls">
-                {state.status === 'won' ? (
-                     <button className="btn btn-primary" onClick={fetchWord}>Next Word →</button>
-                ) : (
-                    <>
-                     <button className="btn btn-primary" onClick={handleSubmit}>Check Spelling</button>
-                     <button className="btn btn-audio-small" onClick={handlePlaySentence}>🗣️ Read Sentence</button>
-                     <button className="btn btn-hint" onClick={handleLetterHint}>🔤 Letter (-3)</button>
-                     <button className="btn btn-hint" onClick={handleShowDefinition} disabled={state.showDefinition}>📖 Define (-5)</button>
-                     <button className="btn btn-secondary" onClick={fetchWord}>Skip</button>
-                    </>
-                )}
-            </div>
-        </div>
-    );
-}
-
-const App = () => {
-  const [view, setView] = useState<GameMode>('scrabble');
-  const [difficulty, setDifficulty] = useState<Difficulty>('Medium');
-  const [totalScore, setTotalScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('lexicon_highscore');
-    if (stored) setHighScore(parseInt(stored, 10));
-  }, []);
-
-  const updateScore = (points: number) => {
-      const newScore = totalScore + points;
-      setTotalScore(newScore);
-      if (newScore > highScore) {
-          setHighScore(newScore);
-          localStorage.setItem('lexicon_highscore', newScore.toString());
-      }
-  };
-
-  const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setDifficulty(e.target.value as Difficulty);
-  };
-
-  return (
-    <>
-      <style>{styles}</style>
-      <div className="app-container">
-        
-        <header className="header">
-          <div className="header-top">
-             <div className="game-title">LEXICON</div>
-             <div className="score-container">
-                <div className="score-board">Score: {totalScore}</div>
-                <div className="high-score">Best: {highScore}</div>
-             </div>
-          </div>
-          
-          <div className="level-selector">
-             <span>Difficulty:</span>
-             <select className="level-select" value={difficulty} onChange={handleDifficultyChange}>
-               <option value="Easy">Easy</option>
-               <option value="Medium">Medium</option>
-               <option value="Hard">Hard</option>
-             </select>
-          </div>
-        </header>
-
-        <div className="nav-tabs">
-            <div className={`nav-tab ${view === 'scrabble' ? 'active' : ''}`} onClick={() => setView('scrabble')}>
-                Definition Game
-            </div>
-            <div className={`nav-tab ${view === 'spelling' ? 'active' : ''}`} onClick={() => setView('spelling')}>
-                Spelling Bee
-            </div>
-            <div className={`nav-tab ${view === 'multiplayer' ? 'active' : ''}`} onClick={() => setView('multiplayer')}>
-                Multiplayer
-            </div>
-        </div>
-
-        {view === 'scrabble' ? (
-            <ScrabbleGame difficulty={difficulty} onScoreUpdate={updateScore} />
-        ) : view === 'spelling' ? (
-            <SpellingGame difficulty={difficulty} onScoreUpdate={updateScore} />
-        ) : (
-            <MultiplayerGame difficulty={difficulty} />
-        )}
-
-      </div>
-    </>
-  );
-};
-
-const root = createRoot(document.getElementById('app')!);
-root.render(<App />);
