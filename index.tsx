@@ -639,6 +639,23 @@ const styles = `
     font-size: 3rem;
     opacity: 0.5;
   }
+  
+  .shuffled-grid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    background: #fff;
+  }
+  
+  .shuffled-tile {
+    width: 33.33%;
+    height: 33.33%;
+    box-sizing: border-box;
+    border: 1px solid rgba(255,255,255,0.5);
+    background-repeat: no-repeat;
+  }
 
   .phonetic-display {
     font-family: 'Lucida Sans Unicode', 'Arial Unicode MS', 'sans-serif';
@@ -957,6 +974,47 @@ const getPollinationsImage = (word: string) => {
 
 // --- Components ---
 
+const ShuffledImage = ({ src, isRevealed }: { src: string, isRevealed: boolean }) => {
+  const [tiles, setTiles] = useState<number[]>([]);
+
+  useEffect(() => {
+    // Generate indices 0..8
+    const indices = Array.from({ length: 9 }, (_, i) => i);
+    // Shuffle
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    setTiles(indices);
+  }, [src]);
+
+  if (isRevealed) {
+    return <img src={src} alt="Word" className="word-image" />;
+  }
+
+  return (
+    <div className="shuffled-grid">
+      {tiles.map((tileIndex, i) => {
+        const row = Math.floor(tileIndex / 3);
+        const col = tileIndex % 3;
+        const x = col * 50; // 0, 50, 100
+        const y = row * 50;
+        return (
+          <div 
+            key={i} 
+            className="shuffled-tile"
+            style={{
+              backgroundImage: `url(${src})`,
+              backgroundPosition: `${x}% ${y}%`,
+              backgroundSize: '300% 300%'
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
 const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
   const [state, setState] = useState<ScrabbleState>({
     word: '',
@@ -1188,7 +1246,7 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
       <div className="definition-card">
         {state.imageUrl && (
             <div className="word-image-container" style={{width: 150, height: 150, margin: '0 auto 15px'}}>
-                <img src={state.imageUrl} alt="Hint" className="word-image" />
+                <ShuffledImage src={state.imageUrl} isRevealed={state.status === 'won'} />
             </div>
         )}
         <div className="definition-label">Definition</div>
@@ -1747,7 +1805,7 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
 
                 <div className="word-image-container">
                      {currentWord ? (
-                        <img src={getPollinationsImage(currentWord.word)} alt="Hint" className="word-image" />
+                        <ShuffledImage src={getPollinationsImage(currentWord.word)} isRevealed={false} />
                      ) : (
                          <div className="loader"></div>
                      )}
@@ -1793,3 +1851,378 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     
     return <div>Loading...</div>;
 };
+
+const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
+    const [state, setState] = useState<SpellingState>({
+        data: null,
+        input: '',
+        status: 'loading',
+        message: '',
+        showDefinition: false,
+        showSentence: false
+    });
+    
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // Preload voices to ensure they are available
+    useEffect(() => {
+        const loadVoices = () => { window.speechSynthesis.getVoices(); };
+        loadVoices();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+             window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+    }, []);
+    
+    const speak = (text: string, rate = 0.9) => {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        const voices = window.speechSynthesis.getVoices();
+        
+        // "Cool Male Voice" - clear, calm, slightly deeper.
+        const coolMaleVoice = voices.find(v => v.name === "Google US English") 
+                           || voices.find(v => v.name === "Google UK English Male")
+                           || voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("male"));
+
+        if (coolMaleVoice) {
+            utterance.voice = coolMaleVoice;
+        }
+
+        utterance.pitch = 0.8; // Slightly deeper to sound "cool"
+        utterance.rate = rate; 
+        utterance.lang = 'en-US';
+
+        window.speechSynthesis.speak(utterance);
+    };
+
+    const fetchWord = useCallback(async () => {
+        setState(s => ({ 
+            ...s, 
+            status: 'loading', 
+            message: '', 
+            data: null, 
+            input: '', 
+            showDefinition: false, 
+            showSentence: false 
+        }));
+
+        // Try API first if Key is available
+        if (process.env.API_KEY) {
+            try {
+                const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+                
+                // 1. Get Word Data
+                const prompt = `
+                    Generate a random English word for a spelling bee.
+                    Source: Access the complete English language corpus (approx 5 million words).
+                    
+                    Difficulty: ${difficulty}.
+                    ${difficulty === 'Easy' ? 'Common words, clear pronunciation, 4-6 letters.' : ''}
+                    ${difficulty === 'Medium' ? 'Less common words, 6-9 letters. Avoid overly simple words.' : ''}
+                    ${difficulty === 'Hard' ? 'Complex, obscure, scientific, or literary words. 8+ letters. Tap into the full depth of the dictionary.' : ''}
+                    
+                    Return JSON format:
+                    {
+                        "word": "STRING",
+                        "phonetic": "STRING (IPA format, e.g. /kæt/)",
+                        "definition": "STRING",
+                        "sentence": "A sentence containing the word, but replace the word itself with '________'."
+                    }
+                `;
+
+                const response = await ai.models.generateContent({
+                    model: 'gemini-2.5-flash',
+                    contents: prompt,
+                    config: {
+                        responseMimeType: 'application/json',
+                        responseSchema: {
+                            type: Type.OBJECT,
+                            properties: {
+                                word: { type: Type.STRING },
+                                phonetic: { type: Type.STRING },
+                                definition: { type: Type.STRING },
+                                sentence: { type: Type.STRING }
+                            },
+                            required: ['word', 'phonetic', 'definition', 'sentence']
+                        }
+                    }
+                });
+                
+                const data = JSON.parse(response.text);
+                
+                // 2. Generate Image (Use Pollinations for consistent illustration)
+                const generatedImageUrl = getPollinationsImage(data.word);
+                
+                setState(s => ({
+                    ...s,
+                    data: {
+                        word: data.word.trim().toUpperCase(),
+                        phonetic: data.phonetic || '',
+                        definition: data.definition,
+                        sentence: data.sentence,
+                        imageUrl: generatedImageUrl
+                    },
+                    status: 'playing',
+                }));
+                
+                setTimeout(() => {
+                    if (data.word) speak(data.word.trim());
+                }, 800);
+                
+                return; // Exit if successful
+
+            } catch (e) {
+                console.warn("API failed or not available, switching to offline mode.", e);
+            }
+        }
+
+        // Fallback: Offline Mode
+        await new Promise(r => setTimeout(r, 600)); // Simulate loading for better UX
+        const pool = LOCAL_DICTIONARY[difficulty];
+        const randomItem = pool[Math.floor(Math.random() * pool.length)];
+        const imageUrl = getPollinationsImage(randomItem.word);
+
+        setState(s => ({
+            ...s,
+            data: { ...randomItem, imageUrl },
+            status: 'playing'
+        }));
+        
+        setTimeout(() => {
+            speak(randomItem.word);
+        }, 800);
+
+    }, [difficulty]);
+
+    useEffect(() => {
+        fetchWord();
+    }, [fetchWord]);
+
+    const handlePlayWord = () => {
+        if (!state.data) return;
+        speak(state.data.word);
+        inputRef.current?.focus();
+    };
+
+    const handlePlaySentence = () => {
+        if (!state.data) return;
+        setState(s => ({...s, showSentence: true}));
+        speak(state.data.sentence, 0.9);
+    };
+
+    const handleSubmit = () => {
+        if (!state.data) return;
+        
+        const cleanInput = state.input.trim().toUpperCase();
+        if (cleanInput === state.data.word) {
+            SoundManager.playWin();
+            const score = Math.max(10, state.data.word.length * 2 - (state.showDefinition ? 5 : 0));
+            onScoreUpdate(score);
+            setState(s => ({ ...s, status: 'won', message: `Correct! +${score} pts` }));
+        } else {
+            SoundManager.playError();
+            // Trigger visual shake
+            const container = document.querySelector('.spelling-container');
+            container?.classList.add('error');
+            setTimeout(() => container?.classList.remove('error'), 500);
+            
+            setState(s => ({ ...s, message: 'Try again!' }));
+            setTimeout(() => setState(s => ({ ...s, message: '' })), 2000);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') handleSubmit();
+    };
+    
+    const handleShowDefinition = () => {
+        if (state.showDefinition) return;
+        onScoreUpdate(-5);
+        setState(s => ({...s, showDefinition: true, message: 'Definition revealed (-5 pts)'}));
+        setTimeout(() => setState(s => ({...s, message: ''})), 2000);
+    };
+
+    const handleLetterHint = () => {
+        if (!state.data || state.status !== 'playing') return;
+        
+        const target = state.data.word;
+        const current = state.input.toUpperCase();
+        
+        let idx = 0;
+        // Find the first character that doesn't match or the end of the input
+        while (idx < current.length && idx < target.length && current[idx] === target[idx]) {
+            idx++;
+        }
+
+        if (idx >= target.length) return; // Word is already fully correct or longer
+
+        const chars = current.split('');
+        chars[idx] = target[idx];
+        const newInput = chars.join('');
+
+        onScoreUpdate(-3);
+        setState(s => ({
+            ...s,
+            input: newInput,
+            message: 'Letter Hint (-3 pts)'
+        }));
+        setTimeout(() => setState(s => ({...s, message: ''})), 1500);
+        inputRef.current?.focus();
+    };
+
+    if (state.status === 'loading') return <div className="loader"></div>;
+    if (state.status === 'error') return (
+        <div className="api-warning">
+            {state.message} <br/>
+            <button className="btn btn-secondary" style={{marginTop: 10}} onClick={fetchWord}>Retry</button>
+        </div>
+    );
+
+    return (
+        <div className={`spelling-container ${state.status === 'won' ? 'won' : ''}`}>
+            
+            <div className="word-image-container">
+                {state.data?.imageUrl ? (
+                    <ShuffledImage src={state.data.imageUrl} isRevealed={state.status === 'won'} />
+                ) : (
+                    <span className="image-placeholder">🖼️</span>
+                )}
+            </div>
+
+            {state.status === 'won' ? (
+                <div className="word-reveal">
+                    {state.data?.word}
+                </div>
+            ) : (
+                <>
+                  <div className="audio-btn-large" onClick={handlePlayWord} title="Play Word">
+                       <span className="audio-icon">🔊</span>
+                  </div>
+                  {state.data?.phonetic && (
+                      <div className="phonetic-display">
+                          {state.data.phonetic}
+                      </div>
+                  )}
+                </>
+            )}
+            
+            {state.status !== 'won' && (
+                <input 
+                    ref={inputRef}
+                    className="spelling-input"
+                    type="text" 
+                    value={state.input} 
+                    onChange={(e) => setState(s => ({...s, input: e.target.value}))}
+                    onKeyDown={handleKeyDown}
+                    placeholder="TYPE HERE"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck="false"
+                />
+            )}
+
+            <div className="hint-section">
+                {state.showDefinition && (
+                    <div className="hint-text">{state.data?.definition}</div>
+                )}
+                {state.showSentence && !state.showDefinition && (
+                     <div className="hint-text">"{state.data?.sentence}"</div>
+                )}
+            </div>
+            
+            <div className="message">{state.message}</div>
+
+            <div className="controls">
+                {state.status === 'won' ? (
+                     <button className="btn btn-primary" onClick={fetchWord}>Next Word →</button>
+                ) : (
+                    <>
+                     <button className="btn btn-primary" onClick={handleSubmit}>Check Spelling</button>
+                     <button className="btn btn-audio-small" onClick={handlePlaySentence}>🗣️ Read Sentence</button>
+                     <button className="btn btn-hint" onClick={handleLetterHint}>🔤 Letter (-3)</button>
+                     <button className="btn btn-hint" onClick={handleShowDefinition} disabled={state.showDefinition}>📖 Define (-5)</button>
+                     <button className="btn btn-secondary" onClick={fetchWord}>Skip</button>
+                    </>
+                )}
+            </div>
+        </div>
+    );
+}
+
+const App = () => {
+  const [view, setView] = useState<GameMode>('scrabble');
+  const [difficulty, setDifficulty] = useState<Difficulty>('Medium');
+  const [totalScore, setTotalScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('lexicon_highscore');
+    if (stored) setHighScore(parseInt(stored, 10));
+  }, []);
+
+  const updateScore = (points: number) => {
+      const newScore = totalScore + points;
+      setTotalScore(newScore);
+      if (newScore > highScore) {
+          setHighScore(newScore);
+          localStorage.setItem('lexicon_highscore', newScore.toString());
+      }
+  };
+
+  const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setDifficulty(e.target.value as Difficulty);
+  };
+
+  return (
+    <>
+      <style>{styles}</style>
+      <div className="app-container">
+        
+        <header className="header">
+          <div className="header-top">
+             <div className="game-title">LEXICON</div>
+             <div className="score-container">
+                <div className="score-board">Score: {totalScore}</div>
+                <div className="high-score">Best: {highScore}</div>
+             </div>
+          </div>
+          
+          <div className="level-selector">
+             <span>Difficulty:</span>
+             <select className="level-select" value={difficulty} onChange={handleDifficultyChange}>
+               <option value="Easy">Easy</option>
+               <option value="Medium">Medium</option>
+               <option value="Hard">Hard</option>
+             </select>
+          </div>
+        </header>
+
+        <div className="nav-tabs">
+            <div className={`nav-tab ${view === 'scrabble' ? 'active' : ''}`} onClick={() => setView('scrabble')}>
+                Definition Game
+            </div>
+            <div className={`nav-tab ${view === 'spelling' ? 'active' : ''}`} onClick={() => setView('spelling')}>
+                Spelling Bee
+            </div>
+            <div className={`nav-tab ${view === 'multiplayer' ? 'active' : ''}`} onClick={() => setView('multiplayer')}>
+                Multiplayer
+            </div>
+        </div>
+
+        {view === 'scrabble' ? (
+            <ScrabbleGame difficulty={difficulty} onScoreUpdate={updateScore} />
+        ) : view === 'spelling' ? (
+            <SpellingGame difficulty={difficulty} onScoreUpdate={updateScore} />
+        ) : (
+            <MultiplayerGame difficulty={difficulty} />
+        )}
+
+      </div>
+    </>
+  );
+};
+
+const root = createRoot(document.getElementById('app')!);
+root.render(<App />);
