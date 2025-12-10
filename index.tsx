@@ -19,6 +19,14 @@ interface WordEntry {
   definition: string;
 }
 
+interface SpellingWordData {
+  word: string;
+  phonetic?: string;
+  definition: string;
+  sentence?: string;
+  imageUrl?: string;
+}
+
 const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
   Easy: [
     { word: "APPLE", definition: "A round fruit with red or green skin and a whitish inside." },
@@ -135,137 +143,28 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
   ]
 };
 
-// Fallback Dictionary for Offline/Error Mode (Spelling)
-interface SpellingWordData {
-    word: string;
-    definition: string;
-    sentence: string;
-    phonetic: string;
-    imageUrl?: string;
-}
-
 const SPELLING_LOCAL_DICTIONARY: Record<Difficulty, SpellingWordData[]> = {
-    Easy: [
-        { word: "TIGER", phonetic: "/ˈtaɪɡər/", definition: "A very large solitary cat with a yellow-brown coat striped with black.", sentence: "The ____ roared loudly in the zoo." },
-        { word: "RIVER", phonetic: "/ˈrɪvər/", definition: "A large natural stream of water flowing in a channel to the sea.", sentence: "We went fishing in the ____." },
-        { word: "CLOUD", phonetic: "/klaʊd/", definition: "A visible mass of condensed water vapor floating in the atmosphere.", sentence: "The sun was hidden behind a dark ____." },
-        { word: "PIZZA", phonetic: "/ˈpiːtsə/", definition: "A dish of Italian origin consisting of a flat, round base of dough.", sentence: "We ordered a pepperoni ____ for dinner." },
-        { word: "MUSIC", phonetic: "/ˈmjuːzɪk/", definition: "Vocal or instrumental sounds (or both) combined in such a way as to produce beauty of form.", sentence: "She loves listening to classical ____." },
-        { word: "WATER", phonetic: "/ˈwɔːtər/", definition: "A colorless, transparent, odorless liquid that forms the seas, lakes, rivers, and rain.", sentence: "He drank a glass of cold ____." },
-        { word: "HOUSE", phonetic: "/haʊs/", definition: "A building for human habitation.", sentence: "They live in a big white ____ on the corner." },
-        { word: "SMILE", phonetic: "/smaɪl/", definition: "A pleased, kind, or amused facial expression.", sentence: "She greeted us with a warm ____." }
-    ],
-    Medium: [
-        { word: "JOURNEY", phonetic: "/ˈdʒɜːrni/", definition: "An act of traveling from one place to another.", sentence: "The ____ to the mountain top took three days." },
-        { word: "MYSTERY", phonetic: "/ˈmɪstəri/", definition: "Something that is difficult or impossible to understand or explain.", sentence: "The disappearance of the cookies remains a ____." },
-        { word: "ISLAND", phonetic: "/ˈaɪlənd/", definition: "A piece of land surrounded by water.", sentence: "They took a boat to the tropical ____." },
-        { word: "RHYTHM", phonetic: "/ˈrɪðəm/", definition: "A strong, regular, repeated pattern of movement or sound.", sentence: "The dancer moved to the ____ of the drums." },
-        { word: "VACUUM", phonetic: "/ˈvækjuːm/", definition: "A space entirely devoid of matter.", sentence: "Space is essentially a ____." },
-        { word: "GUITAR", phonetic: "/ɡɪˈtɑːr/", definition: "A stringed musical instrument played by plucking or strumming.", sentence: "He played a song on his acoustic ____." },
-        { word: "CAMERA", phonetic: "/ˈkæmrə/", definition: "A device for recording visual images in the form of photographs, film, or video signals.", sentence: "She took a picture with her new ____." },
-        { word: "FOREST", phonetic: "/ˈfɔːrɪst/", definition: "A large area covered chiefly with trees and undergrowth.", sentence: "Bears live deep in the ____." },
-        // User Added Words
-        { word: "AMBIGUOUS", phonetic: "/æmˈbɪɡjuəs/", definition: "Not clear; can have more than one meaning.", sentence: "The ending of the movie was ____." },
-        { word: "CONCUR", phonetic: "/kənˈkɜːr/", definition: "To agree.", sentence: "I ____ with your opinion on this matter." },
-        { word: "PLAUSIBLE", phonetic: "/ˈplɔːzəbl/", definition: "Seems possible or believable.", sentence: "His excuse for being late sounded ____." },
-        { word: "INEVITABLE", phonetic: "/ɪˈnɛvɪtəbl/", definition: "Cannot be avoided.", sentence: "Change is ____ in life." },
-        { word: "METICULOUS", phonetic: "/məˈtɪkjələs/", definition: "Very careful with details.", sentence: "She was ____ in her research." },
-        { word: "TEDIOUS", phonetic: "/ˈtiːdiəs/", definition: "Boring and long.", sentence: "The data entry job was repetitive and ____." },
-        { word: "FEASIBLE", phonetic: "/ˈfiːzəbl/", definition: "Possible to do.", sentence: "The plan seems perfectly ____ given our budget." },
-        { word: "DILIGENT", phonetic: "/ˈdɪlɪdʒənt/", definition: "Hardworking.", sentence: "The student was ____ in her studies." },
-        { word: "VIVID", phonetic: "/ˈvɪvɪd/", definition: "Clear and bright.", sentence: "She had ____ memories of her childhood." },
-        { word: "CANDID", phonetic: "/ˈkændɪd/", definition: "Honest and direct.", sentence: "He gave a ____ interview about his struggles." },
-        { word: "HOSTILE", phonetic: "/ˈhɒstaɪl/", definition: "Unfriendly or aggressive.", sentence: "The crowd became ____ towards the referee." },
-        { word: "SUBTLE", phonetic: "/ˈsʌtl/", definition: "Not obvious.", sentence: "There was a ____ hint of lemon in the cake." },
-        { word: "INFER", phonetic: "/ɪnˈfɜːr/", definition: "To conclude from clues.", sentence: "What can you ____ from this evidence?" },
-        { word: "MUNDANE", phonetic: "/mʌnˈdeɪn/", definition: "Ordinary, not exciting.", sentence: "He wanted to escape his ____ daily routine." },
-        { word: "REFRAIN", phonetic: "/rɪˈfreɪn/", definition: "To stop yourself from doing something.", sentence: "Please ____ from talking during the show." },
-        { word: "ADEQUATE", phonetic: "/ˈædɪkwət/", definition: "Good enough.", sentence: "The food supply was ____ for the weekend trip." },
-        { word: "ARBITRARY", phonetic: "/ˈɑːrbɪtrəri/", definition: "Based on random choice, not reason.", sentence: "The decision to paint it red seemed ____." },
-        { word: "CONVENTIONAL", phonetic: "/kənˈvɛnʃənl/", definition: "Normal, traditional.", sentence: "He challenged ____ wisdom." },
-        { word: "RELUCTANT", phonetic: "/rɪˈlʌktənt/", definition: "Not wanting to do something.", sentence: "She was ____ to leave the party so early." },
-        { word: "AMPLE", phonetic: "/ˈæmpl/", definition: "More than enough.", sentence: "There is ____ time to finish the exam." },
-        { word: "IRRATIONAL", phonetic: "/ɪˈræʃənl/", definition: "Not logical.", sentence: "He had an ____ fear of spiders." },
-        { word: "BRITTLE", phonetic: "/ˈbrɪtl/", definition: "Easily broken.", sentence: "Dry twigs are very ____." },
-        { word: "PONDER", phonetic: "/ˈpɒndər/", definition: "To think deeply.", sentence: "He sat by the lake to ____ his future." },
-        { word: "VIABLE", phonetic: "/ˈvaɪəbl/", definition: "Workable; able to succeed.", sentence: "Solar power is a ____ energy source." },
-        { word: "ERRATIC", phonetic: "/ɪˈrætɪk/", definition: "Unpredictable.", sentence: "The car's movement was ____ before it stopped." },
-        { word: "RIGID", phonetic: "/ˈrɪdʒɪd/", definition: "Not flexible.", sentence: "The rules were too ____ to allow for exceptions." },
-        { word: "TRIVIAL", phonetic: "/ˈtrɪviəl/", definition: "Not important.", sentence: "They argued over ____ details." },
-        { word: "PROFOUND", phonetic: "/prəˈfaʊnd/", definition: "Deep or meaningful.", sentence: "The book had a ____ impact on my life." },
-        { word: "CUMULATIVE", phonetic: "/ˈkjuːmjələtɪv/", definition: "Increasing by adding over time.", sentence: "The ____ effect of lack of sleep is dangerous." },
-        { word: "IMMINENT", phonetic: "/ˈɪmɪnənt/", definition: "About to happen soon.", sentence: "Dark clouds suggested a storm was ____." }
-    ],
-    Hard: [
-        { word: "PHARAOH", phonetic: "/ˈfeəroʊ/", definition: "A ruler in ancient Egypt.", sentence: "The ____ ordered the construction of a pyramid." },
-        { word: "CONSCIENCE", phonetic: "/ˈkɒnʃəns/", definition: "An inner feeling or voice viewed as acting as a guide to the rightness or wrongness of one's behavior.", sentence: "His ____ wouldn't let him lie." },
-        { word: "QUARANTINE", phonetic: "/ˈkwɔːrəntiːn/", definition: "A state, period, or place of isolation in which people or animals that have arrived from elsewhere or been exposed to infectious or contagious disease are placed.", sentence: "The astronauts were put in ____ after returning to Earth." },
-        { word: "HIEROGLYPH", phonetic: "/ˈhaɪərəɡlɪf/", definition: "A stylized picture of an object representing a word, syllable, or sound, as found in ancient Egyptian writing.", sentence: "The archaeologist deciphered the ancient ____." },
-        { word: "CHRYSANTHEMUM", phonetic: "/krɪˈsænθəməm/", definition: "A popular plant of the daisy family, having brightly colored ornamental flowers.", sentence: "She planted a yellow ____ in the garden." },
-        { word: "SOLILOQUY", phonetic: "/səˈlɪləkwi/", definition: "An act of speaking one's thoughts aloud when by oneself or regardless of any hearers.", sentence: "Hamlet's famous ____ begins with 'To be, or not to be'." },
-        { word: "LIEUTENANT", phonetic: "/lɛfˈtɛnənt/", definition: "A deputy or substitute acting for a superior.", sentence: "The ____ took command when the captain fell ill." },
-        // 60 New Hard Words
-        { word: "OBFUSCATE", phonetic: "/ˈɒbfʌskeɪt/", definition: "To make something unclear.", sentence: "The writer used complex words to ____ the meaning." },
-        { word: "PERNICIOUS", phonetic: "/pərˈnɪʃəs/", definition: "Harmful in a subtle way.", sentence: "The ____ rumors damaged his reputation." },
-        { word: "UBIQUITOUS", phonetic: "/juːˈbɪkwɪtəs/", definition: "Found everywhere.", sentence: "Smartphones have become ____ in modern society." },
-        { word: "EPHEMERAL", phonetic: "/əˈfɛmərəl/", definition: "Lasting for a very short time.", sentence: "Fashion trends are often ____." },
-        { word: "VOCIFEROUS", phonetic: "/voʊˈsɪfərəs/", definition: "Loud and forceful.", sentence: "The crowd was ____ in their support." },
-        { word: "MAGNANIMOUS", phonetic: "/mæɡˈnænɪməs/", definition: "Very generous and forgiving.", sentence: "He was ____ in victory, shaking his opponent's hand." },
-        { word: "ESOTERIC", phonetic: "/ˌɛsəˈtɛrɪk/", definition: "Known only by a small group.", sentence: "The professor's lecture was on an ____ topic." },
-        { word: "FASTIDIOUS", phonetic: "/fæˈstɪdiəs/", definition: "Very picky; hard to please.", sentence: "She is ____ about keeping the house clean." },
-        { word: "BELLIGERENT", phonetic: "/bəˈlɪdʒərənt/", definition: "Aggressive or ready to fight.", sentence: "The drunk man became ____." },
-        { word: "EQUANIMITY", phonetic: "/ˌiːkwəˈnɪmɪti/", definition: "Calmness under stress.", sentence: "She accepted the bad news with ____." },
-        { word: "HEGEMONY", phonetic: "/hɪˈdʒɛməni/", definition: "Dominance or control over others.", sentence: "The empire maintained its ____ over the region." },
-        { word: "PERFUNCTORY", phonetic: "/pərˈfʌŋktəri/", definition: "Done quickly without care.", sentence: "He gave a ____ nod as he passed." },
-        { word: "OBSTINATE", phonetic: "/ˈɒbstɪnət/", definition: "Stubborn and unwilling to change.", sentence: "The ____ child refused to eat his vegetables." },
-        { word: "SARDONIC", phonetic: "/sɑːrˈdɒnɪk/", definition: "Mocking in a bitter way.", sentence: "He gave a ____ smile." },
-        { word: "RECALCITRANT", phonetic: "/rɪˈkælsɪtrənt/", definition: "Refusing to obey rules.", sentence: "The ____ student was sent to the principal." },
-        { word: "SAGACIOUS", phonetic: "/səˈɡeɪʃəs/", definition: "Wise and good at judging.", sentence: "The ____ old man gave wise advice." },
-        { word: "INTRANSIGENT", phonetic: "/ɪnˈtrænsɪdʒənt/", definition: "Refusing to compromise.", sentence: "The union was ____ in its demands." },
-        { word: "ANACHRONISTIC", phonetic: "/əˌnækrəˈnɪstɪk/", definition: "Out of its proper time period.", sentence: "Sword fighting in a sci-fi movie felt ____." },
-        { word: "PULCHRITUDE", phonetic: "/ˈpʌlkrɪtjuːd/", definition: "Physical beauty.", sentence: "The poem described the ____ of the landscape." },
-        { word: "DISPARATE", phonetic: "/ˈdɪspərət/", definition: "Very different; not related.", sentence: "They have ____ views on politics." },
-        { word: "MENDACIOUS", phonetic: "/mɛnˈdeɪʃəs/", definition: "Lying; not truthful.", sentence: "The ____ report was full of errors." },
-        { word: "INDEFATIGABLE", phonetic: "/ˌɪndɪˈfætɪɡəbl/", definition: "Never getting tired.", sentence: "The ____ runner kept going for miles." },
-        { word: "EXTEMPORANEOUS", phonetic: "/ɪkˌstɛmpəˈreɪniəs/", definition: "Spoken or done without preparation.", sentence: "He gave an ____ speech." },
-        { word: "QUINTESSENTIAL", phonetic: "/ˌkwɪntɪˈsɛnʃl/", definition: "The purest example of something.", sentence: "It was the ____ example of a romantic comedy." },
-        { word: "CONFLAGRATION", phonetic: "/ˌkɒnfləˈɡreɪʃn/", definition: "A large, destructive fire.", sentence: "The ____ destroyed the entire forest." },
-        { word: "INSCRUTABLE", phonetic: "/ɪnˈskruːtəbl/", definition: "Impossible to understand.", sentence: "His face was ____, showing no emotion." },
-        { word: "PUGNACIOUS", phonetic: "/pʌɡˈneɪʃəs/", definition: "Eager to fight or argue.", sentence: "The ____ dog barked at everyone." },
-        { word: "IMPETUOUS", phonetic: "/ɪmˈpɛtʃuəs/", definition: "Acting quickly without thinking.", sentence: "It was an ____ decision to buy the car." },
-        { word: "INELUCTABLE", phonetic: "/ˌɪnɪˈlʌktəbl/", definition: "Unavoidable.", sentence: "The ____ conclusion was that they had lost." },
-        { word: "SUPERCILIOUS", phonetic: "/ˌsuːpərˈsɪliəs/", definition: "Behaving as if better than others.", sentence: "The ____ waiter looked down on us." },
-        { word: "GRANDILOQUENT", phonetic: "/ɡrænˈdɪləkwənt/", definition: "Using fancy or exaggerated language.", sentence: "His ____ speech bored the audience." },
-        { word: "INTREPID", phonetic: "/ɪnˈtrɛpɪd/", definition: "Fearless and brave.", sentence: "The ____ explorer climbed the mountain." },
-        { word: "LUGUBRIOUS", phonetic: "/luːˈɡuːbriəs/", definition: "Sad and gloomy.", sentence: "The funeral music was ____." },
-        { word: "INEFFABLE", phonetic: "/ɪnˈɛfəbl/", definition: "Too great to be described with words.", sentence: "The beauty of the sunset was ____." },
-        { word: "OBSEQUIOUS", phonetic: "/əbˈsiːkwiəs/", definition: "Too eager to please or obey.", sentence: "The ____ assistant agreed with everything the boss said." },
-        { word: "VICISSITUDE", phonetic: "/vɪˈsɪsɪtuːd/", definition: "A sudden change, usually unpleasant.", sentence: "The ____ of life can be challenging." },
-        { word: "ABSTRUSE", phonetic: "/æbˈstruːs/", definition: "Difficult to understand.", sentence: "The theory was too ____ for me to understand." },
-        { word: "RECONDITE", phonetic: "/ˈrɛkəndaɪt/", definition: "Little-known; obscure.", sentence: "He had a deep knowledge of ____ facts." },
-        { word: "CACOPHONY", phonetic: "/kəˈkɒfəni/", definition: "Harsh, unpleasant mixture of sounds.", sentence: "The orchestra warming up was a ____." },
-        { word: "PHLEGMATIC", phonetic: "/flɛɡˈmætɪk/", definition: "Calm and not easily excited.", sentence: "He is ____ and rarely gets angry." },
-        { word: "OBDURATE", phonetic: "/ˈɒbdjʊrət/", definition: "Very stubborn.", sentence: "He remained ____ despite their pleas." },
-        { word: "INIMICAL", phonetic: "/ɪˈnɪmɪkl/", definition: "Harmful or unfriendly.", sentence: "High inflation is ____ to economic growth." },
-        { word: "PERSPICACIOUS", phonetic: "/ˌpɜːrspɪˈkeɪʃəs/", definition: "Very smart; able to notice details.", sentence: "The ____ detective solved the case." },
-        { word: "MUNIFICENT", phonetic: "/mjuːˈnɪfɪsnt/", definition: "Extremely generous.", sentence: "A ____ donation helped build the hospital." },
-        { word: "PARSIMONIOUS", phonetic: "/ˌpɑːrsɪˈmoʊniəs/", definition: "Very unwilling to spend money.", sentence: "The ____ man saved every penny." },
-        { word: "IMPLACABLE", phonetic: "/ɪmˈplækəbl/", definition: "Cannot be calmed or stopped.", sentence: "He has an ____ hatred for his enemy." },
-        { word: "SYCOPHANT", phonetic: "/ˈsɪkəfænt/", definition: "Someone who flatters to gain favor.", sentence: "The ____ constantly praised the king." },
-        { word: "ASSIDUOUS", phonetic: "/əˈsɪdjuəs/", definition: "Persistent and hardworking.", sentence: "She was an ____ student." },
-        { word: "INSIDIOUS", phonetic: "/ɪnˈsɪdiəs/", definition: "Sneaky and harmful.", sentence: "The disease is ____ because it has no early symptoms." },
-        { word: "PERIPATETIC", phonetic: "/ˌpɛrɪpəˈtɛtɪk/", definition: "Traveling from place to place.", sentence: "The ____ teacher worked at three different schools." },
-        { word: "QUERULOUS", phonetic: "/ˈkwɛrələs/", definition: "Always complaining.", sentence: "The ____ customer complained about everything." },
-        { word: "REPLETE", phonetic: "/rɪˈpliːt/", definition: "Completely filled.", sentence: "The book is ____ with interesting facts." },
-        { word: "TREPIDATION", phonetic: "/ˌtrɛpɪˈdeɪʃn/", definition: "Fear or worry.", sentence: "He entered the haunted house with ____." },
-        { word: "AMBIVALENT", phonetic: "/æmˈbɪvələnt/", definition: "Having mixed feelings.", sentence: "She felt ____ about the job offer." },
-        { word: "JUXTAPOSE", phonetic: "/ˌdʒʌkstəˈpoʊz/", definition: "To place side by side for comparison.", sentence: "The artist likes to ____ light and dark colors." },
-        { word: "IMPROVIDENT", phonetic: "/ɪmˈprɒvɪdənt/", definition: "Not planning for the future.", sentence: "The ____ spender ran out of money quickly." },
-        { word: "EXECRABLE", phonetic: "/ˈɛksɪkrəbl/", definition: "Extremely bad.", sentence: "The food at that restaurant was ____." },
-        { word: "OBVIATE", phonetic: "/ˈɒbvieɪt/", definition: "To remove a need or problem.", sentence: "The new software will ____ the need for manual entry." },
-        { word: "VITRIOLIC", phonetic: "/ˌvɪtriˈɒlɪk/", definition: "Extremely harsh or bitter.", sentence: "The critic wrote a ____ review." },
-        { word: "PUSILLANIMOUS", phonetic: "/ˌpjuːsɪˈlænɪməs/", definition: "Cowardly.", sentence: "The ____ soldier ran away from the battle." }
-    ]
+  Easy: [
+    { word: "APPLE", phonetic: "/ˈæp.əl/", definition: "A round fruit with red or green skin.", sentence: "She ate a red _____ for a snack." },
+    { word: "BREAD", phonetic: "/bred/", definition: "Food made of flour, water, and yeast.", sentence: "He made a sandwich with whole wheat _____." },
+    { word: "CHAIR", phonetic: "/tʃeər/", definition: "A seat with a back and legs.", sentence: "Please sit in the _____." },
+    { word: "DANCE", phonetic: "/dæns/", definition: "To move rhythmically to music.", sentence: "They like to _____ at parties." },
+    { word: "HAPPY", phonetic: "/ˈhæp.i/", definition: "Feeling or showing pleasure.", sentence: "The puppy was _____ to see its owner." }
+  ],
+  Medium: [
+    { word: "BRIDGE", phonetic: "/brɪdʒ/", definition: "A structure carrying a road across a river.", sentence: "We drove across the Golden Gate _____." },
+    { word: "CANYON", phonetic: "/ˈkæn.jən/", definition: "A deep gorge, typically one with a river.", sentence: "The Grand _____ is huge." },
+    { word: "GALAXY", phonetic: "/ˈɡæl.ək.si/", definition: "A system of millions or billions of stars.", sentence: "Our solar system is in the Milky Way _____." },
+    { word: "HARBOR", phonetic: "/ˈhɑːr.bər/", definition: "A place on the coast where vessels find shelter.", sentence: "The boats were docked in the _____." },
+    { word: "MAGNET", phonetic: "/ˈmæɡ.nət/", definition: "A material that attracts iron.", sentence: "He used a _____ to pick up the nails." }
+  ],
+  Hard: [
+    { word: "ECLIPSE", phonetic: "/ɪˈklɪps/", definition: "An obscuring of the light from one celestial body.", sentence: "The solar _____ darkened the sky." },
+    { word: "GLACIER", phonetic: "/ˈɡleɪ.ʃər/", definition: "A slowly moving mass of ice.", sentence: "The _____ carved the valley over centuries." },
+    { word: "LABYRINTH", phonetic: "/ˈlæb.ə.rɪnθ/", definition: "A complicated network of passages.", sentence: "Minos built a _____ to hold the Minotaur." },
+    { word: "PHOENIX", phonetic: "/ˈfiː.nɪks/", definition: "A mythical bird that regenerates from ashes.", sentence: "Like a _____, the city rose from the ruins." },
+    { word: "SYMPHONY", phonetic: "/ˈsɪm.fə.ni/", definition: "An elaborate musical composition.", sentence: "Beethoven's Ninth _____ is a masterpiece." }
+  ]
 };
 
 // --- Sound Utility ---
@@ -810,8 +709,9 @@ const styles = `
   }
   
   .btn-secondary {
-    background: rgba(255,255,255,0.2);
-    color: white;
+    background: #ffffff;
+    color: var(--wood-dark);
+    border: 1px solid var(--wood-color);
   }
   
   .btn-hint {
