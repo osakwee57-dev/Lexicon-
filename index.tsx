@@ -33,7 +33,38 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "BREAD", definition: "Food made of flour, water, and yeast." },
     { word: "CHAIR", definition: "A separate seat for one person, typically with a back and four legs." },
     { word: "DANCE", definition: "Move rhythmically to music." },
-    { word: "HAPPY", definition: "Feeling or showing pleasure or contentment." }
+    { word: "HAPPY", definition: "Feeling or showing pleasure or contentment." },
+    // User Added Words (1-30)
+    { word: "ABATE", definition: "To reduce or lessen." },
+    { word: "ABRIDGE", definition: "To shorten a text." },
+    { word: "ACCENTUATE", definition: "To emphasize." },
+    { word: "AFFLUENT", definition: "Rich, wealthy." },
+    { word: "ALLUDE", definition: "To indirectly refer to something." },
+    { word: "AMELIORATE", definition: "To make something better." },
+    { word: "APATHETIC", definition: "Not caring; showing little emotion." },
+    { word: "ARDUOUS", definition: "Very difficult or tiring." },
+    { word: "AUSPICIOUS", definition: "Favorable; showing good signs." },
+    { word: "BANAL", definition: "Boring, not original." },
+    { word: "BENIGN", definition: "Harmless." },
+    { word: "BOLSTER", definition: "To support or strengthen." },
+    { word: "CANDID", definition: "Honest and truthful." },
+    { word: "CHRONICLE", definition: "To record events in order." },
+    { word: "COHERENT", definition: "Clear and logical." },
+    { word: "COLLOQUIAL", definition: "Informal language." },
+    { word: "CONCUR", definition: "To agree." },
+    { word: "CONSPICUOUS", definition: "Easily seen or noticed." },
+    { word: "CURSORY", definition: "Quick and not detailed." },
+    { word: "DAUNTING", definition: "Intimidating; scary to start." },
+    { word: "DEBILITATE", definition: "To weaken." },
+    { word: "DELINEATE", definition: "To describe clearly." },
+    { word: "DERIVE", definition: "To obtain from a source." },
+    { word: "DILIGENT", definition: "Hardworking." },
+    { word: "DISCERN", definition: "To notice or recognize." },
+    { word: "DISCREET", definition: "Careful not to attract attention." },
+    { word: "ELICIT", definition: "To draw out (information or reaction)." },
+    { word: "ELUSIVE", definition: "Hard to find or catch." },
+    { word: "EMULATE", definition: "To imitate to match or surpass." },
+    { word: "ENIGMATIC", definition: "Mysterious." }
   ],
   Medium: [
     { word: "BRIDGE", definition: "A structure carrying a road across a river." },
@@ -41,17 +72,11 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "GALAXY", definition: "A system of millions or billions of stars." },
     { word: "HARBOR", definition: "A place on the coast where vessels may find shelter." },
     { word: "MAGNET", definition: "A material that exhibits properties of magnetism." },
-    // User Added Words
     { word: "AMBIGUOUS", definition: "Not clear; can have more than one meaning." },
-    { word: "CONCUR", definition: "To agree." },
     { word: "PLAUSIBLE", definition: "Seems possible or believable." },
     { word: "INEVITABLE", definition: "Cannot be avoided." },
     { word: "METICULOUS", definition: "Very careful with details." },
     { word: "TEDIOUS", definition: "Boring and long." },
-    { word: "FEASIBLE", definition: "Possible to do." },
-    { word: "DILIGENT", definition: "Hardworking." },
-    { word: "VIVID", definition: "Clear and bright." },
-    { word: "CANDID", definition: "Honest and direct." },
     { word: "HOSTILE", definition: "Unfriendly or aggressive." },
     { word: "SUBTLE", definition: "Not obvious." },
     { word: "INFER", definition: "To conclude from clues." },
@@ -62,16 +87,12 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "CONVENTIONAL", definition: "Normal, traditional." },
     { word: "RELUCTANT", definition: "Not wanting to do something." },
     { word: "AMPLE", definition: "More than enough." },
-    { word: "IRRATIONAL", definition: "Not logical." },
     { word: "BRITTLE", definition: "Easily broken." },
     { word: "PONDER", definition: "To think deeply." },
-    { word: "VIABLE", definition: "Workable; able to succeed." },
-    { word: "ERRATIC", definition: "Unpredictable." },
     { word: "RIGID", definition: "Not flexible." },
     { word: "TRIVIAL", definition: "Not important." },
     { word: "PROFOUND", definition: "Deep or meaningful." },
-    { word: "CUMULATIVE", definition: "Increasing by adding over time." },
-    { word: "IMMINENT", definition: "About to happen soon." }
+    { word: "CUMULATIVE", definition: "Increasing by adding over time." }
   ],
   Hard: [
     { word: "ECLIPSE", definition: "An obscuring of the light from one celestial body by another." },
@@ -79,12 +100,10 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "LABYRINTH", definition: "A complicated irregular network of passages; a maze." },
     { word: "PHOENIX", definition: "A mythical bird that regenerates from its own ashes." },
     { word: "SYMPHONY", definition: "An elaborate musical composition for full orchestra." },
-    // 60 New Hard Words
     { word: "OBFUSCATE", definition: "To make something unclear." },
     { word: "PERNICIOUS", definition: "Harmful in a subtle way." },
     { word: "UBIQUITOUS", definition: "Found everywhere." },
     { word: "EPHEMERAL", definition: "Lasting for a very short time." },
-    { word: "VOCIFEROUS", definition: "Loud and forceful." },
     { word: "MAGNANIMOUS", definition: "Very generous and forgiving." },
     { word: "ESOTERIC", definition: "Known only by a small group." },
     { word: "FASTIDIOUS", definition: "Very picky; hard to please." },
@@ -111,7 +130,6 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "INELUCTABLE", definition: "Unavoidable." },
     { word: "SUPERCILIOUS", definition: "Behaving as if better than others." },
     { word: "GRANDILOQUENT", definition: "Using fancy or exaggerated language." },
-    { word: "INTREPID", definition: "Fearless and brave." },
     { word: "LUGUBRIOUS", definition: "Sad and gloomy." },
     { word: "INEFFABLE", definition: "Too great to be described with words." },
     { word: "OBSEQUIOUS", definition: "Too eager to please or obey." },
@@ -139,7 +157,38 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "EXECRABLE", definition: "Extremely bad." },
     { word: "OBVIATE", definition: "To remove a need or problem." },
     { word: "VITRIOLIC", definition: "Extremely harsh or bitter." },
-    { word: "PUSILLANIMOUS", definition: "Cowardly." }
+    { word: "PUSILLANIMOUS", definition: "Cowardly." },
+    // User Added Words (31-60)
+    { word: "ERRATIC", definition: "Unpredictable." },
+    { word: "EXACERBATE", definition: "To make worse." },
+    { word: "FEASIBLE", definition: "Possible or doable." },
+    { word: "FERVENT", definition: "Very passionate." },
+    { word: "FRIVOLOUS", definition: "Not serious; unimportant." },
+    { word: "GALVANIZE", definition: "To inspire to take action." },
+    { word: "GRAVITATE", definition: "To be drawn toward something." },
+    { word: "IMMINENT", definition: "About to happen." },
+    { word: "IMPARTIAL", definition: "Fair, not biased." },
+    { word: "IMPLICIT", definition: "Implied, not directly stated." },
+    { word: "INCESSANT", definition: "Nonstop." },
+    { word: "INCREDULOUS", definition: "Unable to believe." },
+    { word: "INDOLENT", definition: "Lazy." },
+    { word: "INSINUATE", definition: "To hint something negative." },
+    { word: "INSTIGATE", definition: "To start or provoke." },
+    { word: "INTREPID", definition: "Brave, fearless." },
+    { word: "JUDICIOUS", definition: "Wise, sensible." },
+    { word: "LUCID", definition: "Clear and easy to understand." },
+    { word: "MEDIOCRE", definition: "Average, not very good." },
+    { word: "MITIGATE", definition: "To reduce the effect." },
+    { word: "NOVEL", definition: "New and original." },
+    { word: "OBSOLETE", definition: "Outdated." },
+    { word: "OMNIPRESENT", definition: "Present everywhere." },
+    { word: "PERPLEX", definition: "To confuse." },
+    { word: "PRAGMATIC", definition: "Practical." },
+    { word: "PROLIFIC", definition: "Highly productive." },
+    { word: "REITERATE", definition: "To repeat." },
+    { word: "RESILIENT", definition: "Able to recover quickly." },
+    { word: "SCRUTINIZE", definition: "To examine closely." },
+    { word: "TANGIBLE", definition: "Something you can touch or handle." }
   ]
 };
 
@@ -149,21 +198,162 @@ const SPELLING_LOCAL_DICTIONARY: Record<Difficulty, SpellingWordData[]> = {
     { word: "BREAD", phonetic: "/bred/", definition: "Food made of flour, water, and yeast.", sentence: "He made a sandwich with whole wheat _____." },
     { word: "CHAIR", phonetic: "/tʃeər/", definition: "A seat with a back and legs.", sentence: "Please sit in the _____." },
     { word: "DANCE", phonetic: "/dæns/", definition: "To move rhythmically to music.", sentence: "They like to _____ at parties." },
-    { word: "HAPPY", phonetic: "/ˈhæp.i/", definition: "Feeling or showing pleasure.", sentence: "The puppy was _____ to see its owner." }
+    { word: "HAPPY", phonetic: "/ˈhæp.i/", definition: "Feeling or showing pleasure.", sentence: "The puppy was _____ to see its owner." },
+    // User Added Words (1-30)
+    { word: "ABATE", phonetic: "/əˈbeɪt/", definition: "To reduce or lessen.", sentence: "We waited for the storm to ____." },
+    { word: "ABRIDGE", phonetic: "/əˈbrɪdʒ/", definition: "To shorten a text.", sentence: "The publisher decided to ____ the novel." },
+    { word: "ACCENTUATE", phonetic: "/əkˈsɛntʃueɪt/", definition: "To emphasize.", sentence: "The makeup served to ____ her eyes." },
+    { word: "AFFLUENT", phonetic: "/ˈæfluənt/", definition: "Rich, wealthy.", sentence: "He grew up in an ____ neighborhood." },
+    { word: "ALLUDE", phonetic: "/əˈluːd/", definition: "To indirectly refer to something.", sentence: "She did not ____ to the incident." },
+    { word: "AMELIORATE", phonetic: "/əˈmiːliəreɪt/", definition: "To make something better.", sentence: "They tried to ____ the situation." },
+    { word: "APATHETIC", phonetic: "/ˌæpəˈθɛtɪk/", definition: "Not caring; showing little emotion.", sentence: "The voters were ____ about the election." },
+    { word: "ARDUOUS", phonetic: "/ˈɑːrdʒuəs/", definition: "Very difficult or tiring.", sentence: "It was an ____ climb up the mountain." },
+    { word: "AUSPICIOUS", phonetic: "/ɔːˈspɪʃəs/", definition: "Favorable; showing good signs.", sentence: "It was an ____ start to the new year." },
+    { word: "BANAL", phonetic: "/bəˈnɑːl/", definition: "Boring, not original.", sentence: "The movie's plot was predictable and ____." },
+    { word: "BENIGN", phonetic: "/bɪˈnaɪn/", definition: "Harmless.", sentence: "The tumor turned out to be ____." },
+    { word: "BOLSTER", phonetic: "/ˈboʊlstər/", definition: "To support or strengthen.", sentence: "He needed to ____ his confidence." },
+    { word: "CANDID", phonetic: "/ˈkændɪd/", definition: "Honest and truthful.", sentence: "She gave a ____ opinion." },
+    { word: "CHRONICLE", phonetic: "/ˈkrɒnɪkl/", definition: "To record events in order.", sentence: "The book will ____ the history of the war." },
+    { word: "COHERENT", phonetic: "/koʊˈhɪərənt/", definition: "Clear and logical.", sentence: "He gave a ____ explanation." },
+    { word: "COLLOQUIAL", phonetic: "/kəˈloʊkwiəl/", definition: "Informal language.", sentence: "The phrase is ____ and not used in formal writing." },
+    { word: "CONCUR", phonetic: "/kənˈkɜːr/", definition: "To agree.", sentence: "I ____ with your assessment." },
+    { word: "CONSPICUOUS", phonetic: "/kənˈspɪkjuəs/", definition: "Easily seen or noticed.", sentence: "The red car was ____ in the parking lot." },
+    { word: "CURSORY", phonetic: "/ˈkɜːrsəri/", definition: "Quick and not detailed.", sentence: "He gave the report a ____ glance." },
+    { word: "DAUNTING", phonetic: "/ˈdɔːntɪŋ/", definition: "Intimidating; scary to start.", sentence: "The task ahead seemed ____." },
+    { word: "DEBILITATE", phonetic: "/dɪˈbɪlɪteɪt/", definition: "To weaken.", sentence: "The illness can ____ the body." },
+    { word: "DELINEATE", phonetic: "/dɪˈlɪnieɪt/", definition: "To describe clearly.", sentence: "The map will ____ the property lines." },
+    { word: "DERIVE", phonetic: "/dɪˈraɪv/", definition: "To obtain from a source.", sentence: "Many words ____ from Latin." },
+    { word: "DILIGENT", phonetic: "/ˈdɪlɪdʒənt/", definition: "Hardworking.", sentence: "She is a ____ student." },
+    { word: "DISCERN", phonetic: "/dɪˈsɜːrn/", definition: "To notice or recognize.", sentence: "It was hard to ____ the truth." },
+    { word: "DISCREET", phonetic: "/dɪˈskriːt/", definition: "Careful not to attract attention.", sentence: "Please be ____ about the surprise party." },
+    { word: "ELICIT", phonetic: "/ɪˈlɪsɪt/", definition: "To draw out (information or reaction).", sentence: "The joke failed to ____ a laugh." },
+    { word: "ELUSIVE", phonetic: "/ɪˈluːsɪv/", definition: "Hard to find or catch.", sentence: "The solution remained ____." },
+    { word: "EMULATE", phonetic: "/ˈɛmjuleɪt/", definition: "To imitate to match or surpass.", sentence: "He tried to ____ his hero." },
+    { word: "ENIGMATIC", phonetic: "/ˌɛnɪɡˈmætɪk/", definition: "Mysterious.", sentence: "She gave him an ____ smile." }
   ],
   Medium: [
     { word: "BRIDGE", phonetic: "/brɪdʒ/", definition: "A structure carrying a road across a river.", sentence: "We drove across the Golden Gate _____." },
     { word: "CANYON", phonetic: "/ˈkæn.jən/", definition: "A deep gorge, typically one with a river.", sentence: "The Grand _____ is huge." },
     { word: "GALAXY", phonetic: "/ˈɡæl.ək.si/", definition: "A system of millions or billions of stars.", sentence: "Our solar system is in the Milky Way _____." },
     { word: "HARBOR", phonetic: "/ˈhɑːr.bər/", definition: "A place on the coast where vessels find shelter.", sentence: "The boats were docked in the _____." },
-    { word: "MAGNET", phonetic: "/ˈmæɡ.nət/", definition: "A material that attracts iron.", sentence: "He used a _____ to pick up the nails." }
+    { word: "MAGNET", phonetic: "/ˈmæɡ.nət/", definition: "A material that attracts iron.", sentence: "He used a _____ to pick up the nails." },
+    { word: "AMBIGUOUS", phonetic: "/æmˈbɪɡjuəs/", definition: "Not clear; can have more than one meaning.", sentence: "The ending was _____." },
+    { word: "PLAUSIBLE", phonetic: "/ˈplɔːzəbl/", definition: "Seems possible or believable.", sentence: "That seems like a _____ excuse." },
+    { word: "INEVITABLE", phonetic: "/ɪˈnɛvɪtəbl/", definition: "Cannot be avoided.", sentence: "Change is _____." },
+    { word: "METICULOUS", phonetic: "/məˈtɪkjələs/", definition: "Very careful with details.", sentence: "She was _____ in her work." },
+    { word: "TEDIOUS", phonetic: "/ˈtiːdiəs/", definition: "Boring and long.", sentence: "The job was _____." },
+    { word: "HOSTILE", phonetic: "/ˈhɒstaɪl/", definition: "Unfriendly or aggressive.", sentence: "The crowd was _____." },
+    { word: "SUBTLE", phonetic: "/ˈsʌtl/", definition: "Not obvious.", sentence: "There was a _____ difference." },
+    { word: "INFER", phonetic: "/ɪnˈfɜːr/", definition: "To conclude from clues.", sentence: "I can _____ that you are tired." },
+    { word: "MUNDANE", phonetic: "/mʌnˈdeɪn/", definition: "Ordinary, not exciting.", sentence: "It was a _____ day." },
+    { word: "REFRAIN", phonetic: "/rɪˈfreɪn/", definition: "To stop yourself from doing something.", sentence: "Please _____ from smoking." },
+    { word: "ADEQUATE", phonetic: "/ˈædɪkwət/", definition: "Good enough.", sentence: "The food was _____." },
+    { word: "ARBITRARY", phonetic: "/ˈɑːrbɪtrəri/", definition: "Based on random choice, not reason.", sentence: "The rule seemed _____." },
+    { word: "CONVENTIONAL", phonetic: "/kənˈvɛnʃənl/", definition: "Normal, traditional.", sentence: "It was a _____ wedding." },
+    { word: "RELUCTANT", phonetic: "/rɪˈlʌktənt/", definition: "Not wanting to do something.", sentence: "He was _____ to go." },
+    { word: "AMPLE", phonetic: "/ˈæmpl/", definition: "More than enough.", sentence: "We have _____ time." },
+    { word: "BRITTLE", phonetic: "/ˈbrɪtl/", definition: "Easily broken.", sentence: "The bone was _____." },
+    { word: "PONDER", phonetic: "/ˈpɒndər/", definition: "To think deeply.", sentence: "Let me _____ that question." },
+    { word: "RIGID", phonetic: "/ˈrɪdʒɪd/", definition: "Not flexible.", sentence: "The board was _____." },
+    { word: "TRIVIAL", phonetic: "/ˈtrɪviəl/", definition: "Not important.", sentence: "It was a _____ matter." },
+    { word: "PROFOUND", phonetic: "/prəˈfaʊnd/", definition: "Deep or meaningful.", sentence: "That is a _____ thought." },
+    { word: "CUMULATIVE", phonetic: "/ˈkjuːmjələtɪv/", definition: "Increasing by adding over time.", sentence: "The _____ effect was huge." }
   ],
   Hard: [
     { word: "ECLIPSE", phonetic: "/ɪˈklɪps/", definition: "An obscuring of the light from one celestial body.", sentence: "The solar _____ darkened the sky." },
     { word: "GLACIER", phonetic: "/ˈɡleɪ.ʃər/", definition: "A slowly moving mass of ice.", sentence: "The _____ carved the valley over centuries." },
     { word: "LABYRINTH", phonetic: "/ˈlæb.ə.rɪnθ/", definition: "A complicated network of passages.", sentence: "Minos built a _____ to hold the Minotaur." },
     { word: "PHOENIX", phonetic: "/ˈfiː.nɪks/", definition: "A mythical bird that regenerates from ashes.", sentence: "Like a _____, the city rose from the ruins." },
-    { word: "SYMPHONY", phonetic: "/ˈsɪm.fə.ni/", definition: "An elaborate musical composition.", sentence: "Beethoven's Ninth _____ is a masterpiece." }
+    { word: "SYMPHONY", phonetic: "/ˈsɪm.fə.ni/", definition: "An elaborate musical composition.", sentence: "Beethoven's Ninth _____ is a masterpiece." },
+    { word: "OBFUSCATE", phonetic: "/ˈɒbfʌskeɪt/", definition: "To make something unclear.", sentence: "Do not _____ the truth." },
+    { word: "PERNICIOUS", phonetic: "/pərˈnɪʃəs/", definition: "Harmful in a subtle way.", sentence: "The rumor had a _____ effect." },
+    { word: "UBIQUITOUS", phonetic: "/juːˈbɪkwɪtəs/", definition: "Found everywhere.", sentence: "Computers are _____ now." },
+    { word: "EPHEMERAL", phonetic: "/əˈfɛmərəl/", definition: "Lasting for a very short time.", sentence: "Beauty is often _____." },
+    { word: "MAGNANIMOUS", phonetic: "/mæɡˈnænɪməs/", definition: "Very generous and forgiving.", sentence: "He was _____ in defeat." },
+    { word: "ESOTERIC", phonetic: "/ˌɛsəˈtɛrɪk/", definition: "Known only by a small group.", sentence: "The topic was _____." },
+    { word: "FASTIDIOUS", phonetic: "/fæˈstɪdiəs/", definition: "Very picky; hard to please.", sentence: "She is _____ about cleaning." },
+    { word: "BELLIGERENT", phonetic: "/bəˈlɪdʒərənt/", definition: "Aggressive or ready to fight.", sentence: "The drunk man was _____." },
+    { word: "EQUANIMITY", phonetic: "/ˌiːkwəˈnɪmɪti/", definition: "Calmness under stress.", sentence: "He bore the insult with _____." },
+    { word: "HEGEMONY", phonetic: "/hɪˈdʒɛməni/", definition: "Dominance or control over others.", sentence: "The country lost its _____." },
+    { word: "PERFUNCTORY", phonetic: "/pərˈfʌŋktəri/", definition: "Done quickly without care.", sentence: "He gave a _____ greeting." },
+    { word: "OBSTINATE", phonetic: "/ˈɒbstɪnət/", definition: "Stubborn and unwilling to change.", sentence: "The donkey was _____." },
+    { word: "SARDONIC", phonetic: "/sɑːrˈdɒnɪk/", definition: "Mocking in a bitter way.", sentence: "He had a _____ grin." },
+    { word: "RECALCITRANT", phonetic: "/rɪˈkælsɪtrənt/", definition: "Refusing to obey rules.", sentence: "The _____ child wouldn't listen." },
+    { word: "SAGACIOUS", phonetic: "/səˈɡeɪʃəs/", definition: "Wise and good at judging.", sentence: "It was a _____ decision." },
+    { word: "INTRANSIGENT", phonetic: "/ɪnˈtrænsɪdʒənt/", definition: "Refusing to compromise.", sentence: "They remained _____." },
+    { word: "ANACHRONISTIC", phonetic: "/əˌnækrəˈnɪstɪk/", definition: "Out of its proper time period.", sentence: "The costume was _____." },
+    { word: "PULCHRITUDE", phonetic: "/ˈpʌlkrɪtjuːd/", definition: "Physical beauty.", sentence: "She was known for her _____." },
+    { word: "DISPARATE", phonetic: "/ˈdɪspərət/", definition: "Very different; not related.", sentence: "They have _____ ideas." },
+    { word: "MENDACIOUS", phonetic: "/mɛnˈdeɪʃəs/", definition: "Lying; not truthful.", sentence: "The statement was _____." },
+    { word: "INDEFATIGABLE", phonetic: "/ˌɪndɪˈfætɪɡəbl/", definition: "Never getting tired.", sentence: "He was an _____ worker." },
+    { word: "EXTEMPORANEOUS", phonetic: "/ɪkˌstɛmpəˈreɪniəs/", definition: "Spoken or done without preparation.", sentence: "It was an _____ speech." },
+    { word: "QUINTESSENTIAL", phonetic: "/ˌkwɪntɪˈsɛnʃl/", definition: "The purest example of something.", sentence: "He is the _____ gentleman." },
+    { word: "CONFLAGRATION", phonetic: "/ˌkɒnfləˈɡreɪʃn/", definition: "A large, destructive fire.", sentence: "The _____ burned the town." },
+    { word: "INSCRUTABLE", phonetic: "/ɪnˈskruːtəbl/", definition: "Impossible to understand.", sentence: "His face was _____." },
+    { word: "PUGNACIOUS", phonetic: "/pʌɡˈneɪʃəs/", definition: "Eager to fight or argue.", sentence: "The dog was _____." },
+    { word: "IMPETUOUS", phonetic: "/ɪmˈpɛtʃuəs/", definition: "Acting quickly without thinking.", sentence: "He made an _____ choice." },
+    { word: "INELUCTABLE", phonetic: "/ˌɪnɪˈlʌktəbl/", definition: "Unavoidable.", sentence: "Fate is _____." },
+    { word: "SUPERCILIOUS", phonetic: "/ˌsuːpərˈsɪliəs/", definition: "Behaving as if better than others.", sentence: "She gave a _____ look." },
+    { word: "GRANDILOQUENT", phonetic: "/ɡrænˈdɪləkwənt/", definition: "Using fancy or exaggerated language.", sentence: "His speech was _____." },
+    { word: "LUGUBRIOUS", phonetic: "/luːˈɡuːbriəs/", definition: "Sad and gloomy.", sentence: "The music was _____." },
+    { word: "INEFFABLE", phonetic: "/ɪnˈɛfəbl/", definition: "Too great to be described with words.", sentence: "The joy was _____." },
+    { word: "OBSEQUIOUS", phonetic: "/əbˈsiːkwiəs/", definition: "Too eager to please or obey.", sentence: "The servant was _____." },
+    { word: "VICISSITUDE", phonetic: "/vɪˈsɪsɪtuːd/", definition: "A sudden change, usually unpleasant.", sentence: "The _____ of fortune." },
+    { word: "ABSTRUSE", phonetic: "/æbˈstruːs/", definition: "Difficult to understand.", sentence: "The text was _____." },
+    { word: "RECONDITE", phonetic: "/ˈrɛkəndaɪt/", definition: "Little-known; obscure.", sentence: "It is a _____ fact." },
+    { word: "CACOPHONY", phonetic: "/kəˈkɒfəni/", definition: "Harsh, unpleasant mixture of sounds.", sentence: "The city was a _____." },
+    { word: "PHLEGMATIC", phonetic: "/flɛɡˈmætɪk/", definition: "Calm and not easily excited.", sentence: "He is _____ by nature." },
+    { word: "OBDURATE", phonetic: "/ˈɒbdjʊrət/", definition: "Very stubborn.", sentence: "She remained _____." },
+    { word: "INIMICAL", phonetic: "/ɪˈnɪmɪkl/", definition: "Harmful or unfriendly.", sentence: "It was _____ to our interests." },
+    { word: "PERSPICACIOUS", phonetic: "/ˌpɜːrspɪˈkeɪʃəs/", definition: "Very smart; able to notice details.", sentence: "She is a _____ observer." },
+    { word: "MUNIFICENT", phonetic: "/mjuːˈnɪfɪsnt/", definition: "Extremely generous.", sentence: "It was a _____ gift." },
+    { word: "PARSIMONIOUS", phonetic: "/ˌpɑːrsɪˈmoʊniəs/", definition: "Very unwilling to spend money.", sentence: "He is _____ with words." },
+    { word: "IMPLACABLE", phonetic: "/ɪmˈplækəbl/", definition: "Cannot be calmed or stopped.", sentence: "He was an _____ foe." },
+    { word: "SYCOPHANT", phonetic: "/ˈsɪkəfænt/", definition: "Someone who flatters to gain favor.", sentence: "He is a total _____." },
+    { word: "ASSIDUOUS", phonetic: "/əˈsɪdjuəs/", definition: "Persistent and hardworking.", sentence: "He was _____ in his duties." },
+    { word: "INSIDIOUS", phonetic: "/ɪnˈsɪdiəs/", definition: "Sneaky and harmful.", sentence: "The habit is _____." },
+    { word: "PERIPATETIC", phonetic: "/ˌpɛrɪpəˈtɛtɪk/", definition: "Traveling from place to place.", sentence: "A _____ lifestyle." },
+    { word: "QUERULOUS", phonetic: "/ˈkwɛrələs/", definition: "Always complaining.", sentence: "The patient was _____." },
+    { word: "REPLETE", phonetic: "/rɪˈpliːt/", definition: "Completely filled.", sentence: "The meal was _____." },
+    { word: "TREPIDATION", phonetic: "/ˌtrɛpɪˈdeɪʃn/", definition: "Fear or worry.", sentence: "He felt _____." },
+    { word: "AMBIVALENT", phonetic: "/æmˈbɪvələnt/", definition: "Having mixed feelings.", sentence: "I am _____ about it." },
+    { word: "JUXTAPOSE", phonetic: "/ˌdʒʌkstəˈpoʊz/", definition: "To place side by side for comparison.", sentence: "Try to _____ the images." },
+    { word: "IMPROVIDENT", phonetic: "/ɪmˈprɒvɪdənt/", definition: "Not planning for the future.", sentence: "He was _____ with money." },
+    { word: "EXECRABLE", phonetic: "/ˈɛksɪkrəbl/", definition: "Extremely bad.", sentence: "The taste was _____." },
+    { word: "OBVIATE", phonetic: "/ˈɒbvieɪt/", definition: "To remove a need or problem.", sentence: "This will _____ the risk." },
+    { word: "VITRIOLIC", phonetic: "/ˌvɪtriˈɒlɪk/", definition: "Extremely harsh or bitter.", sentence: "A _____ attack." },
+    { word: "PUSILLANIMOUS", phonetic: "/ˌpjuːsɪˈlænɪməs/", definition: "Cowardly.", sentence: "A _____ act." },
+    // User Added Words (31-60)
+    { word: "ERRATIC", phonetic: "/ɪˈrætɪk/", definition: "Unpredictable.", sentence: "His driving was ____." },
+    { word: "EXACERBATE", phonetic: "/ɪɡˈzæsərbeɪt/", definition: "To make worse.", sentence: "Stress can ____ the pain." },
+    { word: "FEASIBLE", phonetic: "/ˈfiːzəbl/", definition: "Possible or doable.", sentence: "The plan is ____." },
+    { word: "FERVENT", phonetic: "/ˈfɜːrvənt/", definition: "Very passionate." },
+    { word: "FRIVOLOUS", phonetic: "/ˈfrɪvələs/", definition: "Not serious; unimportant." },
+    { word: "GALVANIZE", phonetic: "/ˈɡælvənaɪz/", definition: "To inspire to take action." },
+    { word: "GRAVITATE", phonetic: "/ˈɡrævɪteɪt/", definition: "To be drawn toward something." },
+    { word: "IMMINENT", phonetic: "/ˈɪmɪnənt/", definition: "About to happen." },
+    { word: "IMPARTIAL", phonetic: "/ɪmˈpɑːrʃl/", definition: "Fair, not biased." },
+    { word: "IMPLICIT", phonetic: "/ɪmˈplɪsɪt/", definition: "Implied, not directly stated." },
+    { word: "INCESSANT", phonetic: "/ɪnˈsɛsnt/", definition: "Nonstop." },
+    { word: "INCREDULOUS", phonetic: "/ɪnˈkrɛdʒələs/", definition: "Unable to believe." },
+    { word: "INDOLENT", phonetic: "/ˈɪndələnt/", definition: "Lazy." },
+    { word: "INSINUATE", phonetic: "/ɪnˈsɪnjueɪt/", definition: "To hint something negative." },
+    { word: "INSTIGATE", definition: "To start or provoke." },
+    { word: "INTREPID", definition: "Brave, fearless." },
+    { word: "JUDICIOUS", definition: "Wise, sensible." },
+    { word: "LUCID", definition: "Clear and easy to understand." },
+    { word: "MEDIOCRE", definition: "Average, not very good." },
+    { word: "MITIGATE", definition: "To reduce the effect." },
+    { word: "NOVEL", definition: "New and original." },
+    { word: "OBSOLETE", definition: "Outdated." },
+    { word: "OMNIPRESENT", definition: "Present everywhere." },
+    { word: "PERPLEX", definition: "To confuse." },
+    { word: "PRAGMATIC", definition: "Practical." },
+    { word: "PROLIFIC", definition: "Highly productive." },
+    { word: "REITERATE", definition: "To repeat." },
+    { word: "RESILIENT", definition: "Able to recover quickly." },
+    { word: "SCRUTINIZE", definition: "To examine closely." },
+    { word: "TANGIBLE", definition: "Something you can touch or handle." }
   ]
 };
 
@@ -1204,6 +1394,18 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   );
 };
 
+// --- Multiplayer Types & Component ---
+
+interface GameState {
+    words: SpellingWordData[];
+    currentWordIndex: number;
+    turn: 'host' | 'client';
+    phase: 'main' | 'steal'; // 'main' attempt or 'steal' attempt after failure
+    timeLeft: number;
+    scores: { host: number, client: number };
+    status: 'waiting' | 'playing' | 'gameover';
+}
+
 const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     const [status, setStatus] = useState<'lobby' | 'hosting' | 'joining' | 'playing' | 'gameover'>('lobby');
     const [role, setRole] = useState<'host' | 'client' | null>(null);
@@ -1211,19 +1413,26 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     const [joinInput, setJoinInput] = useState('');
     const [connection, setConnection] = useState<any>(null);
     const [peerId, setPeerId] = useState<string>('');
-    const [wordList, setWordList] = useState<SpellingWordData[]>([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [myScore, setMyScore] = useState(0);
-    const [opponentScore, setOpponentScore] = useState(0);
     const peerRef = useRef<any>(null);
 
-    // Game Logic State
+    // Host Authoritative State
+    const [gameState, setGameState] = useState<GameState>({
+        words: [],
+        currentWordIndex: 0,
+        turn: 'host',
+        phase: 'main',
+        timeLeft: 30,
+        scores: { host: 0, client: 0 },
+        status: 'waiting',
+    });
+    
+    // Client Local Input State
     const [input, setInput] = useState('');
     const [message, setMessage] = useState('');
     const [showDef, setShowDef] = useState(false);
-    
-    // Voice
-    const speak = (text: string) => {
+
+    // --- Voice Logic ---
+    const speak = useCallback((text: string) => {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         const voices = window.speechSynthesis.getVoices();
@@ -1232,210 +1441,392 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
         utterance.pitch = 0.8;
         utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
-    };
-
-    // Initialize Peer
-    useEffect(() => {
-        const id = Math.random().toString(36).substring(2, 6).toUpperCase();
-        setPeerId(id);
-        const peer = new Peer(id, { debug: 1 });
-        peerRef.current = peer;
-
-        peer.on('connection', (conn) => {
-            setConnection(conn);
-            setupConnection(conn);
-            setStatus('playing');
-            setRole('host');
-        });
-        
-        return () => peer.destroy();
     }, []);
 
-    const setupConnection = (conn: any) => {
+    // --- Peer Setup ---
+    useEffect(() => {
+        const id = Math.random().toString(36).substring(2, 6).toUpperCase();
+        
+        const setupPeer = () => {
+             const peer = new Peer(id, { debug: 1 });
+             peerRef.current = peer;
+
+             peer.on('open', (id) => {
+                 setPeerId(id);
+             });
+             
+             peer.on('error', (err) => {
+                 console.error("Peer error:", err);
+                 setMessage("Connection Error. Retrying...");
+                 setTimeout(setupPeer, 2000);
+             });
+
+             peer.on('connection', (conn) => {
+                 conn.on('open', () => {
+                     setConnection(conn);
+                     setRole('host');
+                     setStatus('hosting');
+                     setupHostConnection(conn);
+                 });
+             });
+        };
+        
+        setupPeer();
+        return () => peerRef.current?.destroy();
+    }, []);
+
+    // --- Host Logic ---
+    const setupHostConnection = (conn: any) => {
         conn.on('data', (data: any) => {
-            if (data.type === 'START_GAME') {
-                setWordList(data.words);
-                setCurrentIndex(0);
-                setStatus('playing');
-                setRole('client');
-                speak("Game Started! Spell " + data.words[0].word);
-            }
-            if (data.type === 'SCORE_UPDATE') {
-                setOpponentScore(data.score);
-            }
-            if (data.type === 'GAME_OVER') {
-                setStatus('gameover');
+            if (data.type === 'CLIENT_SUBMIT') {
+                handleWordSubmission(data.word, 'client');
             }
         });
     };
 
-    const handleHost = () => {
-        setStatus('hosting');
-        setGameId(peerId);
-        // Pre-generate word list
+    // Send state updates to client whenever gameState changes
+    useEffect(() => {
+        if (role === 'host' && connection && status === 'playing') {
+             connection.send({ type: 'STATE_UPDATE', state: gameState });
+        }
+    }, [gameState, role, connection, status]);
+
+    // Timer Loop (Host Only)
+    useEffect(() => {
+        if (role !== 'host' || status !== 'playing' || gameState.status !== 'playing') return;
+
+        const timer = setInterval(() => {
+            setGameState(prev => {
+                if (prev.timeLeft <= 0) {
+                    // Time is up!
+                    return handleTurnTimeout(prev);
+                }
+                return { ...prev, timeLeft: prev.timeLeft - 1 };
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [role, status, gameState.status]);
+
+    const handleTurnTimeout = (prevState: GameState): GameState => {
+        // Switch turn if timeout
+        return switchTurn(prevState, false); // false = not correct (timed out)
+    };
+
+    const switchTurn = (prev: GameState, success: boolean): GameState => {
+        let nextState = { ...prev };
+        
+        if (success) {
+             // Correct answer logic
+             const points = prev.phase === 'main' ? 10 : 5; // Half points for steal
+             const winner = prev.turn;
+             
+             nextState.scores = {
+                 ...prev.scores,
+                 [winner]: prev.scores[winner] + points
+             };
+             
+             // Move to next word
+             nextState.currentWordIndex += 1;
+             nextState.phase = 'main';
+             nextState.timeLeft = 30;
+             
+             if (nextState.currentWordIndex >= nextState.words.length) {
+                 nextState.status = 'gameover';
+             } else {
+                 // Alternate starting player for next word
+                 nextState.turn = nextState.currentWordIndex % 2 === 0 ? 'host' : 'client';
+                 speak(nextState.words[nextState.currentWordIndex].word);
+             }
+
+        } else {
+            // Failure logic (Timeout or Wrong Answer)
+            if (prev.phase === 'main') {
+                // Activate Steal Phase
+                nextState.phase = 'steal';
+                nextState.turn = prev.turn === 'host' ? 'client' : 'host';
+                nextState.timeLeft = 30; // 30s for steal
+            } else {
+                // Steal failed too, move to next word
+                nextState.currentWordIndex += 1;
+                nextState.phase = 'main';
+                nextState.timeLeft = 30;
+                
+                if (nextState.currentWordIndex >= nextState.words.length) {
+                    nextState.status = 'gameover';
+                } else {
+                    nextState.turn = nextState.currentWordIndex % 2 === 0 ? 'host' : 'client';
+                    speak(nextState.words[nextState.currentWordIndex].word);
+                }
+            }
+        }
+        
+        return nextState;
+    };
+
+    const handleWordSubmission = (submittedWord: string, playerRole: 'host' | 'client') => {
+        setGameState(prev => {
+             // Validate it is this player's turn
+             if (prev.turn !== playerRole) return prev;
+
+             const targetWord = prev.words[prev.currentWordIndex].word;
+             const isCorrect = submittedWord.toUpperCase().trim() === targetWord;
+             
+             if (isCorrect) {
+                 SoundManager.playWin();
+             } else {
+                 SoundManager.playError();
+             }
+
+             return switchTurn(prev, isCorrect);
+        });
+        
+        // Reset local input if host
+        if (playerRole === 'host') {
+            setInput('');
+            setShowDef(false);
+        }
+    };
+
+    const startGameHost = () => {
+        // Generate words
         const pool = SPELLING_LOCAL_DICTIONARY[difficulty];
         const selected = [];
         for (let i = 0; i < 5; i++) {
             selected.push(pool[Math.floor(Math.random() * pool.length)]);
         }
-        setWordList(selected);
+        
+        const initialState: GameState = {
+            words: selected,
+            currentWordIndex: 0,
+            turn: 'host', // Host always starts first word (index 0)
+            phase: 'main',
+            timeLeft: 30,
+            scores: { host: 0, client: 0 },
+            status: 'playing'
+        };
+        
+        setGameState(initialState);
+        setStatus('playing');
+        speak(selected[0].word);
     };
 
+    // --- Client Logic ---
     const handleJoin = () => {
         if (!joinInput) return;
         const conn = peerRef.current.connect(joinInput.toUpperCase());
+        
         conn.on('open', () => {
             setConnection(conn);
-            setupConnection(conn);
-            setStatus('joining'); // Wait for host to start
+            setRole('client');
+            setStatus('playing'); // Switch to game view immediately, wait for updates
+            
+            conn.on('data', (data: any) => {
+                if (data.type === 'STATE_UPDATE') {
+                    setGameState(data.state);
+                    // Detect word change to speak
+                    // Note: Ideally we track last played index to avoid repeat speaking
+                }
+            });
+        });
+        
+        conn.on('error', () => {
+             setMessage("Could not connect.");
         });
     };
 
-    const startGame = () => {
-        if (connection && role === 'host') {
-            connection.send({ type: 'START_GAME', words: wordList });
-            speak("Game Started! Spell " + wordList[0].word);
-            setCurrentIndex(0);
-            setStatus('playing');
+    const submitWordClient = () => {
+        if (connection) {
+            connection.send({ type: 'CLIENT_SUBMIT', word: input });
+            setInput('');
+            setShowDef(false);
         }
     };
     
-    const handleSubmit = () => {
-        const currentWord = wordList[currentIndex];
-        if (input.trim().toUpperCase() === currentWord.word) {
-            SoundManager.playWin();
-            const newScore = myScore + 10 - (showDef ? 5 : 0);
-            setMyScore(newScore);
-            connection.send({ type: 'SCORE_UPDATE', score: newScore });
-            
-            if (currentIndex + 1 < wordList.length) {
-                const nextIdx = currentIndex + 1;
-                setCurrentIndex(nextIdx);
-                setInput('');
-                setShowDef(false);
-                setMessage('Correct! Next Word...');
-                setTimeout(() => setMessage(''), 1500);
-                speak(wordList[nextIdx].word);
-            } else {
-                setStatus('gameover');
-                connection.send({ type: 'GAME_OVER' });
-            }
-        } else {
-            SoundManager.playError();
-            setMessage("Incorrect!");
-            setTimeout(() => setMessage(''), 1000);
-        }
-    };
+    // --- Render Logic ---
     
-    // Lobby UI
+    // 1. Lobby
     if (status === 'lobby') {
         return (
             <div className="lobby-card">
                 <h3>Multiplayer Spelling Bee</h3>
                 <p>Connect with a friend to play!</p>
-                <div style={{display:'flex', gap: 10, justifyContent: 'center'}}>
-                    <button className="btn btn-primary" onClick={handleHost}>Host Game</button>
-                    <button className="btn btn-secondary" onClick={() => setStatus('joining')}>Join Game</button>
-                </div>
+                {peerId ? (
+                    <div style={{display:'flex', gap: 10, justifyContent: 'center'}}>
+                        <button className="btn btn-primary" onClick={() => setStatus('hosting')}>Host Game</button>
+                        <button className="btn btn-secondary" onClick={() => setStatus('joining')}>Join Game</button>
+                    </div>
+                ) : (
+                    <div className="loader"></div>
+                )}
             </div>
         );
     }
     
+    // 2. Hosting Lobby
     if (status === 'hosting') {
-        return (
+         // If connected, we show start button. If not, show code.
+         return (
             <div className="lobby-card">
                 <h3>Hosting Game</h3>
-                <p>Share this code with your friend:</p>
-                <div className="lobby-code">{gameId}</div>
-                {connection ? (
-                     <div style={{marginTop: 20}}>
-                        <p style={{color: '#4caf50', fontWeight: 'bold'}}>Friend Connected!</p>
-                        <button className="btn btn-primary" onClick={startGame}>Start Match</button>
-                     </div>
+                {!connection ? (
+                    <>
+                        <p>Share this code:</p>
+                        <div className="lobby-code">{peerId}</div>
+                        <div className="loader"></div>
+                        <p>Waiting for player...</p>
+                    </>
                 ) : (
-                    <div className="loader"></div>
+                     <>
+                        <p style={{color: '#4caf50', fontWeight: 'bold'}}>Player Connected!</p>
+                        <button className="btn btn-primary" onClick={startGameHost}>Start Match</button>
+                     </>
                 )}
-                 <button className="btn btn-secondary" style={{marginTop: 10}} onClick={() => setStatus('lobby')}>Cancel</button>
+                <button className="btn btn-secondary" style={{marginTop: 10}} onClick={() => setStatus('lobby')}>Back</button>
             </div>
-        );
+         );
     }
 
+    // 3. Joining Lobby
     if (status === 'joining') {
          return (
             <div className="lobby-card">
                 <h3>Join Game</h3>
-                {connection ? (
-                    <p>Connected! Waiting for host to start...</p>
-                ) : (
-                    <>
-                        <input className="lobby-input" placeholder="ENTER CODE" value={joinInput} onChange={e => setJoinInput(e.target.value)} />
-                        <button className="btn btn-primary" style={{marginTop: 15}} onClick={handleJoin}>Connect</button>
-                    </>
-                )}
-                 <button className="btn btn-secondary" style={{marginTop: 10}} onClick={() => setStatus('lobby')}>Back</button>
+                <input className="lobby-input" placeholder="ENTER CODE" value={joinInput} onChange={e => setJoinInput(e.target.value)} />
+                <button className="btn btn-primary" style={{marginTop: 15}} onClick={handleJoin}>Connect</button>
+                <div className="message">{message}</div>
+                <button className="btn btn-secondary" style={{marginTop: 10}} onClick={() => setStatus('lobby')}>Back</button>
             </div>
         );
     }
 
-    // Game UI
-    const currentWordData = wordList[currentIndex];
+    // 4. Playing Game
+    if (status === 'playing') {
+        
+        if (gameState.status === 'gameover') {
+             return (
+                <div className="spelling-container">
+                    <h2>Game Over!</h2>
+                    <div className="player-list" style={{flexDirection: 'column', gap: 20, alignItems: 'center'}}>
+                        <div className="player-badge" style={{fontSize: '1.5rem'}}>
+                           {role === 'host' ? 'You (Host)' : 'Host'}: {gameState.scores.host}
+                        </div>
+                        <div className="player-badge" style={{fontSize: '1.5rem', background: '#555'}}>
+                           {role === 'client' ? 'You (Guest)' : 'Guest'}: {gameState.scores.client}
+                        </div>
+                    </div>
+                    
+                    <h3>
+                        {(role === 'host' && gameState.scores.host > gameState.scores.client) ||
+                         (role === 'client' && gameState.scores.client > gameState.scores.host) ? 
+                         "🏆 YOU WON!" : 
+                         gameState.scores.host === gameState.scores.client ? 
+                         "🤝 DRAW!" : 
+                         "💀 YOU LOST!"}
+                    </h3>
+                    
+                    <button className="btn btn-primary" onClick={() => window.location.reload()}>Exit</button>
+                </div>
+            );
+        }
+        
+        // Waiting for host to start the actual round
+        if (gameState.status === 'waiting') {
+             return (
+                 <div className="lobby-card">
+                     <h3>Connected!</h3>
+                     <p>Waiting for host to start the game...</p>
+                     <div className="loader"></div>
+                 </div>
+             );
+        }
+
+        const isMyTurn = gameState.turn === role;
+        const currentWord = gameState.words[gameState.currentWordIndex];
+        
+        return (
+            <div className="spelling-container" style={{ border: isMyTurn ? '4px solid var(--accent)' : '4px solid transparent' }}>
+                {/* Scoreboard */}
+                <div className="player-list">
+                    <div style={{opacity: role === 'host' ? 1 : 0.7}}>
+                        <div className="player-badge">HOST {role === 'host' && '(YOU)'}</div>
+                        <div className="player-score">{gameState.scores.host}</div>
+                    </div>
+                     <div style={{opacity: role === 'client' ? 1 : 0.7}}>
+                        <div className="player-badge" style={{background:'#555'}}>GUEST {role === 'client' && '(YOU)'}</div>
+                        <div className="player-score">{gameState.scores.client}</div>
+                    </div>
+                </div>
+
+                {/* Timer & Turn Indicator */}
+                <div style={{
+                    fontSize: '2rem', 
+                    fontWeight: 'bold', 
+                    color: gameState.timeLeft < 10 ? 'red' : '#333',
+                    marginBottom: 10
+                }}>
+                    ⏱ {gameState.timeLeft}s
+                </div>
+                
+                <div style={{
+                    padding: '5px 15px', 
+                    background: isMyTurn ? 'var(--accent)' : '#eee',
+                    color: isMyTurn ? '#3e2700' : '#888',
+                    borderRadius: 20,
+                    fontWeight: 'bold',
+                    marginBottom: 20
+                }}>
+                    {isMyTurn ? "YOUR TURN" : "OPPONENT'S TURN"} 
+                    {gameState.phase === 'steal' && " (STEAL!)"}
+                </div>
+
+                <div className="word-image-container">
+                     {currentWord ? (
+                        <img src={getPollinationsImage(currentWord.word)} alt="Hint" className="word-image" />
+                     ) : (
+                         <div className="loader"></div>
+                     )}
+                </div>
+                
+                <div className="audio-btn-large" onClick={() => speak(currentWord?.word || '')} title="Play Word">
+                     <span className="audio-icon">🔊</span>
+                </div>
+
+                {/* Input Area */}
+                <input 
+                    className="spelling-input"
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    placeholder={isMyTurn ? "SPELL IT" : "WAITING..."}
+                    disabled={!isMyTurn}
+                    onKeyDown={e => {
+                        if (e.key === 'Enter' && isMyTurn) {
+                            role === 'host' ? handleWordSubmission(input, 'host') : submitWordClient();
+                        }
+                    }}
+                />
+                
+                {showDef && <div className="hint-text" style={{marginBottom: 20}}>{currentWord?.definition}</div>}
+
+                <div className="controls">
+                    <button 
+                        className="btn btn-primary" 
+                        onClick={() => role === 'host' ? handleWordSubmission(input, 'host') : submitWordClient()}
+                        disabled={!isMyTurn}
+                    >
+                        Submit
+                    </button>
+                    <button className="btn btn-hint" onClick={() => setShowDef(true)} disabled={showDef}>Definition</button>
+                </div>
+                
+                <div style={{marginTop: 20, fontSize: '0.8rem', opacity: 0.6}}>
+                    Word {gameState.currentWordIndex + 1} / {gameState.words.length}
+                </div>
+            </div>
+        );
+    }
     
-    if (status === 'gameover') {
-         return (
-            <div className="spelling-container">
-                <h2>Game Over!</h2>
-                <div className="player-list" style={{flexDirection: 'column', gap: 20, alignItems: 'center'}}>
-                    <div className="player-badge" style={{fontSize: '1.5rem'}}>You: {myScore}</div>
-                    <div className="player-badge" style={{fontSize: '1.5rem', background: '#555'}}>Opponent: {opponentScore}</div>
-                </div>
-                <h3>{myScore > opponentScore ? "🏆 YOU WON!" : myScore < opponentScore ? "💀 YOU LOST" : "🤝 DRAW"}</h3>
-                <button className="btn btn-primary" onClick={() => setStatus('lobby')}>Exit</button>
-            </div>
-        );
-    }
-
-    return (
-        <div className="spelling-container">
-            <div className="player-list">
-                <div>
-                    <div className="player-badge">YOU</div>
-                    <div className="player-score">{myScore}</div>
-                </div>
-                 <div>
-                    <div className="player-badge" style={{background:'#555'}}>OPPONENT</div>
-                    <div className="player-score">{opponentScore}</div>
-                </div>
-            </div>
-            
-             <div className="word-image-container">
-                <img src={getPollinationsImage(currentWordData.word)} alt="Hint" className="word-image" />
-            </div>
-            
-            <div className="audio-btn-large" onClick={() => speak(currentWordData.word)}>
-                 <span className="audio-icon">🔊</span>
-            </div>
-            
-             <input 
-                className="spelling-input"
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                placeholder="SPELL IT"
-                onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-            />
-            
-            {showDef && <div className="hint-text" style={{marginBottom: 20}}>{currentWordData.definition}</div>}
-            <div className="message">{message}</div>
-            
-            <div className="controls">
-                <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>
-                <button className="btn btn-hint" onClick={() => setShowDef(true)} disabled={showDef}>Definition (-5)</button>
-            </div>
-            
-            <div style={{marginTop: 20, fontSize: '0.8rem', opacity: 0.6}}>
-                Round {currentIndex + 1} / {wordList.length}
-            </div>
-        </div>
-    );
+    return <div>Loading...</div>;
 };
 
 const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
