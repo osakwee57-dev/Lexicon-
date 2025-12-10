@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { GoogleGenAI, Type } from "@google/genai";
+import { Peer } from 'peerjs';
 
 // --- Configuration & Constants ---
 
@@ -10,7 +11,7 @@ const SCRABBLE_SCORES: Record<string, number> = {
 };
 
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
-type GameMode = 'scrabble' | 'spelling';
+type GameMode = 'scrabble' | 'spelling' | 'multiplayer';
 
 // Fallback Dictionary for Offline/Error Mode (Scrabble)
 interface WordEntry {
@@ -140,6 +141,7 @@ interface SpellingWordData {
     definition: string;
     sentence: string;
     phonetic: string;
+    imageUrl?: string;
 }
 
 const SPELLING_LOCAL_DICTIONARY: Record<Difficulty, SpellingWordData[]> = {
@@ -657,17 +659,17 @@ const styles = `
   }
 
   .audio-btn-large {
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: var(--wood-color);
-    border: 4px solid #fff;
+    border: 3px solid #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-    margin-bottom: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    margin-bottom: 15px;
     transition: transform 0.1s, background 0.2s;
   }
 
@@ -680,8 +682,35 @@ const styles = `
   }
 
   .audio-icon {
-    font-size: 3rem;
+    font-size: 2rem;
     color: white;
+  }
+
+  .word-image-container {
+    width: 200px;
+    height: 200px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    position: relative;
+    flex-shrink: 0;
+  }
+  
+  .word-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .image-placeholder {
+    font-size: 3rem;
+    opacity: 0.5;
   }
 
   .phonetic-display {
@@ -767,6 +796,7 @@ const styles = `
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
   }
 
@@ -858,6 +888,72 @@ const styles = `
     color: rgba(255,255,255,0.5);
   }
   
+  /* Multiplayer Styles */
+  .lobby-card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      color: #333;
+      text-align: center;
+  }
+
+  .lobby-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.2rem;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      box-sizing: border-box;
+  }
+
+  .lobby-code {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: 5px;
+      color: var(--wood-color);
+      margin: 10px 0;
+      user-select: all;
+  }
+
+  .player-list {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 20px;
+  }
+
+  .player-badge {
+      background: var(--wood-color);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.8rem;
+  }
+  
+  .player-score {
+      font-size: 1.5rem;
+      font-weight: bold;
+  }
+  
+  .opponent-view {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px dashed rgba(255,255,255,0.3);
+      width: 100%;
+      text-align: center;
+      opacity: 0.7;
+  }
+
   @keyframes pop {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }
@@ -888,6 +984,7 @@ interface ScrabbleState {
   score: number;
   message: string;
   seenWords: string[];
+  imageUrl?: string;
 }
 
 interface SpellingState {
@@ -918,6 +1015,14 @@ function generateTiles(word: string): Tile[] {
   }));
 }
 
+// Pollinations.ai Image Generator (No API Key Required)
+const getPollinationsImage = (word: string) => {
+    // Generate a consistent but distinct seed-like effect or just use word
+    // "nologo=true" removes the watermark
+    // "cartoon illustration" style
+    return `https://image.pollinations.ai/prompt/cartoon%20illustration%20of%20${word}%20simple%20vector%20art%20white%20background%20educational?width=400&height=400&nologo=true&seed=${Math.floor(Math.random()*1000)}`;
+}
+
 // --- Components ---
 
 const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
@@ -935,7 +1040,7 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   const seenWordsRef = useRef<string[]>([]);
 
   const fetchWord = useCallback(async () => {
-    setState(prev => ({ ...prev, status: 'loading', message: '', placedTiles: [], rackTiles: [], word: '', definition: '' }));
+    setState(prev => ({ ...prev, status: 'loading', message: '', placedTiles: [], rackTiles: [], word: '', definition: '', imageUrl: undefined }));
     
     // Attempt Gemini API first
     if (process.env.API_KEY) {
@@ -943,15 +1048,8 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const model = difficulty === 'Hard' ? 'gemini-3-pro-preview' : 'gemini-2.5-flash';
         
-        // Use full lexicon prompt for "5 million words" feel
         const prompt = `
           Pick a single random English word and its definition.
-          Source Material: The entire English lexicon (approx 5 million words). 
-          Instructions:
-          - Access the full breadth of the English language.
-          - Do not limit yourself to common words unless difficulty is Easy.
-          - Ensure extreme variety. Avoid repeating common words.
-          
           Difficulty Level: ${difficulty}.
           ${difficulty === 'Easy' ? 'Word length 4-5 letters. Common everyday words.' : ''}
           ${difficulty === 'Medium' ? 'Word length 6-8 letters. Standard to Advanced vocabulary.' : ''}
@@ -999,7 +1097,8 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
                 rackTiles: shuffleArray(tiles),
                 status: 'playing',
                 score: 0,
-                seenWords: [...prev.seenWords, word]
+                seenWords: [...prev.seenWords, word],
+                imageUrl: getPollinationsImage(word)
              }));
              return;
         }
@@ -1030,7 +1129,8 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
       rackTiles: shuffleArray(tiles),
       status: 'playing',
       score: 0,
-      seenWords: [...prev.seenWords, word]
+      seenWords: [...prev.seenWords, word],
+      imageUrl: getPollinationsImage(word)
     }));
 
   }, [difficulty]);
@@ -1154,6 +1254,11 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   return (
     <>
       <div className="definition-card">
+        {state.imageUrl && (
+            <div className="word-image-container" style={{width: 150, height: 150, margin: '0 auto 15px'}}>
+                <img src={state.imageUrl} alt="Hint" className="word-image" />
+            </div>
+        )}
         <div className="definition-label">Definition</div>
         <div className="definition-text">{state.definition}</div>
       </div>
@@ -1199,6 +1304,240 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   );
 };
 
+const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
+    const [status, setStatus] = useState<'lobby' | 'hosting' | 'joining' | 'playing' | 'gameover'>('lobby');
+    const [role, setRole] = useState<'host' | 'client' | null>(null);
+    const [gameId, setGameId] = useState('');
+    const [joinInput, setJoinInput] = useState('');
+    const [connection, setConnection] = useState<any>(null);
+    const [peerId, setPeerId] = useState<string>('');
+    const [wordList, setWordList] = useState<SpellingWordData[]>([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [myScore, setMyScore] = useState(0);
+    const [opponentScore, setOpponentScore] = useState(0);
+    const peerRef = useRef<any>(null);
+
+    // Game Logic State
+    const [input, setInput] = useState('');
+    const [message, setMessage] = useState('');
+    const [showDef, setShowDef] = useState(false);
+    
+    // Voice
+    const speak = (text: string) => {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+        const coolMaleVoice = voices.find(v => v.name === "Google US English") || voices.find(v => v.lang.startsWith("en") && v.name.includes("Male"));
+        if (coolMaleVoice) utterance.voice = coolMaleVoice;
+        utterance.pitch = 0.8;
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+    };
+
+    // Initialize Peer
+    useEffect(() => {
+        const id = Math.random().toString(36).substring(2, 6).toUpperCase();
+        setPeerId(id);
+        const peer = new Peer(id, { debug: 1 });
+        peerRef.current = peer;
+
+        peer.on('connection', (conn) => {
+            setConnection(conn);
+            setupConnection(conn);
+            setStatus('playing');
+            setRole('host');
+        });
+        
+        return () => peer.destroy();
+    }, []);
+
+    const setupConnection = (conn: any) => {
+        conn.on('data', (data: any) => {
+            if (data.type === 'START_GAME') {
+                setWordList(data.words);
+                setCurrentIndex(0);
+                setStatus('playing');
+                setRole('client');
+                speak("Game Started! Spell " + data.words[0].word);
+            }
+            if (data.type === 'SCORE_UPDATE') {
+                setOpponentScore(data.score);
+            }
+            if (data.type === 'GAME_OVER') {
+                setStatus('gameover');
+            }
+        });
+    };
+
+    const handleHost = () => {
+        setStatus('hosting');
+        setGameId(peerId);
+        // Pre-generate word list
+        const pool = SPELLING_LOCAL_DICTIONARY[difficulty];
+        const selected = [];
+        for (let i = 0; i < 5; i++) {
+            selected.push(pool[Math.floor(Math.random() * pool.length)]);
+        }
+        setWordList(selected);
+    };
+
+    const handleJoin = () => {
+        if (!joinInput) return;
+        const conn = peerRef.current.connect(joinInput.toUpperCase());
+        conn.on('open', () => {
+            setConnection(conn);
+            setupConnection(conn);
+            setStatus('joining'); // Wait for host to start
+        });
+    };
+
+    const startGame = () => {
+        if (connection && role === 'host') {
+            connection.send({ type: 'START_GAME', words: wordList });
+            speak("Game Started! Spell " + wordList[0].word);
+            setCurrentIndex(0);
+            setStatus('playing');
+        }
+    };
+    
+    const handleSubmit = () => {
+        const currentWord = wordList[currentIndex];
+        if (input.trim().toUpperCase() === currentWord.word) {
+            SoundManager.playWin();
+            const newScore = myScore + 10 - (showDef ? 5 : 0);
+            setMyScore(newScore);
+            connection.send({ type: 'SCORE_UPDATE', score: newScore });
+            
+            if (currentIndex + 1 < wordList.length) {
+                const nextIdx = currentIndex + 1;
+                setCurrentIndex(nextIdx);
+                setInput('');
+                setShowDef(false);
+                setMessage('Correct! Next Word...');
+                setTimeout(() => setMessage(''), 1500);
+                speak(wordList[nextIdx].word);
+            } else {
+                setStatus('gameover');
+                connection.send({ type: 'GAME_OVER' });
+            }
+        } else {
+            SoundManager.playError();
+            setMessage("Incorrect!");
+            setTimeout(() => setMessage(''), 1000);
+        }
+    };
+    
+    // Lobby UI
+    if (status === 'lobby') {
+        return (
+            <div className="lobby-card">
+                <h3>Multiplayer Spelling Bee</h3>
+                <p>Connect with a friend to play!</p>
+                <div style={{display:'flex', gap: 10, justifyContent: 'center'}}>
+                    <button className="btn btn-primary" onClick={handleHost}>Host Game</button>
+                    <button className="btn btn-secondary" onClick={() => setStatus('joining')}>Join Game</button>
+                </div>
+            </div>
+        );
+    }
+    
+    if (status === 'hosting') {
+        return (
+            <div className="lobby-card">
+                <h3>Hosting Game</h3>
+                <p>Share this code with your friend:</p>
+                <div className="lobby-code">{gameId}</div>
+                {connection ? (
+                     <div style={{marginTop: 20}}>
+                        <p style={{color: '#4caf50', fontWeight: 'bold'}}>Friend Connected!</p>
+                        <button className="btn btn-primary" onClick={startGame}>Start Match</button>
+                     </div>
+                ) : (
+                    <div className="loader"></div>
+                )}
+                 <button className="btn btn-secondary" style={{marginTop: 10}} onClick={() => setStatus('lobby')}>Cancel</button>
+            </div>
+        );
+    }
+
+    if (status === 'joining') {
+         return (
+            <div className="lobby-card">
+                <h3>Join Game</h3>
+                {connection ? (
+                    <p>Connected! Waiting for host to start...</p>
+                ) : (
+                    <>
+                        <input className="lobby-input" placeholder="ENTER CODE" value={joinInput} onChange={e => setJoinInput(e.target.value)} />
+                        <button className="btn btn-primary" style={{marginTop: 15}} onClick={handleJoin}>Connect</button>
+                    </>
+                )}
+                 <button className="btn btn-secondary" style={{marginTop: 10}} onClick={() => setStatus('lobby')}>Back</button>
+            </div>
+        );
+    }
+
+    // Game UI
+    const currentWordData = wordList[currentIndex];
+    
+    if (status === 'gameover') {
+         return (
+            <div className="spelling-container">
+                <h2>Game Over!</h2>
+                <div className="player-list" style={{flexDirection: 'column', gap: 20, alignItems: 'center'}}>
+                    <div className="player-badge" style={{fontSize: '1.5rem'}}>You: {myScore}</div>
+                    <div className="player-badge" style={{fontSize: '1.5rem', background: '#555'}}>Opponent: {opponentScore}</div>
+                </div>
+                <h3>{myScore > opponentScore ? "🏆 YOU WON!" : myScore < opponentScore ? "💀 YOU LOST" : "🤝 DRAW"}</h3>
+                <button className="btn btn-primary" onClick={() => setStatus('lobby')}>Exit</button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="spelling-container">
+            <div className="player-list">
+                <div>
+                    <div className="player-badge">YOU</div>
+                    <div className="player-score">{myScore}</div>
+                </div>
+                 <div>
+                    <div className="player-badge" style={{background:'#555'}}>OPPONENT</div>
+                    <div className="player-score">{opponentScore}</div>
+                </div>
+            </div>
+            
+             <div className="word-image-container">
+                <img src={getPollinationsImage(currentWordData.word)} alt="Hint" className="word-image" />
+            </div>
+            
+            <div className="audio-btn-large" onClick={() => speak(currentWordData.word)}>
+                 <span className="audio-icon">🔊</span>
+            </div>
+            
+             <input 
+                className="spelling-input"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                placeholder="SPELL IT"
+                onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+            />
+            
+            {showDef && <div className="hint-text" style={{marginBottom: 20}}>{currentWordData.definition}</div>}
+            <div className="message">{message}</div>
+            
+            <div className="controls">
+                <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+                <button className="btn btn-hint" onClick={() => setShowDef(true)} disabled={showDef}>Definition (-5)</button>
+            </div>
+            
+            <div style={{marginTop: 20, fontSize: '0.8rem', opacity: 0.6}}>
+                Round {currentIndex + 1} / {wordList.length}
+            </div>
+        </div>
+    );
+};
+
 const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
     const [state, setState] = useState<SpellingState>({
         data: null,
@@ -1220,34 +1559,26 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
         }
     }, []);
     
-    const speak = (text: string, rate = 0.8) => {
+    const speak = (text: string, rate = 0.9) => {
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         
-        // Force get voices (sometimes helps with lazy loading in browsers)
         const voices = window.speechSynthesis.getVoices();
         
-        // Priority: African accents (South Africa 'en-ZA' or Nigeria 'en-NG')
-        const africanVoice = voices.find(v => v.lang === 'en-ZA' || v.lang === 'en-NG');
+        // "Cool Male Voice" - clear, calm, slightly deeper.
+        const coolMaleVoice = voices.find(v => v.name === "Google US English") 
+                           || voices.find(v => v.name === "Google UK English Male")
+                           || voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("male"));
 
-        // Fallback: Generic Male Voices
-        const maleVoice = voices.find(v => v.name.includes("Google UK English Male")) 
-                       || voices.find(v => v.name.includes("Daniel")) 
-                       || voices.find(v => v.name.toLowerCase().includes("male") && v.lang.startsWith("en"));
-
-        if (africanVoice) {
-            utterance.voice = africanVoice;
-            utterance.pitch = 0.5; // Deep, serious tone for 'Wakandan' feel
-            utterance.rate = rate * 0.9; // Measured, deliberate pace
-        } else if (maleVoice) {
-            utterance.voice = maleVoice;
-            utterance.pitch = 0.6; // Deep pitch for 'dark' male voice fallback
-            utterance.rate = rate;
+        if (coolMaleVoice) {
+            utterance.voice = coolMaleVoice;
         }
 
-        utterance.lang = 'en-US'; // Default if voice specific lang fails, though voice obj usually overrides
-        
+        utterance.pitch = 0.8; // Slightly deeper to sound "cool"
+        utterance.rate = rate; 
+        utterance.lang = 'en-US';
+
         window.speechSynthesis.speak(utterance);
     };
 
@@ -1266,8 +1597,8 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
         if (process.env.API_KEY) {
             try {
                 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-                const model = 'gemini-2.5-flash';
                 
+                // 1. Get Word Data
                 const prompt = `
                     Generate a random English word for a spelling bee.
                     Source: Access the complete English language corpus (approx 5 million words).
@@ -1287,7 +1618,7 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
                 `;
 
                 const response = await ai.models.generateContent({
-                    model,
+                    model: 'gemini-2.5-flash',
                     contents: prompt,
                     config: {
                         responseMimeType: 'application/json',
@@ -1306,13 +1637,17 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
                 
                 const data = JSON.parse(response.text);
                 
+                // 2. Generate Image (Use Pollinations for consistent illustration)
+                const generatedImageUrl = getPollinationsImage(data.word);
+                
                 setState(s => ({
                     ...s,
                     data: {
                         word: data.word.trim().toUpperCase(),
                         phonetic: data.phonetic || '',
                         definition: data.definition,
-                        sentence: data.sentence
+                        sentence: data.sentence,
+                        imageUrl: generatedImageUrl
                     },
                     status: 'playing',
                 }));
@@ -1332,10 +1667,11 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
         await new Promise(r => setTimeout(r, 600)); // Simulate loading for better UX
         const pool = SPELLING_LOCAL_DICTIONARY[difficulty];
         const randomItem = pool[Math.floor(Math.random() * pool.length)];
+        const imageUrl = getPollinationsImage(randomItem.word);
 
         setState(s => ({
             ...s,
-            data: randomItem,
+            data: { ...randomItem, imageUrl },
             status: 'playing'
         }));
         
@@ -1432,6 +1768,14 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
     return (
         <div className={`spelling-container ${state.status === 'won' ? 'won' : ''}`}>
             
+            <div className="word-image-container">
+                {state.data?.imageUrl ? (
+                    <img src={state.data.imageUrl} alt="Hint" className="word-image" />
+                ) : (
+                    <span className="image-placeholder">🖼️</span>
+                )}
+            </div>
+
             {state.status === 'won' ? (
                 <div className="word-reveal">
                     {state.data?.word}
@@ -1548,12 +1892,17 @@ const App = () => {
             <div className={`nav-tab ${view === 'spelling' ? 'active' : ''}`} onClick={() => setView('spelling')}>
                 Spelling Bee
             </div>
+            <div className={`nav-tab ${view === 'multiplayer' ? 'active' : ''}`} onClick={() => setView('multiplayer')}>
+                Multiplayer
+            </div>
         </div>
 
         {view === 'scrabble' ? (
             <ScrabbleGame difficulty={difficulty} onScoreUpdate={updateScore} />
-        ) : (
+        ) : view === 'spelling' ? (
             <SpellingGame difficulty={difficulty} onScoreUpdate={updateScore} />
+        ) : (
+            <MultiplayerGame difficulty={difficulty} />
         )}
 
       </div>
