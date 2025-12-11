@@ -37,37 +37,37 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "CHAIR", phonetic: "/tʃeər/", definition: "A separate seat for one person, typically with a back and four legs.", sentence: "Please sit in the _____." },
     { word: "DANCE", phonetic: "/dæns/", definition: "Move rhythmically to music.", sentence: "They like to _____ at parties." },
     { word: "HAPPY", phonetic: "/ˈhæp.i/", definition: "Feeling or showing pleasure or contentment.", sentence: "The puppy was _____ to see its owner." },
-    // User Added Words (1-30)
+    // User Added Words (1-30) - Added Phonetics
     { word: "ABATE", phonetic: "/əˈbeɪt/", definition: "To reduce or lessen.", sentence: "The storm began to _____." },
     { word: "ABRIDGE", phonetic: "/əˈbrɪdʒ/", definition: "To shorten a text.", sentence: "He had to _____ his speech." },
-    { word: "ACCENTUATE", phonetic: "/ækˈsen.tʃu.eɪt/", definition: "To emphasize.", sentence: "The dress helped _____ her figure." },
-    { word: "AFFLUENT", phonetic: "/ˈæf.lu.ənt/", definition: "Rich, wealthy.", sentence: "They lived in an _____ neighborhood." },
+    { word: "ACCENTUATE", phonetic: "/əkˈsɛntʃueɪt/", definition: "To emphasize.", sentence: "The dress helped _____ her figure." },
+    { word: "AFFLUENT", phonetic: "/ˈæfluənt/", definition: "Rich, wealthy.", sentence: "They lived in an _____ neighborhood." },
     { word: "ALLUDE", phonetic: "/əˈluːd/", definition: "To indirectly refer to something.", sentence: "He did _____ to the problem." },
-    { word: "AMELIORATE", phonetic: "/əˈmiː.li.ə.reɪt/", definition: "To make something better.", sentence: "Medicine can _____ pain." },
-    { word: "APATHETIC", phonetic: "/ˌæp.əˈθet.ɪk/", definition: "Not caring; showing little emotion.", sentence: "Voters were _____ about the election." },
-    { word: "ARDUOUS", phonetic: "/ˈɑːr.dʒu.əs/", definition: "Very difficult or tiring.", sentence: "It was an _____ climb." },
-    { word: "AUSPICIOUS", phonetic: "/ɔːˈspɪʃ.əs/", definition: "Favorable; showing good signs.", sentence: "It was an _____ start." },
+    { word: "AMELIORATE", phonetic: "/əˈmiːliəreɪt/", definition: "To make something better.", sentence: "Medicine can _____ pain." },
+    { word: "APATHETIC", phonetic: "/ˌæpəˈθɛtɪk/", definition: "Not caring; showing little emotion.", sentence: "Voters were _____ about the election." },
+    { word: "ARDUOUS", phonetic: "/ˈɑːrdʒuəs/", definition: "Very difficult or tiring.", sentence: "It was an _____ climb." },
+    { word: "AUSPICIOUS", phonetic: "/ɔːˈspɪʃəs/", definition: "Favorable; showing good signs.", sentence: "It was an _____ start." },
     { word: "BANAL", phonetic: "/bəˈnɑːl/", definition: "Boring, not original.", sentence: "The conversation was _____." },
     { word: "BENIGN", phonetic: "/bɪˈnaɪn/", definition: "Harmless.", sentence: "The tumor was _____." },
-    { word: "BOLSTER", phonetic: "/ˈboʊl.stɚ/", definition: "To support or strengthen.", sentence: "We need to _____ morale." },
-    { word: "CANDID", phonetic: "/ˈkæn.dɪd/", definition: "Honest and truthful.", sentence: "To be _____, I don't like it." },
-    { word: "CHRONICLE", phonetic: "/ˈkrɑː.nɪ.kəl/", definition: "To record events in order.", sentence: "The book will _____ the war." },
-    { word: "COHERENT", phonetic: "/koʊˈhɪr.ənt/", definition: "Clear and logical.", sentence: "He gave a _____ explanation." },
-    { word: "COLLOQUIAL", phonetic: "/kəˈloʊ.kwi.əl/", definition: "Informal language.", sentence: "It's a _____ expression." },
-    { word: "CONCUR", phonetic: "/kənˈkɝː/", definition: "To agree.", sentence: "I _____ with your opinion." },
-    { word: "CONSPICUOUS", phonetic: "/kənˈspɪk.ju.əs/", definition: "Easily seen or noticed.", sentence: "He was _____ in a bright suit." },
-    { word: "CURSORY", phonetic: "/ˈkɝː.sɚ.i/", definition: "Quick and not detailed.", sentence: "A _____ glance." },
-    { word: "DAUNTING", phonetic: "/ˈdɑːn.tɪŋ/", definition: "Intimidating; scary to start.", sentence: "The task was _____." },
-    { word: "DEBILITATE", phonetic: "/dɪˈbɪl.ə.teɪt/", definition: "To weaken.", sentence: "The virus can _____ you." },
-    { word: "DELINEATE", phonetic: "/dɪˈlɪn.i.eɪt/", definition: "To describe clearly.", sentence: "The plan will _____ the steps." },
+    { word: "BOLSTER", phonetic: "/ˈboʊlstər/", definition: "To support or strengthen.", sentence: "We need to _____ morale." },
+    { word: "CANDID", phonetic: "/ˈkændɪd/", definition: "Honest and truthful.", sentence: "To be _____, I don't like it." },
+    { word: "CHRONICLE", phonetic: "/ˈkrɑːnɪkəl/", definition: "To record events in order.", sentence: "The book will _____ the war." },
+    { word: "COHERENT", phonetic: "/koʊˈhɪərənt/", definition: "Clear and logical.", sentence: "He gave a _____ explanation." },
+    { word: "COLLOQUIAL", phonetic: "/kəˈloʊkwiəl/", definition: "Informal language.", sentence: "It's a _____ expression." },
+    { word: "CONCUR", phonetic: "/kənˈkɜːr/", definition: "To agree.", sentence: "I _____ with your opinion." },
+    { word: "CONSPICUOUS", phonetic: "/kənˈspɪkjuəs/", definition: "Easily seen or noticed.", sentence: "He was _____ in a bright suit." },
+    { word: "CURSORY", phonetic: "/ˈkɜːrsəri/", definition: "Quick and not detailed.", sentence: "A _____ glance." },
+    { word: "DAUNTING", phonetic: "/ˈdɔːntɪŋ/", definition: "Intimidating; scary to start.", sentence: "The task was _____." },
+    { word: "DEBILITATE", phonetic: "/dɪˈbɪlɪteɪt/", definition: "To weaken.", sentence: "The virus can _____ you." },
+    { word: "DELINEATE", phonetic: "/dɪˈlɪnieɪt/", definition: "To describe clearly.", sentence: "The plan will _____ the steps." },
     { word: "DERIVE", phonetic: "/dɪˈraɪv/", definition: "To obtain from a source.", sentence: "We _____ pleasure from music." },
-    { word: "DILIGENT", phonetic: "/ˈdɪl.ə.dʒənt/", definition: "Hardworking.", sentence: "She is a _____ student." },
-    { word: "DISCERN", phonetic: "/dɪˈsɝːn/", definition: "To notice or recognize.", sentence: "I could _____ a faint light." },
+    { word: "DILIGENT", phonetic: "/ˈdɪlɪdʒənt/", definition: "Hardworking.", sentence: "She is a _____ student." },
+    { word: "DISCERN", phonetic: "/dɪˈsɜːrn/", definition: "To notice or recognize.", sentence: "I could _____ a faint light." },
     { word: "DISCREET", phonetic: "/dɪˈskriːt/", definition: "Careful not to attract attention.", sentence: "Be _____ about the gift." },
-    { word: "ELICIT", phonetic: "/iˈlɪs.ɪt/", definition: "To draw out (information or reaction).", sentence: "The joke failed to _____ a laugh." },
-    { word: "ELUSIVE", phonetic: "/iˈluː.sɪv/", definition: "Hard to find or catch.", sentence: "Success remained _____." },
-    { word: "EMULATE", phonetic: "/ˈem.ju.leɪt/", definition: "To imitate to match or surpass.", sentence: "Sons often _____ their fathers." },
-    { word: "ENIGMATIC", phonetic: "/ˌen.ɪɡˈmæt.ɪk/", definition: "Mysterious.", sentence: "The Mona Lisa has an _____ smile." }
+    { word: "ELICIT", phonetic: "/ɪˈlɪsɪt/", definition: "To draw out (information or reaction).", sentence: "The joke failed to _____ a laugh." },
+    { word: "ELUSIVE", phonetic: "/ɪˈluːsɪv/", definition: "Hard to find or catch.", sentence: "Success remained _____." },
+    { word: "EMULATE", phonetic: "/ˈɛmjuleɪt/ ", definition: "To imitate to match or surpass.", sentence: "Sons often _____ their fathers." },
+    { word: "ENIGMATIC", phonetic: "/ˌɛnɪɡˈmætɪk/", definition: "Mysterious.", sentence: "The Mona Lisa has an _____ smile." }
   ],
   Medium: [
     { word: "BRIDGE", phonetic: "/brɪdʒ/", definition: "A structure carrying a road across a river.", sentence: "We drove across the Golden Gate _____." },
@@ -220,6 +220,28 @@ interface GameState {
   status: 'waiting' | 'playing' | 'gameover';
 }
 
+interface ScrabbleState {
+  word: string;
+  definition: string;
+  placedTiles: (Tile | null)[];
+  rackTiles: Tile[];
+  status: 'loading' | 'playing' | 'won' | 'error';
+  score: number;
+  message: string;
+  seenWords: string[];
+  imageUrl?: string;
+  phonetic?: string; // Added field
+}
+
+interface SpellingState {
+    data: SpellingWordData | null;
+    input: string;
+    status: 'loading' | 'playing' | 'won' | 'error';
+    message: string;
+    showDefinition: boolean;
+    showSentence: boolean;
+}
+
 const SoundManager = {
   ctx: null as AudioContext | null,
   init() {
@@ -293,38 +315,55 @@ const getPollinationsImage = (word: string): string => {
 const ShuffledImage = ({ src, isRevealed }: { src: string, isRevealed: boolean }) => {
     const [loaded, setLoaded] = useState(false);
     useEffect(() => { setLoaded(false); }, [src]);
+    const [tiles, setTiles] = useState<number[]>([]);
+
+    useEffect(() => {
+        const indices = Array.from({ length: 9 }, (_, i) => i);
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        setTiles(indices);
+    }, [src]);
+
     return (
         <div style={{ width: '100%', height: '100%', overflow: 'hidden', borderRadius: 8, background: '#eee', position: 'relative' }}>
-            <img 
-                src={src} 
-                onLoad={() => setLoaded(true)}
-                style={{
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'cover',
-                    filter: isRevealed ? 'none' : 'blur(10px)',
-                    transition: 'filter 0.5s ease',
-                    opacity: loaded ? 1 : 0
-                }}
-            />
+             {isRevealed ? (
+                 <img 
+                    src={src} 
+                    onLoad={() => setLoaded(true)}
+                    style={{
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'cover',
+                        opacity: loaded ? 1 : 0,
+                        transition: 'opacity 0.3s'
+                    }}
+                />
+             ) : (
+                <div style={{width: '100%', height: '100%', display: 'flex', flexWrap: 'wrap'}}>
+                    {tiles.map((tileIndex, i) => {
+                        const row = Math.floor(tileIndex / 3);
+                        const col = tileIndex % 3;
+                        return (
+                            <div key={i} style={{
+                                width: '33.33%',
+                                height: '33.33%',
+                                backgroundImage: `url(${src})`,
+                                backgroundPosition: `${col * 50}% ${row * 50}%`,
+                                backgroundSize: '300% 300%',
+                                boxSizing: 'border-box',
+                                border: '1px solid #fff'
+                            }} />
+                        );
+                    })}
+                </div>
+             )}
         </div>
     );
 };
 
-interface ScrabbleState {
-  word: string;
-  definition: string;
-  placedTiles: (Tile | null)[];
-  rackTiles: Tile[];
-  status: 'loading' | 'playing' | 'won' | 'error';
-  score: number;
-  message: string;
-  seenWords: string[];
-  imageUrl?: string;
-  phonetic?: string; // Added field
-}
-
-// ... (Rest of Types remain unchanged) ...
+// --- Components ---
 
 const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
   const [state, setState] = useState<ScrabbleState>({
@@ -445,7 +484,6 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
     fetchWord();
   }, [fetchWord]);
 
-  // Logic Handlers (handleRackTileClick, etc.) remain the same...
   const handleRackTileClick = (tile: Tile) => {
     if (state.status !== 'playing') return;
     SoundManager.init();
@@ -602,19 +640,15 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   );
 };
 
-// ... (Multiplayer Types same as before) ...
-
 const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     const [status, setStatus] = useState<'lobby' | 'hosting' | 'joining' | 'playing' | 'gameover'>('lobby');
     const [role, setRole] = useState<'host' | 'client' | null>(null);
     const [joinInput, setJoinInput] = useState('');
     const [connection, setConnection] = useState<any>(null); // For client
     const [peerId, setPeerId] = useState<string>('');
-    // const [numRounds, setNumRounds] = useState(5); // Removed: Rounds configuration
     const peerRef = useRef<any>(null);
     const hostConnectionsRef = useRef<Map<string, any>>(new Map()); // For host
 
-    // ... (State and Voice Logic same as before) ...
     const [gameState, setGameState] = useState<GameState>({
         players: [],
         words: [],
@@ -748,7 +782,6 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
                  nextState.timeLeft = 30;
                  nextState.activePlayerIndex = (prev.activePlayerIndex + 1) % playerCount;
                  if (nextState.currentWordIndex >= nextState.words.length) {
-                     // Wrap around or End? With 100 words generated, unlikely to reach.
                      nextState.status = 'gameover'; // Fallback
                  } else {
                      speak(nextState.words[nextState.currentWordIndex].word);
@@ -1060,3 +1093,356 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     
     return <div>Loading...</div>;
 };
+
+const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
+    const [state, setState] = useState<SpellingState>({
+        data: null,
+        input: '',
+        status: 'loading',
+        message: '',
+        showDefinition: false,
+        showSentence: false
+    });
+    
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const speak = (text: string, rate = 0.9) => {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+        const coolMaleVoice = voices.find(v => v.name === "Google US English") || voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("male"));
+        if (coolMaleVoice) utterance.voice = coolMaleVoice;
+        utterance.pitch = 0.8; 
+        utterance.rate = rate; 
+        utterance.lang = 'en-US';
+        window.speechSynthesis.speak(utterance);
+    };
+
+    const fetchWord = useCallback(async () => {
+        setState(s => ({ ...s, status: 'loading', message: '', data: null, input: '', showDefinition: false, showSentence: false }));
+
+        if (process.env.API_KEY) {
+            try {
+                const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+                const prompt = `
+                    Generate a random English word for a spelling bee.
+                    Difficulty: ${difficulty}.
+                    Return JSON format:
+                    {
+                        "word": "STRING",
+                        "phonetic": "STRING (IPA)",
+                        "definition": "STRING",
+                        "sentence": "A sentence containing the word, replaced with '________'."
+                    }
+                `;
+                const response = await ai.models.generateContent({
+                    model: 'gemini-2.5-flash',
+                    contents: prompt,
+                    config: {
+                        responseMimeType: 'application/json',
+                        responseSchema: {
+                            type: Type.OBJECT,
+                            properties: {
+                                word: { type: Type.STRING },
+                                phonetic: { type: Type.STRING },
+                                definition: { type: Type.STRING },
+                                sentence: { type: Type.STRING }
+                            },
+                            required: ['word', 'phonetic', 'definition', 'sentence']
+                        }
+                    }
+                });
+                const data = JSON.parse(response.text);
+                const generatedImageUrl = getPollinationsImage(data.word);
+                setState(s => ({
+                    ...s,
+                    data: {
+                        word: data.word.trim().toUpperCase(),
+                        phonetic: data.phonetic || '',
+                        definition: data.definition,
+                        sentence: data.sentence,
+                        imageUrl: generatedImageUrl
+                    },
+                    status: 'playing',
+                }));
+                setTimeout(() => { if (data.word) speak(data.word.trim()); }, 800);
+                return;
+            } catch (e) {
+                console.warn("API failed, using fallback.", e);
+            }
+        }
+
+        await new Promise(r => setTimeout(r, 600)); 
+        const pool = LOCAL_DICTIONARY[difficulty];
+        const randomItem = pool[Math.floor(Math.random() * pool.length)];
+        const imageUrl = getPollinationsImage(randomItem.word);
+
+        setState(s => ({
+            ...s,
+            data: { ...randomItem, imageUrl },
+            status: 'playing'
+        }));
+        
+        setTimeout(() => { speak(randomItem.word); }, 800);
+
+    }, [difficulty]);
+
+    useEffect(() => {
+        fetchWord();
+    }, [fetchWord]);
+
+    const handlePlayWord = () => {
+        if (!state.data) return;
+        speak(state.data.word);
+        inputRef.current?.focus();
+    };
+
+    const handlePlaySentence = () => {
+        if (!state.data) return;
+        setState(s => ({...s, showSentence: true}));
+        speak(state.data.sentence || "Sentence not available", 0.9);
+    };
+
+    const handleSubmit = () => {
+        if (!state.data) return;
+        const cleanInput = state.input.trim().toUpperCase();
+        if (cleanInput === state.data.word) {
+            SoundManager.playWin();
+            const score = Math.max(10, state.data.word.length * 2 - (state.showDefinition ? 5 : 0));
+            onScoreUpdate(score);
+            setState(s => ({ ...s, status: 'won', message: `Correct! +${score} pts` }));
+        } else {
+            SoundManager.playError();
+            setState(s => ({ ...s, message: 'Try again!' }));
+            setTimeout(() => setState(s => ({ ...s, message: '' })), 2000);
+        }
+    };
+
+    return (
+        <div className={`spelling-container ${state.status === 'won' ? 'won' : ''}`}>
+            <div className="word-image-container">
+                {state.data?.imageUrl ? (
+                    <ShuffledImage src={state.data.imageUrl} isRevealed={state.status === 'won'} />
+                ) : (
+                    <span className="image-placeholder">🖼️</span>
+                )}
+            </div>
+
+            {state.status === 'won' ? (
+                <div className="word-reveal">
+                    {state.data?.word}
+                </div>
+            ) : (
+                <>
+                  <div className="audio-btn-large" onClick={handlePlayWord} title="Play Word">
+                       <span className="audio-icon">🔊</span>
+                  </div>
+                  {state.data?.phonetic && (
+                      <div className="phonetic-display">
+                          {state.data.phonetic}
+                      </div>
+                  )}
+                </>
+            )}
+            
+            {state.status !== 'won' && (
+                <input 
+                    ref={inputRef}
+                    className="spelling-input"
+                    type="text" 
+                    value={state.input} 
+                    onChange={(e) => setState(s => ({...s, input: e.target.value}))}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+                    placeholder="TYPE HERE"
+                    autoComplete="off"
+                    spellCheck="false"
+                />
+            )}
+
+            <div className="hint-section">
+                {state.showDefinition && (
+                    <div className="hint-text">{state.data?.definition}</div>
+                )}
+                {state.showSentence && !state.showDefinition && (
+                     <div className="hint-text">"{state.data?.sentence}"</div>
+                )}
+            </div>
+            
+            <div className="message">{state.message}</div>
+
+            <div className="controls">
+                {state.status === 'won' ? (
+                     <button className="btn btn-primary" onClick={fetchWord}>Next Word →</button>
+                ) : (
+                    <>
+                     <button className="btn btn-primary" onClick={handleSubmit}>Check Spelling</button>
+                     <button className="btn btn-audio-small" onClick={handlePlaySentence}>🗣️ Read Sentence</button>
+                     <button className="btn btn-hint" onClick={() => setState(s => ({...s, showDefinition: true}))} disabled={state.showDefinition}>📖 Define (-5)</button>
+                     <button className="btn btn-secondary" onClick={fetchWord}>Skip</button>
+                    </>
+                )}
+            </div>
+        </div>
+    );
+}
+
+const styles = `
+  :root {
+    --bg-color: #2e8b57;
+    --tile-color: #f4e7d1;
+    --tile-shadow: #d9cba8;
+    --wood-color: #8b5a2b;
+    --wood-dark: #5c3a1b;
+    --text-main: #ffffff;
+    --accent: #f9a825;
+    --danger: #e57373;
+    --tab-inactive: rgba(0,0,0,0.3);
+    --tab-active: rgba(255,255,255,0.2);
+    --spelling-bg: #fff9c4;
+  }
+  body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+  .app-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center; padding: 10px; box-sizing: border-box; }
+  .nav-tabs { display: flex; width: 100%; margin-bottom: 20px; background: var(--tab-inactive); border-radius: 12px; padding: 5px; gap: 5px; }
+  .nav-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; border-radius: 8px; font-weight: bold; color: rgba(255,255,255,0.7); transition: all 0.2s; }
+  .nav-tab.active { background: var(--tab-active); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  .header { width: 100%; display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; background: rgba(0, 0, 0, 0.2); padding: 15px 20px; border-radius: 12px; backdrop-filter: blur(5px); box-sizing: border-box; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
+  .game-title { font-size: 1.5rem; font-weight: 800; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); letter-spacing: 1px; color: var(--accent); }
+  .score-container { text-align: right; }
+  .score-board { font-size: 1.2rem; font-weight: bold; color: white; }
+  .high-score { font-size: 0.8rem; color: var(--accent); margin-top: 2px; font-weight: 600; }
+  .level-selector { display: flex; gap: 10px; align-items: center; font-size: 0.9rem; color: rgba(255,255,255,0.8); flex-wrap: wrap; }
+  .level-select { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-family: inherit; }
+  .level-select:focus { outline: none; border-color: var(--accent); }
+  .definition-card { background: white; color: #333; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); margin-bottom: 30px; width: 100%; text-align: center; position: relative; min-height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; }
+  .definition-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; }
+  .definition-text { font-size: 1.2rem; line-height: 1.5; font-weight: 500; }
+  .board-area { display: flex; gap: 8px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; min-height: 60px; }
+  .slot { width: 48px; height: 48px; background: rgba(0,0,0,0.15); border-radius: 6px; border: 2px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+  .slot.filled { border-color: transparent; background: transparent; }
+  .tile { width: 46px; height: 46px; background: var(--tile-color); border-radius: 6px; box-shadow: 0 4px 0 var(--tile-shadow), 0 5px 5px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; position: relative; color: #333; user-select: none; transform: translateY(0); transition: transform 0.1s, box-shadow 0.1s; cursor: pointer; z-index: 2; }
+  .tile.locked { filter: brightness(0.95); cursor: default; }
+  .tile:active { transform: translateY(4px); box-shadow: 0 0 0 var(--tile-shadow), 0 0 0 rgba(0,0,0,0); }
+  .tile-letter { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+  .tile-score { position: absolute; bottom: 2px; right: 3px; font-size: 0.6rem; font-weight: 600; }
+  .rack-container { background: linear-gradient(to bottom, var(--wood-color), var(--wood-dark)); padding: 15px 15px 20px; border-radius: 6px; box-shadow: 0 10px 20px rgba(0,0,0,0.4); display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: fit-content; min-width: 300px; min-height: 80px; align-items: center; margin-bottom: 30px; position: relative; box-sizing: border-box; }
+  .rack-container::after { content: ''; position: absolute; bottom: -10px; left: 10px; right: 10px; height: 10px; background: rgba(0,0,0,0.3); border-radius: 50%; filter: blur(5px); z-index: -1; }
+  .spelling-container { background: var(--spelling-bg); border-radius: 12px; padding: 30px; width: 100%; display: flex; flex-direction: column; align-items: center; box-shadow: 0 8px 16px rgba(0,0,0,0.2); box-sizing: border-box; position: relative; overflow: hidden; }
+  .spelling-container.won { background: #d cedc8; }
+  .spelling-container.error { animation: shake 0.5s; border: 2px solid var(--danger); }
+  @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+  .audio-btn-large { width: 60px; height: 60px; border-radius: 50%; background: var(--wood-color); border: 3px solid #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3); margin-bottom: 15px; transition: transform 0.1s, background 0.2s; }
+  .audio-btn-large:active { transform: scale(0.95); }
+  .audio-btn-large:hover { background: var(--wood-dark); }
+  .audio-icon { font-size: 2rem; color: white; }
+  .word-image-container { width: 200px; height: 200px; background: rgba(255,255,255,0.5); border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.2); position: relative; flex-shrink: 0; }
+  .word-image { width: 100%; height: 100%; object-fit: cover; }
+  .image-placeholder { font-size: 3rem; opacity: 0.5; }
+  .phonetic-display { font-family: 'Lucida Sans Unicode', 'Arial Unicode MS', 'sans-serif'; font-size: 1.2rem; color: #5d4037; background: rgba(255, 255, 255, 0.4); padding: 4px 12px; border-radius: 12px; margin-bottom: 25px; font-style: italic; }
+  .spelling-input { width: 100%; max-width: 300px; padding: 15px; font-size: 2rem; text-align: center; border: none; border-bottom: 3px solid var(--wood-color); background: transparent; color: var(--wood-dark); font-family: 'Courier New', monospace; font-weight: bold; letter-spacing: 5px; outline: none; text-transform: uppercase; margin-bottom: 20px; }
+  .spelling-input::placeholder { color: rgba(0,0,0,0.2); letter-spacing: 0; }
+  .hint-section { width: 100%; text-align: center; margin-bottom: 20px; min-height: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+  .hint-text { color: var(--wood-dark); font-style: italic; font-size: 1.1rem; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; max-width: 90%; }
+  .word-reveal { font-size: 2rem; color: var(--bg-color); font-weight: bold; margin-bottom: 20px; text-shadow: 1px 1px 0 #fff; }
+  .controls { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; width: 100%; }
+  .btn { padding: 12px 24px; border: none; border-radius: 25px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.1s, opacity 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn:active { transform: scale(0.95); }
+  .btn-primary { background: var(--accent); color: #3e2700; }
+  .btn-secondary { background: #ffffff; color: var(--wood-dark); border: 1px solid var(--wood-color); }
+  .btn-hint { background: #ffb74d; color: #4e342e; }
+  .btn-audio-small { background: var(--wood-color); color: white; padding: 8px 16px; font-size: 0.9rem; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .message { height: 20px; margin-bottom: 10px; color: var(--accent); font-weight: bold; text-align: center; }
+  .loader { width: 30px; height: 30px; border: 4px solid #fff; border-bottom-color: transparent; border-radius: 50%; animation: rotation 1s linear infinite; margin: 40px auto; }
+  @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .api-warning { background: #ff5252; color: white; padding: 10px; border-radius: 8px; margin-top: 20px; text-align: center; max-width: 400px; }
+  .shuffle-btn { position: absolute; right: -40px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 1.5rem; }
+  .shuffle-btn:hover { color: white; }
+  .seen-count { position: absolute; bottom: -25px; right: 0; font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+  .lobby-card { background: white; border-radius: 12px; padding: 30px; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); color: #333; text-align: center; }
+  .lobby-input { width: 100%; padding: 12px; font-size: 1.2rem; border: 2px solid #ccc; border-radius: 8px; text-align: center; text-transform: uppercase; letter-spacing: 3px; box-sizing: border-box; }
+  .lobby-code { font-size: 3rem; font-weight: 800; letter-spacing: 5px; color: var(--wood-color); margin: 10px 0; user-select: all; }
+  .player-list { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 20px; }
+  .player-row { display: flex; justify-content: space-between; align-items: center; background: #f0f0f0; padding: 8px 15px; border-radius: 8px; font-weight: bold; }
+  .player-row.active { background: var(--accent); color: #3e2700; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+  .opponent-view { margin-top: 20px; padding-top: 20px; border-top: 2px dashed rgba(255,255,255,0.3); width: 100%; text-align: center; opacity: 0.7; }
+  @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+  .win-anim { animation: pop 0.3s ease-in-out; }
+`;
+
+const App = () => {
+  const [view, setView] = useState<GameMode>('scrabble');
+  const [difficulty, setDifficulty] = useState<Difficulty>('Medium');
+  const [totalScore, setTotalScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('lexicon_highscore');
+    if (stored) setHighScore(parseInt(stored, 10));
+  }, []);
+
+  const updateScore = (points: number) => {
+      const newScore = totalScore + points;
+      setTotalScore(newScore);
+      if (newScore > highScore) {
+          setHighScore(newScore);
+          localStorage.setItem('lexicon_highscore', newScore.toString());
+      }
+  };
+
+  const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setDifficulty(e.target.value as Difficulty);
+  };
+
+  return (
+    <>
+      <style>{styles}</style>
+      <div className="app-container">
+        
+        <header className="header">
+          <div className="header-top">
+             <div className="game-title">LEXICON</div>
+             <div className="score-container">
+                <div className="score-board">Score: {totalScore}</div>
+                <div className="high-score">Best: {highScore}</div>
+             </div>
+          </div>
+          
+          <div className="level-selector">
+             <span>Difficulty:</span>
+             <select className="level-select" value={difficulty} onChange={handleDifficultyChange}>
+               <option value="Easy">Easy</option>
+               <option value="Medium">Medium</option>
+               <option value="Hard">Hard</option>
+             </select>
+          </div>
+        </header>
+
+        <div className="nav-tabs">
+            <div className={`nav-tab ${view === 'scrabble' ? 'active' : ''}`} onClick={() => setView('scrabble')}>
+                Definition Game
+            </div>
+            <div className={`nav-tab ${view === 'spelling' ? 'active' : ''}`} onClick={() => setView('spelling')}>
+                Spelling Bee
+            </div>
+            <div className={`nav-tab ${view === 'multiplayer' ? 'active' : ''}`} onClick={() => setView('multiplayer')}>
+                Multiplayer
+            </div>
+        </div>
+
+        {view === 'scrabble' ? (
+            <ScrabbleGame difficulty={difficulty} onScoreUpdate={updateScore} />
+        ) : view === 'spelling' ? (
+            <SpellingGame difficulty={difficulty} onScoreUpdate={updateScore} />
+        ) : (
+            <MultiplayerGame difficulty={difficulty} />
+        )}
+
+      </div>
+    </>
+  );
+};
+
+const root = createRoot(document.getElementById('app')!);
+root.render(<App />);
