@@ -269,6 +269,69 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
 
 // --- Shared Types & Helpers ---
 
+const useTextToSpeech = () => {
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  // Keep a ref to the active utterance to prevent garbage collection bugs in some browsers
+  const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+
+    const loadVoices = () => {
+      setVoices(window.speechSynthesis.getVoices());
+    };
+
+    loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+      window.speechSynthesis.cancel();
+    };
+  }, []);
+
+  const speak = useCallback((text: string, rate = 0.9) => {
+    if (typeof window === 'undefined' || !window.speechSynthesis || !text) return;
+    
+    // Resume if paused (fixes some stuck states)
+    if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+    }
+    
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = rate;
+    utterance.volume = 1.0;
+    
+    // Store in ref to prevent GC
+    activeUtteranceRef.current = utterance;
+    
+    // Voice selection
+    const currentVoices = window.speechSynthesis.getVoices();
+    const voice = currentVoices.find(v => v.name.includes("Google US English")) || 
+                  currentVoices.find(v => v.lang === 'en-US') || 
+                  currentVoices.find(v => v.lang.startsWith('en'));
+    
+    if (voice) utterance.voice = voice;
+    
+    utterance.onend = () => {
+        activeUtteranceRef.current = null;
+    };
+    
+    utterance.onerror = (e) => {
+        console.error("TTS Error:", e);
+        activeUtteranceRef.current = null;
+    };
+    
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
+  return speak;
+};
+
 interface Tile {
   id: string;
   letter: string;
@@ -302,7 +365,7 @@ interface ScrabbleState {
   message: string;
   seenWords: string[];
   imageUrl?: string;
-  phonetic?: string; // Added field
+  phonetic?: string; 
 }
 
 interface SpellingState {
@@ -439,6 +502,12 @@ const ShuffledImage = ({ src, isRevealed }: { src: string, isRevealed: boolean }
 
 const PhoneticsGuide = () => {
     const [selectedSound, setSelectedSound] = useState<PhoneticEntry | null>(null);
+    const speak = useTextToSpeech();
+
+    const playSound = (sound: PhoneticEntry) => {
+        const text = `${sound.name}. As in ${sound.examples.join(', ')}.`;
+        speak(text);
+    };
 
     return (
         <div className="phonetics-container">
@@ -460,7 +529,13 @@ const PhoneticsGuide = () => {
             {selectedSound && (
                 <div className="modal-overlay" onClick={() => setSelectedSound(null)}>
                     <div className="definition-card modal-content" onClick={e => e.stopPropagation()}>
-                        <h2 style={{fontSize: '3rem', margin: '0 0 10px 0', color: 'var(--accent)'}}>{selectedSound.symbol}</h2>
+                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 15, marginBottom: 10}}>
+                             <h2 style={{fontSize: '3rem', margin: 0, color: 'var(--accent)'}}>{selectedSound.symbol}</h2>
+                             <button className="audio-btn-large" style={{width: 50, height: 50, marginBottom: 0}} onClick={() => playSound(selectedSound)}>
+                                <span className="audio-icon" style={{fontSize: '1.5rem'}}>🔊</span>
+                             </button>
+                        </div>
+                        
                         <div className="definition-label">{selectedSound.type}</div>
                         
                         <div style={{display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 15, flexWrap: 'wrap'}}>
@@ -474,10 +549,24 @@ const PhoneticsGuide = () => {
                         </p>
 
                         <div style={{width: '100%', background: '#f5f5f5', padding: 10, borderRadius: 8}}>
-                            <div className="definition-label" style={{marginBottom: 5}}>Examples</div>
+                            <div className="definition-label" style={{marginBottom: 5}}>Examples (Tap to listen)</div>
                             <div style={{display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center'}}>
                                 {selectedSound.examples.map((ex, i) => (
-                                    <span key={i} style={{fontWeight: 'bold', color: 'var(--wood-dark)'}}>{ex}</span>
+                                    <button 
+                                        key={i} 
+                                        style={{
+                                            fontWeight: 'bold', 
+                                            color: 'var(--wood-dark)', 
+                                            background: '#fff', 
+                                            border: '1px solid #ccc',
+                                            borderRadius: 20,
+                                            padding: '5px 10px',
+                                            cursor: 'pointer'
+                                        }}
+                                        onClick={() => speak(ex)}
+                                    >
+                                        {ex}
+                                    </button>
                                 ))}
                             </div>
                         </div>
@@ -627,7 +716,6 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
       setWordProgress(0);
       localStorage.setItem(`scrabble_level_${difficulty}`, newLevel.toString());
       localStorage.setItem(`scrabble_progress_${difficulty}`, '0');
-      // Trigger a fresh word fetch
       setTimeout(fetchWord, 0); 
   };
 
@@ -828,6 +916,7 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
 const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
   const [level, setLevel] = useState(1);
   const [wordProgress, setWordProgress] = useState(0);
+  const speak = useTextToSpeech();
   
   // Load level from storage
   useEffect(() => {
@@ -849,17 +938,6 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   });
 
   const seenWordsRef = useRef<string[]>([]);
-
-  const speak = useCallback((text: string) => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voices = window.speechSynthesis.getVoices();
-    const preferredVoice = voices.find(v => v.name === "Google US English") || voices.find(v => v.lang.startsWith("en"));
-    if (preferredVoice) utterance.voice = preferredVoice;
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
-  }, []);
 
   const fetchWord = useCallback(async () => {
     setState(prev => ({ ...prev, status: 'loading', message: '', input: '', showDefinition: false, showSentence: false, data: null }));
@@ -1115,17 +1193,8 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     const [message, setMessage] = useState('');
     const [showDef, setShowDef] = useState(false);
 
-    // Voice Logic
-    const speak = useCallback((text: string) => {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        const voices = window.speechSynthesis.getVoices();
-        const coolMaleVoice = voices.find(v => v.name === "Google US English") || voices.find(v => v.lang.startsWith("en") && v.name.includes("Male"));
-        if (coolMaleVoice) utterance.voice = coolMaleVoice;
-        utterance.pitch = 0.8;
-        utterance.rate = 0.9;
-        window.speechSynthesis.speak(utterance);
-    }, []);
+    // Use shared hook for consistent robust behavior
+    const speak = useTextToSpeech();
 
     // Peer Setup
     useEffect(() => {
@@ -1543,204 +1612,3 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     
     return <div>Loading...</div>;
 };
-
-const styles = `
-  :root {
-    --bg-color: #2e8b57;
-    --tile-color: #f4e7d1;
-    --tile-shadow: #d9cba8;
-    --wood-color: #8b5a2b;
-    --wood-dark: #5c3a1b;
-    --text-main: #ffffff;
-    --accent: #f9a825;
-    --danger: #e57373;
-    --tab-inactive: rgba(0,0,0,0.3);
-    --tab-active: rgba(255,255,255,0.2);
-    --spelling-bg: #fff9c4;
-  }
-  body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
-  .app-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center; padding: 10px; box-sizing: border-box; }
-  .nav-tabs { display: flex; width: 100%; margin-bottom: 20px; background: var(--tab-inactive); border-radius: 12px; padding: 5px; gap: 5px; flex-wrap: wrap; }
-  .nav-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; border-radius: 8px; font-weight: bold; color: rgba(255,255,255,0.7); transition: all 0.2s; white-space: nowrap; }
-  .nav-tab.active { background: var(--tab-active); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-  .header { width: 100%; display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; background: rgba(0, 0, 0, 0.2); padding: 15px 20px; border-radius: 12px; backdrop-filter: blur(5px); box-sizing: border-box; }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
-  .game-title { font-size: 1.5rem; font-weight: 800; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); letter-spacing: 1px; color: var(--accent); }
-  .score-container { text-align: right; }
-  .score-board { font-size: 1.2rem; font-weight: bold; color: white; }
-  .high-score { font-size: 0.8rem; color: var(--accent); margin-top: 2px; font-weight: 600; }
-  .level-selector { display: flex; gap: 10px; align-items: center; font-size: 0.9rem; color: rgba(255,255,255,0.8); flex-wrap: wrap; }
-  .level-select { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-family: inherit; }
-  .level-select:focus { outline: none; border-color: var(--accent); }
-  .definition-card { background: white; color: #333; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); margin-bottom: 30px; width: 100%; text-align: center; position: relative; min-height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; }
-  .definition-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; }
-  .definition-text { font-size: 1.2rem; line-height: 1.5; font-weight: 500; }
-  .board-area { display: flex; gap: 8px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; min-height: 60px; }
-  .slot { width: 48px; height: 48px; background: rgba(0,0,0,0.15); border-radius: 6px; border: 2px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-  .slot.filled { border-color: transparent; background: transparent; }
-  .tile { width: 46px; height: 46px; background: var(--tile-color); border-radius: 6px; box-shadow: 0 4px 0 var(--tile-shadow), 0 5px 5px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; position: relative; color: #333; user-select: none; transform: translateY(0); transition: transform 0.1s, box-shadow 0.1s; cursor: pointer; z-index: 2; }
-  .tile.locked { filter: brightness(0.95); cursor: default; }
-  .tile:active { transform: translateY(4px); box-shadow: 0 0 0 var(--tile-shadow), 0 0 0 rgba(0,0,0,0); }
-  .tile-letter { font-size: 1.5rem; font-weight: 700; line-height: 1; }
-  .tile-score { position: absolute; bottom: 2px; right: 3px; font-size: 0.6rem; font-weight: 600; }
-  .rack-container { background: linear-gradient(to bottom, var(--wood-color), var(--wood-dark)); padding: 15px 15px 20px; border-radius: 6px; box-shadow: 0 10px 20px rgba(0,0,0,0.4); display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: fit-content; min-width: 300px; min-height: 80px; align-items: center; margin-bottom: 30px; position: relative; box-sizing: border-box; }
-  .rack-container::after { content: ''; position: absolute; bottom: -10px; left: 10px; right: 10px; height: 10px; background: rgba(0,0,0,0.3); border-radius: 50%; filter: blur(5px); z-index: -1; }
-  .spelling-container { background: var(--spelling-bg); border-radius: 12px; padding: 30px; width: 100%; display: flex; flex-direction: column; align-items: center; box-shadow: 0 8px 16px rgba(0,0,0,0.2); box-sizing: border-box; position: relative; overflow: hidden; }
-  .spelling-container.won { background: #d cedc8; }
-  .spelling-container.error { animation: shake 0.5s; border: 2px solid var(--danger); }
-  @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
-  .audio-btn-large { width: 60px; height: 60px; border-radius: 50%; background: var(--wood-color); border: 3px solid #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3); margin-bottom: 15px; transition: transform 0.1s, background 0.2s; }
-  .audio-btn-large:active { transform: scale(0.95); }
-  .audio-btn-large:hover { background: var(--wood-dark); }
-  .audio-icon { font-size: 2rem; color: white; }
-  .word-image-container { width: 200px; height: 200px; background: rgba(255,255,255,0.5); border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.2); position: relative; flex-shrink: 0; }
-  .word-image { width: 100%; height: 100%; object-fit: cover; }
-  .image-placeholder { font-size: 3rem; opacity: 0.5; }
-  .phonetic-display { font-family: 'Lucida Sans Unicode', 'Arial Unicode MS', 'sans-serif'; font-size: 1.2rem; color: #5d4037; background: rgba(255, 255, 255, 0.4); padding: 4px 12px; border-radius: 12px; margin-bottom: 25px; font-style: italic; }
-  .spelling-input { width: 100%; max-width: 300px; padding: 15px; font-size: 2rem; text-align: center; border: none; border-bottom: 3px solid var(--wood-color); background: transparent; color: var(--wood-dark); font-family: 'Courier New', monospace; font-weight: bold; letter-spacing: 5px; outline: none; text-transform: uppercase; margin-bottom: 20px; }
-  .spelling-input::placeholder { color: rgba(0,0,0,0.2); letter-spacing: 0; }
-  .hint-section { width: 100%; text-align: center; margin-bottom: 20px; min-height: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-  .hint-text { color: var(--wood-dark); font-style: italic; font-size: 1.1rem; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; max-width: 90%; }
-  .word-reveal { font-size: 2rem; color: var(--bg-color); font-weight: bold; margin-bottom: 20px; text-shadow: 1px 1px 0 #fff; }
-  .controls { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; width: 100%; }
-  .btn { padding: 12px 24px; border: none; border-radius: 25px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.1s, opacity 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .btn:active { transform: scale(0.95); }
-  .btn-primary { background: var(--accent); color: #3e2700; }
-  .btn-secondary { background: #ffffff; color: var(--wood-dark); border: 1px solid var(--wood-color); }
-  .btn-hint { background: #ffb74d; color: #4e342e; }
-  .btn-audio-small { background: var(--wood-color); color: white; padding: 8px 16px; font-size: 0.9rem; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .message { height: 20px; margin-bottom: 10px; color: var(--accent); font-weight: bold; text-align: center; }
-  .loader { width: 30px; height: 30px; border: 4px solid #fff; border-bottom-color: transparent; border-radius: 50%; animation: rotation 1s linear infinite; margin: 40px auto; }
-  @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  .api-warning { background: #ff5252; color: white; padding: 10px; border-radius: 8px; margin-top: 20px; text-align: center; max-width: 400px; }
-  .shuffle-btn { position: absolute; right: -40px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 1.5rem; }
-  .shuffle-btn:hover { color: white; }
-  .seen-count { position: absolute; bottom: -25px; right: 0; font-size: 0.7rem; color: rgba(255,255,255,0.5); }
-  .lobby-card { background: white; border-radius: 12px; padding: 30px; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); color: #333; text-align: center; }
-  .lobby-input { width: 100%; padding: 12px; font-size: 1.2rem; border: 2px solid #ccc; border-radius: 8px; text-align: center; text-transform: uppercase; letter-spacing: 3px; box-sizing: border-box; }
-  .lobby-code { font-size: 3rem; font-weight: 800; letter-spacing: 5px; color: var(--wood-color); margin: 10px 0; user-select: all; }
-  .player-list { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 20px; }
-  .player-row { display: flex; justify-content: space-between; align-items: center; background: #f0f0f0; padding: 8px 15px; border-radius: 8px; font-weight: bold; }
-  .player-row.active { background: var(--accent); color: #3e2700; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-  .opponent-view { margin-top: 20px; padding-top: 20px; border-top: 2px dashed rgba(255,255,255,0.3); width: 100%; text-align: center; opacity: 0.7; }
-  
-  /* New Styles */
-  .level-bar { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box; }
-  .level-info { display: flex; justify-content: space-between; font-weight: bold; color: white; margin-bottom: 5px; font-size: 0.9rem; }
-  .progress-track { background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; }
-  
-  .phonetics-container { background: white; border-radius: 12px; padding: 20px; width: 100%; box-sizing: border-box; }
-  .phonetics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 10px; width: 100%; }
-  .phonetic-btn { aspect-ratio: 1; border: 1px solid #ddd; background: #fff; font-family: sans-serif; font-size: 1.2rem; font-weight: bold; color: #333; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
-  .phonetic-btn:hover { transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-  .phonetic-btn.consonant { border-bottom: 3px solid #64b5f6; }
-  .phonetic-btn.vowel { border-bottom: 3px solid #81c784; }
-  .phonetic-btn.diphthong { border-bottom: 3px solid #ba68c8; }
-  
-  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); padding: 20px; }
-  .modal-content { max-width: 400px; margin: 0; animation: pop 0.3s ease-in-out; }
-  .badge { display: inline-block; background: #eee; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; color: #555; font-weight: bold; }
-
-  .level-select-inline {
-      background: rgba(255,255,255,0.3);
-      border: 1px solid rgba(255,255,255,0.4);
-      color: inherit;
-      font-family: inherit;
-      font-weight: bold;
-      border-radius: 4px;
-      padding: 2px 5px;
-      cursor: pointer;
-      font-size: 0.9rem;
-  }
-  .level-select-inline option {
-      color: #333;
-      background: white;
-  }
-
-  @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-  .win-anim { animation: pop 0.3s ease-in-out; }
-`;
-
-const App = () => {
-  const [view, setView] = useState<GameMode>('phonetics'); // Changed default to show phonetics first as requested by "add a section before"
-  const [difficulty, setDifficulty] = useState<Difficulty>('Medium');
-  const [totalScore, setTotalScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('lexicon_highscore');
-    if (stored) setHighScore(parseInt(stored, 10));
-  }, []);
-
-  const updateScore = (points: number) => {
-      const newScore = totalScore + points;
-      setTotalScore(newScore);
-      if (newScore > highScore) {
-          setHighScore(newScore);
-          localStorage.setItem('lexicon_highscore', newScore.toString());
-      }
-  };
-
-  const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setDifficulty(e.target.value as Difficulty);
-  };
-
-  return (
-    <>
-      <Analytics />
-      <style>{styles}</style>
-      <div className="app-container">
-        
-        <header className="header">
-          <div className="header-top">
-             <div className="game-title">LEXICON</div>
-             <div className="score-container">
-                <div className="score-board">Score: {totalScore}</div>
-                <div className="high-score">Best: {highScore}</div>
-             </div>
-          </div>
-          
-          <div className="level-selector">
-             <span>Difficulty:</span>
-             <select className="level-select" value={difficulty} onChange={handleDifficultyChange}>
-               <option value="Easy">Easy</option>
-               <option value="Medium">Medium</option>
-               <option value="Hard">Hard</option>
-             </select>
-          </div>
-        </header>
-
-        <div className="nav-tabs">
-            <div className={`nav-tab ${view === 'phonetics' ? 'active' : ''}`} onClick={() => setView('phonetics')}>
-                Sounds
-            </div>
-            <div className={`nav-tab ${view === 'scrabble' ? 'active' : ''}`} onClick={() => setView('scrabble')}>
-                Definition Game
-            </div>
-            <div className={`nav-tab ${view === 'spelling' ? 'active' : ''}`} onClick={() => setView('spelling')}>
-                Spelling Bee
-            </div>
-            <div className={`nav-tab ${view === 'multiplayer' ? 'active' : ''}`} onClick={() => setView('multiplayer')}>
-                Multiplayer
-            </div>
-        </div>
-
-        {view === 'phonetics' ? (
-            <PhoneticsGuide />
-        ) : view === 'scrabble' ? (
-            <ScrabbleGame difficulty={difficulty} onScoreUpdate={updateScore} />
-        ) : view === 'spelling' ? (
-            <SpellingGame difficulty={difficulty} onScoreUpdate={updateScore} />
-        ) : (
-            <MultiplayerGame difficulty={difficulty} />
-        )}
-
-      </div>
-    </>
-  );
-};
-
-const root = createRoot(document.getElementById('app')!);
-root.render(<App />);
