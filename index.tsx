@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { GoogleGenAI, Type } from "@google/genai";
 import { Peer, DataConnection } from 'peerjs';
+import { Analytics } from '@vercel/analytics/react';
 
 // --- Configuration & Constants ---
 
@@ -11,7 +12,78 @@ const SCRABBLE_SCORES: Record<string, number> = {
 };
 
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
-type GameMode = 'scrabble' | 'spelling' | 'multiplayer';
+type GameMode = 'scrabble' | 'spelling' | 'multiplayer' | 'phonetics';
+
+const LEVEL_CONFIG: Record<Difficulty, { maxLevels: number, wordsPerLevel: number }> = {
+    Easy: { maxLevels: 20, wordsPerLevel: 20 },
+    Medium: { maxLevels: 50, wordsPerLevel: 20 },
+    Hard: { maxLevels: 100, wordsPerLevel: 20 }
+};
+
+interface PhoneticEntry {
+    symbol: string;
+    name: string;
+    type: string; // Vowel, Consonant, Diphthong
+    voiced?: boolean; // True if voiced, false if voiceless
+    place?: string; // e.g., Bilabial
+    manner?: string; // e.g., Stop
+    examples: string[];
+    description: string;
+}
+
+const PHONETICS_DATA: PhoneticEntry[] = [
+    // Consonants - Stops
+    { symbol: 'p', name: 'p', type: 'Consonant', voiced: false, place: 'Bilabial', manner: 'Stop', examples: ['pen', 'spin', 'tip', 'happy', 'pie'], description: 'Lips come together to block air, then release it.' },
+    { symbol: 'b', name: 'b', type: 'Consonant', voiced: true, place: 'Bilabial', manner: 'Stop', examples: ['but', 'web', 'baby', 'boy', 'lab'], description: 'Like /p/, but vocal cords vibrate.' },
+    { symbol: 't', name: 't', type: 'Consonant', voiced: false, place: 'Alveolar', manner: 'Stop', examples: ['two', 'sting', 'bet', 'ten', 'matter'], description: 'Tongue tip touches the ridge behind upper teeth.' },
+    { symbol: 'd', name: 'd', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Stop', examples: ['do', 'daddy', 'odd', 'dog', 'ladder'], description: 'Like /t/, but vocal cords vibrate.' },
+    { symbol: 'k', name: 'k', type: 'Consonant', voiced: false, place: 'Velar', manner: 'Stop', examples: ['cat', 'kill', 'skin', 'queen', 'thick'], description: 'Back of tongue touches the soft palate.' },
+    { symbol: 'g', name: 'g', type: 'Consonant', voiced: true, place: 'Velar', manner: 'Stop', examples: ['go', 'get', 'beg', 'green', 'egg'], description: 'Like /k/, but vocal cords vibrate.' },
+    // Consonants - Fricatives
+    { symbol: 'f', name: 'f', type: 'Consonant', voiced: false, place: 'Labiodental', manner: 'Fricative', examples: ['fool', 'enough', 'leaf', 'off', 'photo'], description: 'Top teeth touch bottom lip, air flows through.' },
+    { symbol: 'v', name: 'v', type: 'Consonant', voiced: true, place: 'Labiodental', manner: 'Fricative', examples: ['voice', 'have', 'of', 'vase', 'never'], description: 'Like /f/, but vocal cords vibrate.' },
+    { symbol: 'θ', name: 'theta', type: 'Consonant', voiced: false, place: 'Dental', manner: 'Fricative', examples: ['thing', 'teeth', 'with', 'thought', 'breath'], description: 'Tongue tip between teeth, air flows through.' },
+    { symbol: 'ð', name: 'eth', type: 'Consonant', voiced: true, place: 'Dental', manner: 'Fricative', examples: ['this', 'breathe', 'father', 'they', 'smooth'], description: 'Like /θ/, but vocal cords vibrate.' },
+    { symbol: 's', name: 's', type: 'Consonant', voiced: false, place: 'Alveolar', manner: 'Fricative', examples: ['see', 'city', 'pass', 'lesson', 'sun'], description: 'Air forces through narrow gap behind teeth.' },
+    { symbol: 'z', name: 'z', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Fricative', examples: ['zoo', 'rose', 'buzz', 'zip', 'easy'], description: 'Like /s/, but vocal cords vibrate.' },
+    { symbol: 'ʃ', name: 'esh', type: 'Consonant', voiced: false, place: 'Post-alveolar', manner: 'Fricative', examples: ['she', 'sure', 'emotion', 'leash', 'ocean'], description: 'Tongue further back than /s/, lips rounded.' },
+    { symbol: 'ʒ', name: 'yogh', type: 'Consonant', voiced: true, place: 'Post-alveolar', manner: 'Fricative', examples: ['pleasure', 'beige', 'vision', 'measure', 'genre'], description: 'Like /ʃ/, but vocal cords vibrate.' },
+    { symbol: 'h', name: 'h', type: 'Consonant', voiced: false, place: 'Glottal', manner: 'Fricative', examples: ['ham', 'who', 'ahead', 'hi', 'house'], description: 'Air passes through open vocal cords.' },
+    // Consonants - Affricates
+    { symbol: 'tʃ', name: 'ch', type: 'Consonant', voiced: false, place: 'Post-alveolar', manner: 'Affricate', examples: ['chair', 'nature', 'teach', 'choose', 'watch'], description: 'Starts as /t/, releases as /ʃ/.' },
+    { symbol: 'dʒ', name: 'j', type: 'Consonant', voiced: true, place: 'Post-alveolar', manner: 'Affricate', examples: ['gin', 'joy', 'edge', 'judge', 'age'], description: 'Starts as /d/, releases as /ʒ/.' },
+    // Consonants - Nasals
+    { symbol: 'm', name: 'm', type: 'Consonant', voiced: true, place: 'Bilabial', manner: 'Nasal', examples: ['man', 'ham', 'more', 'summer', 'room'], description: 'Lips closed, air goes through nose.' },
+    { symbol: 'n', name: 'n', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Nasal', examples: ['no', 'tin', 'know', 'funny', 'sun'], description: 'Tongue on ridge, air goes through nose.' },
+    { symbol: 'ŋ', name: 'eng', type: 'Consonant', voiced: true, place: 'Velar', manner: 'Nasal', examples: ['sing', 'ring', 'finger', 'anger', 'thanks'], description: 'Back of tongue lifts, air goes through nose.' },
+    // Consonants - Approximants
+    { symbol: 'l', name: 'l', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Lateral Approximant', examples: ['left', 'bell', 'table', 'like', 'feel'], description: 'Tongue touches ridge, air flows around sides.' },
+    { symbol: 'r', name: 'r', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Approximant', examples: ['run', 'very', 'bird', 'red', 'car'], description: 'Tongue curls back or bunches up.' },
+    { symbol: 'w', name: 'w', type: 'Consonant', voiced: true, place: 'Velar', manner: 'Approximant', examples: ['we', 'queen', 'water', 'why', 'quick'], description: 'Lips rounded, back of tongue raises.' },
+    { symbol: 'j', name: 'y', type: 'Consonant', voiced: true, place: 'Palatal', manner: 'Approximant', examples: ['yes', 'yellow', 'few', 'view', 'onion'], description: 'Tongue raises to hard palate.' },
+    // Vowels - Monophthongs
+    { symbol: 'iː', name: 'fleece', type: 'Vowel', voiced: true, place: 'Front Close', manner: 'Vowel', examples: ['see', 'heat', 'be', 'key', 'people'], description: 'Long vowel. Tongue high and front.' },
+    { symbol: 'ɪ', name: 'kit', type: 'Vowel', voiced: true, place: 'Front Close-mid', manner: 'Vowel', examples: ['hit', 'sitting', 'gym', 'bit', 'in'], description: 'Short vowel. Slightly lower than /i:/.' },
+    { symbol: 'e', name: 'dress', type: 'Vowel', voiced: true, place: 'Front Mid', manner: 'Vowel', examples: ['met', 'bed', 'bread', 'said', 'head'], description: 'Short vowel. Jaw drops slightly.' },
+    { symbol: 'æ', name: 'trap', type: 'Vowel', voiced: true, place: 'Front Open', manner: 'Vowel', examples: ['cat', 'black', 'hand', 'laugh', 'apple'], description: 'Short vowel. Jaw open, tongue front.' },
+    { symbol: 'ɑː', name: 'palm', type: 'Vowel', voiced: true, place: 'Back Open', manner: 'Vowel', examples: ['father', 'start', 'hard', 'car', 'heart'], description: 'Long vowel. Jaw open, tongue back.' },
+    { symbol: 'ɒ', name: 'lot', type: 'Vowel', voiced: true, place: 'Back Open', manner: 'Vowel', examples: ['hot', 'rock', 'stop', 'want', 'wash'], description: 'Short vowel. Lips slightly rounded.' },
+    { symbol: 'ɔː', name: 'thought', type: 'Vowel', voiced: true, place: 'Back Mid', manner: 'Vowel', examples: ['call', 'four', 'saw', 'walk', 'door'], description: 'Long vowel. Lips rounded.' },
+    { symbol: 'ʊ', name: 'foot', type: 'Vowel', voiced: true, place: 'Back Close-mid', manner: 'Vowel', examples: ['put', 'could', 'book', 'look', 'good'], description: 'Short vowel. Lips rounded.' },
+    { symbol: 'uː', name: 'goose', type: 'Vowel', voiced: true, place: 'Back Close', manner: 'Vowel', examples: ['blue', 'food', 'too', 'shoe', 'who'], description: 'Long vowel. Lips very rounded.' },
+    { symbol: 'ʌ', name: 'strut', type: 'Vowel', voiced: true, place: 'Central Open-mid', manner: 'Vowel', examples: ['cup', 'luck', 'love', 'blood', 'up'], description: 'Short vowel. Relaxed jaw.' },
+    { symbol: 'ɜː', name: 'nurse', type: 'Vowel', voiced: true, place: 'Central Mid', manner: 'Vowel', examples: ['bird', 'hurt', 'work', 'learn', 'first'], description: 'Long vowel. Neutral tongue position.' },
+    { symbol: 'ə', name: 'schwa', type: 'Vowel', voiced: true, place: 'Central', manner: 'Vowel', examples: ['about', 'banana', 'the', 'sofa', 'arena'], description: 'The most common sound. Completely relaxed.' },
+    // Diphthongs
+    { symbol: 'eɪ', name: 'face', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['say', 'eight', 'rain', 'break', 'day'], description: 'Glides from /e/ to /ɪ/.' },
+    { symbol: 'aɪ', name: 'price', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['my', 'sight', 'buy', 'eye', 'fly'], description: 'Glides from /a/ to /ɪ/.' },
+    { symbol: 'ɔɪ', name: 'choice', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['boy', 'join', 'toy', 'noise', 'oil'], description: 'Glides from /ɔ/ to /ɪ/.' },
+    { symbol: 'uə', name: 'cure', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['pure', 'tourist', 'cure', 'furious', 'security'], description: 'Glides from /ʊ/ to /ə/.' },
+    { symbol: 'aʊ', name: 'mouth', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['now', 'out', 'house', 'cow', 'loud'], description: 'Glides from /a/ to /ʊ/.' },
+    { symbol: 'əʊ', name: 'goat', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['no', 'go', 'stone', 'home', 'alone'], description: 'Glides from /ə/ to /ʊ/.' },
+    { symbol: 'ɪə', name: 'near', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['near', 'ear', 'here', 'clear', 'year'], description: 'Glides from /ɪ/ to /ə/.' },
+    { symbol: 'eə', name: 'square', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['hair', 'care', 'stair', 'where', 'air'], description: 'Glides from /e/ to /ə/.' }
+];
 
 // Fallback Dictionary for Offline/Error Mode (Scrabble)
 interface WordEntry {
@@ -88,7 +160,7 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "ADEQUATE", phonetic: "/ˈæd.ə.kwət/", definition: "Good enough.", sentence: "The food was _____." },
     { word: "ARBITRARY", phonetic: "/ˈɑːr.bə.trer.i/", definition: "Based on random choice, not reason.", sentence: "An _____ decision." },
     { word: "CONVENTIONAL", phonetic: "/kənˈven.ʃən.əl/", definition: "Normal, traditional.", sentence: "A _____ oven." },
-    { word: "RELUCTANT", phonetic: "/rɪˈlʌk.tənt/", definition: "Not wanting to do something.", sentence: "He was _____ to go." },
+    { word: "RELUCTANT", phonetic: "/rɪˈlʌk.tənt/", definition: "Not wanting to do something.", sentence: "He is _____ to go." },
     { word: "AMPLE", phonetic: "/ˈæm.pəl/", definition: "More than enough.", sentence: "There is _____ room." },
     { word: "BRITTLE", phonetic: "/ˈbrɪt.əl/", definition: "Easily broken.", sentence: "Dry twigs are _____." },
     { word: "PONDER", phonetic: "/ˈpɑːn.dɚ/", definition: "To think deeply.", sentence: "I need to _____ this." },
@@ -365,7 +437,71 @@ const ShuffledImage = ({ src, isRevealed }: { src: string, isRevealed: boolean }
 
 // --- Components ---
 
+const PhoneticsGuide = () => {
+    const [selectedSound, setSelectedSound] = useState<PhoneticEntry | null>(null);
+
+    return (
+        <div className="phonetics-container">
+            <h3 style={{textAlign: 'center', marginBottom: 20, color: 'var(--wood-dark)'}}>English Phonetic Reference</h3>
+            <p style={{textAlign: 'center', marginBottom: 20, fontSize: '0.9rem', color: '#555'}}>Tap a symbol to see articulation details.</p>
+            
+            <div className="phonetics-grid">
+                {PHONETICS_DATA.map((sound, idx) => (
+                    <button 
+                        key={idx} 
+                        className={`phonetic-btn ${sound.type.toLowerCase()}`}
+                        onClick={() => setSelectedSound(sound)}
+                    >
+                        {sound.symbol}
+                    </button>
+                ))}
+            </div>
+
+            {selectedSound && (
+                <div className="modal-overlay" onClick={() => setSelectedSound(null)}>
+                    <div className="definition-card modal-content" onClick={e => e.stopPropagation()}>
+                        <h2 style={{fontSize: '3rem', margin: '0 0 10px 0', color: 'var(--accent)'}}>{selectedSound.symbol}</h2>
+                        <div className="definition-label">{selectedSound.type}</div>
+                        
+                        <div style={{display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 15, flexWrap: 'wrap'}}>
+                            <span className="badge">{selectedSound.voiced ? "Voiced 🔊" : "Voiceless 🔇"}</span>
+                            {selectedSound.place && <span className="badge">{selectedSound.place}</span>}
+                            {selectedSound.manner && <span className="badge">{selectedSound.manner}</span>}
+                        </div>
+
+                        <p className="definition-text" style={{fontSize: '1rem', marginBottom: 20}}>
+                            {selectedSound.description}
+                        </p>
+
+                        <div style={{width: '100%', background: '#f5f5f5', padding: 10, borderRadius: 8}}>
+                            <div className="definition-label" style={{marginBottom: 5}}>Examples</div>
+                            <div style={{display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center'}}>
+                                {selectedSound.examples.map((ex, i) => (
+                                    <span key={i} style={{fontWeight: 'bold', color: 'var(--wood-dark)'}}>{ex}</span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <button className="btn btn-secondary" style={{marginTop: 20}} onClick={() => setSelectedSound(null)}>Close</button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
+  const [level, setLevel] = useState(1);
+  const [wordProgress, setWordProgress] = useState(0);
+
+  // Load level from storage
+  useEffect(() => {
+    const savedLevel = localStorage.getItem(`scrabble_level_${difficulty}`);
+    const savedProgress = localStorage.getItem(`scrabble_progress_${difficulty}`);
+    if (savedLevel) setLevel(parseInt(savedLevel));
+    if (savedProgress) setWordProgress(parseInt(savedProgress));
+  }, [difficulty]);
+
   const [state, setState] = useState<ScrabbleState>({
     word: '',
     definition: '',
@@ -378,6 +514,7 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   });
 
   const seenWordsRef = useRef<string[]>([]);
+  const { maxLevels, wordsPerLevel } = LEVEL_CONFIG[difficulty];
 
   const fetchWord = useCallback(async () => {
     setState(prev => ({ ...prev, status: 'loading', message: '', placedTiles: [], rackTiles: [], word: '', definition: '', imageUrl: undefined, phonetic: undefined }));
@@ -484,6 +621,16 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
     fetchWord();
   }, [fetchWord]);
 
+  const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const newLevel = parseInt(e.target.value);
+      setLevel(newLevel);
+      setWordProgress(0);
+      localStorage.setItem(`scrabble_level_${difficulty}`, newLevel.toString());
+      localStorage.setItem(`scrabble_progress_${difficulty}`, '0');
+      // Trigger a fresh word fetch
+      setTimeout(fetchWord, 0); 
+  };
+
   const handleRackTileClick = (tile: Tile) => {
     if (state.status !== 'playing') return;
     SoundManager.init();
@@ -565,6 +712,21 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
     setState(prev => ({ ...prev, rackTiles: shuffleArray(prev.rackTiles) }));
   };
 
+  const handleLevelProgress = () => {
+      let nextProgress = wordProgress + 1;
+      let nextLevel = level;
+      
+      if (nextProgress >= wordsPerLevel) {
+          nextLevel = Math.min(level + 1, maxLevels);
+          nextProgress = 0;
+      }
+      
+      setLevel(nextLevel);
+      setWordProgress(nextProgress);
+      localStorage.setItem(`scrabble_level_${difficulty}`, nextLevel.toString());
+      localStorage.setItem(`scrabble_progress_${difficulty}`, nextProgress.toString());
+  };
+
   const checkWin = (currentPlaced: (Tile | null)[], targetWord: string) => {
     if (currentPlaced.some(t => t === null)) return;
     const formedWord = currentPlaced.map(t => t?.letter).join('');
@@ -572,6 +734,7 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
       SoundManager.playWin();
       const wordScore = currentPlaced.reduce((acc, t) => acc + (t ? t.value : 0), 0);
       onScoreUpdate(wordScore);
+      handleLevelProgress();
       setState(prev => ({ ...prev, status: 'won', message: `Correct! +${wordScore} pts` }));
     } else {
       SoundManager.playError();
@@ -584,6 +747,28 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
 
   return (
     <>
+      <div className="level-bar">
+          <div className="level-info">
+              <div style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                  <span>Level</span>
+                  <select 
+                    value={level} 
+                    onChange={handleLevelChange}
+                    className="level-select-inline"
+                  >
+                    {Array.from({length: maxLevels}, (_, i) => i + 1).map(l => (
+                        <option key={l} value={l}> {l} </option>
+                    ))}
+                  </select>
+                  <span>/ {maxLevels}</span>
+              </div>
+              <span>Word {wordProgress + 1} / {wordsPerLevel}</span>
+          </div>
+          <div className="progress-track">
+              <div className="progress-fill" style={{width: `${(wordProgress / wordsPerLevel) * 100}%`}}></div>
+          </div>
+      </div>
+
       <div className="definition-card">
         {state.imageUrl && (
             <div className="word-image-container" style={{width: 150, height: 150, margin: '0 auto 15px'}}>
@@ -637,6 +822,271 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
         </div>
       )}
     </>
+  );
+};
+
+const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
+  const [level, setLevel] = useState(1);
+  const [wordProgress, setWordProgress] = useState(0);
+  
+  // Load level from storage
+  useEffect(() => {
+    const savedLevel = localStorage.getItem(`spelling_level_${difficulty}`);
+    const savedProgress = localStorage.getItem(`spelling_progress_${difficulty}`);
+    if (savedLevel) setLevel(parseInt(savedLevel));
+    if (savedProgress) setWordProgress(parseInt(savedProgress));
+  }, [difficulty]);
+
+  const { maxLevels, wordsPerLevel } = LEVEL_CONFIG[difficulty];
+
+  const [state, setState] = useState<SpellingState>({
+    data: null,
+    input: '',
+    status: 'loading',
+    message: '',
+    showDefinition: false,
+    showSentence: false
+  });
+
+  const seenWordsRef = useRef<string[]>([]);
+
+  const speak = useCallback((text: string) => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(v => v.name === "Google US English") || voices.find(v => v.lang.startsWith("en"));
+    if (preferredVoice) utterance.voice = preferredVoice;
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
+  const fetchWord = useCallback(async () => {
+    setState(prev => ({ ...prev, status: 'loading', message: '', input: '', showDefinition: false, showSentence: false, data: null }));
+
+    if (process.env.API_KEY) {
+      try {
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const model = difficulty === 'Hard' ? 'gemini-3-pro-preview' : 'gemini-2.5-flash';
+        
+        const prompt = `
+          Pick a single random English word for a spelling bee.
+          Difficulty Level: ${difficulty}.
+          ${difficulty === 'Easy' ? 'Word length 4-6 letters. Common words.' : ''}
+          ${difficulty === 'Medium' ? 'Word length 6-10 letters. Standard vocabulary.' : ''}
+          ${difficulty === 'Hard' ? 'Word length 10+ letters. Advanced, obscure, or tricky spelling words.' : ''}
+
+          Do NOT use these words: ${seenWordsRef.current.slice(-20).join(', ')}.
+
+          Return JSON format:
+          {
+            "word": "EXAMPLE",
+            "phonetic": "/.../",
+            "definition": "The definition...",
+            "sentence": "A sentence using the word."
+          }
+        `;
+
+        const response = await ai.models.generateContent({
+          model: model,
+          contents: prompt,
+          config: {
+             responseMimeType: 'application/json',
+             responseSchema: {
+               type: Type.OBJECT,
+               properties: {
+                 word: { type: Type.STRING },
+                 phonetic: { type: Type.STRING },
+                 definition: { type: Type.STRING },
+                 sentence: { type: Type.STRING }
+               },
+               required: ['word', 'definition', 'sentence']
+             }
+          }
+        });
+        
+        const data = JSON.parse(response.text);
+        
+        if (data.word) {
+             const wordData: SpellingWordData = {
+                word: data.word.toUpperCase().trim(),
+                phonetic: data.phonetic,
+                definition: data.definition,
+                sentence: data.sentence,
+                imageUrl: getPollinationsImage(data.word)
+             };
+             
+             seenWordsRef.current.push(wordData.word);
+
+             setState(prev => ({
+                ...prev,
+                status: 'playing',
+                data: wordData
+             }));
+             setTimeout(() => speak(wordData.word), 500);
+             return;
+        }
+
+      } catch (e) {
+        console.warn("API Error", e);
+      }
+    }
+
+    // Fallback
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const candidates = LOCAL_DICTIONARY[difficulty];
+    const available = candidates.filter(c => !seenWordsRef.current.includes(c.word));
+    const pool = available.length > 0 ? available : candidates;
+    const randomEntry = pool[Math.floor(Math.random() * pool.length)];
+    
+    const wordData: SpellingWordData = {
+        word: randomEntry.word.toUpperCase(),
+        phonetic: randomEntry.phonetic,
+        definition: randomEntry.definition,
+        sentence: randomEntry.sentence,
+        imageUrl: getPollinationsImage(randomEntry.word)
+    };
+    
+    seenWordsRef.current.push(wordData.word);
+
+    setState(prev => ({
+      ...prev,
+      status: 'playing',
+      data: wordData
+    }));
+    setTimeout(() => speak(wordData.word), 500);
+
+  }, [difficulty, speak]);
+
+  useEffect(() => {
+    fetchWord();
+  }, [fetchWord]);
+
+  const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const newLevel = parseInt(e.target.value);
+      setLevel(newLevel);
+      setWordProgress(0);
+      localStorage.setItem(`spelling_level_${difficulty}`, newLevel.toString());
+      localStorage.setItem(`spelling_progress_${difficulty}`, '0');
+      setTimeout(fetchWord, 0);
+  };
+
+  const handleLevelProgress = () => {
+    let nextProgress = wordProgress + 1;
+    let nextLevel = level;
+    
+    if (nextProgress >= wordsPerLevel) {
+        nextLevel = Math.min(level + 1, maxLevels);
+        nextProgress = 0;
+    }
+    
+    setLevel(nextLevel);
+    setWordProgress(nextProgress);
+    localStorage.setItem(`spelling_level_${difficulty}`, nextLevel.toString());
+    localStorage.setItem(`spelling_progress_${difficulty}`, nextProgress.toString());
+  };
+
+  const checkWord = () => {
+      SoundManager.init();
+      if (!state.data) return;
+      if (state.input.toUpperCase().trim() === state.data.word) {
+          SoundManager.playWin();
+          const points = difficulty === 'Hard' ? 15 : difficulty === 'Medium' ? 10 : 5;
+          onScoreUpdate(points);
+          handleLevelProgress();
+          setState(prev => ({ ...prev, status: 'won', message: `Correct! +${points} pts` }));
+      } else {
+          SoundManager.playError();
+          setState(prev => ({ ...prev, message: 'Try again!' }));
+          setTimeout(() => setState(prev => ({...prev, message: ''})), 1500);
+      }
+  };
+
+  if (state.status === 'loading') return <div className="loader"></div>;
+
+  return (
+    <div className={`spelling-container ${state.status === 'won' ? 'won' : ''} ${state.message === 'Try again!' ? 'error' : ''}`}>
+        
+        <div className="level-bar" style={{width: '100%', marginBottom: 20}}>
+            <div className="level-info" style={{color: '#555'}}>
+                <div style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                  <span>Level</span>
+                  <select 
+                    value={level} 
+                    onChange={handleLevelChange}
+                    className="level-select-inline"
+                    style={{color: '#333', borderColor: '#999'}}
+                  >
+                    {Array.from({length: maxLevels}, (_, i) => i + 1).map(l => (
+                        <option key={l} value={l}> {l} </option>
+                    ))}
+                  </select>
+                  <span>/ {maxLevels}</span>
+                </div>
+                <span>Word {wordProgress + 1} / {wordsPerLevel}</span>
+            </div>
+            <div className="progress-track" style={{background: '#ddd'}}>
+                <div className="progress-fill" style={{width: `${(wordProgress / wordsPerLevel) * 100}%`, background: 'var(--accent)'}}></div>
+            </div>
+        </div>
+
+        <div className="word-image-container">
+            {state.data?.imageUrl && <ShuffledImage src={state.data.imageUrl} isRevealed={state.status === 'won'} />}
+        </div>
+        
+        <div className="audio-btn-large" onClick={() => speak(state.data?.word || '')}>
+             <span className="audio-icon">🔊</span>
+        </div>
+        
+        {state.data?.phonetic && (
+            <div className="phonetic-display">
+                {state.data.phonetic}
+            </div>
+        )}
+
+        <input 
+            className="spelling-input"
+            value={state.input}
+            onChange={e => setState(prev => ({...prev, input: e.target.value}))}
+            placeholder="SPELL IT"
+            disabled={state.status === 'won'}
+            onKeyDown={e => e.key === 'Enter' && checkWord()}
+            autoFocus
+        />
+
+        <div className="message">{state.message}</div>
+        
+        <div className="hint-section">
+             {state.showDefinition && (
+                 <div className="hint-text">
+                     <strong>Def:</strong> {state.data?.definition}
+                 </div>
+             )}
+             {state.showSentence && state.data?.sentence && (
+                 <div className="hint-text" style={{marginTop: 5}}>
+                     <strong>Use:</strong> "{state.data.sentence.replace(new RegExp(state.data.word, 'gi'), '_____')}"
+                 </div>
+             )}
+        </div>
+
+        <div className="controls">
+            {state.status === 'won' ? (
+                <button className="btn btn-primary" onClick={fetchWord}>Next Word →</button>
+            ) : (
+                <>
+                    <button className="btn btn-primary" onClick={checkWord}>Submit</button>
+                    <button className="btn btn-hint" onClick={() => {
+                        if (!state.showDefinition) setState(prev => ({...prev, showDefinition: true}));
+                        else if (!state.showSentence) setState(prev => ({...prev, showSentence: true}));
+                        else speak(state.data?.word || '');
+                    }}>
+                        {(!state.showDefinition) ? 'Hint: Def' : (!state.showSentence) ? 'Hint: Sentence' : 'Replay Audio'}
+                    </button>
+                    <button className="btn btn-secondary" onClick={fetchWord}>Skip</button>
+                </>
+            )}
+        </div>
+    </div>
   );
 };
 
@@ -1094,199 +1544,6 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     return <div>Loading...</div>;
 };
 
-const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, onScoreUpdate: (points: number) => void }) => {
-    const [state, setState] = useState<SpellingState>({
-        data: null,
-        input: '',
-        status: 'loading',
-        message: '',
-        showDefinition: false,
-        showSentence: false
-    });
-    
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    const speak = (text: string, rate = 0.9) => {
-        if (!window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        const voices = window.speechSynthesis.getVoices();
-        const coolMaleVoice = voices.find(v => v.name === "Google US English") || voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("male"));
-        if (coolMaleVoice) utterance.voice = coolMaleVoice;
-        utterance.pitch = 0.8; 
-        utterance.rate = rate; 
-        utterance.lang = 'en-US';
-        window.speechSynthesis.speak(utterance);
-    };
-
-    const fetchWord = useCallback(async () => {
-        setState(s => ({ ...s, status: 'loading', message: '', data: null, input: '', showDefinition: false, showSentence: false }));
-
-        if (process.env.API_KEY) {
-            try {
-                const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-                const prompt = `
-                    Generate a random English word for a spelling bee.
-                    Difficulty: ${difficulty}.
-                    Return JSON format:
-                    {
-                        "word": "STRING",
-                        "phonetic": "STRING (IPA)",
-                        "definition": "STRING",
-                        "sentence": "A sentence containing the word, replaced with '________'."
-                    }
-                `;
-                const response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: prompt,
-                    config: {
-                        responseMimeType: 'application/json',
-                        responseSchema: {
-                            type: Type.OBJECT,
-                            properties: {
-                                word: { type: Type.STRING },
-                                phonetic: { type: Type.STRING },
-                                definition: { type: Type.STRING },
-                                sentence: { type: Type.STRING }
-                            },
-                            required: ['word', 'phonetic', 'definition', 'sentence']
-                        }
-                    }
-                });
-                const data = JSON.parse(response.text);
-                const generatedImageUrl = getPollinationsImage(data.word);
-                setState(s => ({
-                    ...s,
-                    data: {
-                        word: data.word.trim().toUpperCase(),
-                        phonetic: data.phonetic || '',
-                        definition: data.definition,
-                        sentence: data.sentence,
-                        imageUrl: generatedImageUrl
-                    },
-                    status: 'playing',
-                }));
-                setTimeout(() => { if (data.word) speak(data.word.trim()); }, 800);
-                return;
-            } catch (e) {
-                console.warn("API failed, using fallback.", e);
-            }
-        }
-
-        await new Promise(r => setTimeout(r, 600)); 
-        const pool = LOCAL_DICTIONARY[difficulty];
-        const randomItem = pool[Math.floor(Math.random() * pool.length)];
-        const imageUrl = getPollinationsImage(randomItem.word);
-
-        setState(s => ({
-            ...s,
-            data: { ...randomItem, imageUrl },
-            status: 'playing'
-        }));
-        
-        setTimeout(() => { speak(randomItem.word); }, 800);
-
-    }, [difficulty]);
-
-    useEffect(() => {
-        fetchWord();
-    }, [fetchWord]);
-
-    const handlePlayWord = () => {
-        if (!state.data) return;
-        speak(state.data.word);
-        inputRef.current?.focus();
-    };
-
-    const handlePlaySentence = () => {
-        if (!state.data) return;
-        setState(s => ({...s, showSentence: true}));
-        speak(state.data.sentence || "Sentence not available", 0.9);
-    };
-
-    const handleSubmit = () => {
-        if (!state.data) return;
-        const cleanInput = state.input.trim().toUpperCase();
-        if (cleanInput === state.data.word) {
-            SoundManager.playWin();
-            const score = Math.max(10, state.data.word.length * 2 - (state.showDefinition ? 5 : 0));
-            onScoreUpdate(score);
-            setState(s => ({ ...s, status: 'won', message: `Correct! +${score} pts` }));
-        } else {
-            SoundManager.playError();
-            setState(s => ({ ...s, message: 'Try again!' }));
-            setTimeout(() => setState(s => ({ ...s, message: '' })), 2000);
-        }
-    };
-
-    return (
-        <div className={`spelling-container ${state.status === 'won' ? 'won' : ''}`}>
-            <div className="word-image-container">
-                {state.data?.imageUrl ? (
-                    <ShuffledImage src={state.data.imageUrl} isRevealed={state.status === 'won'} />
-                ) : (
-                    <span className="image-placeholder">🖼️</span>
-                )}
-            </div>
-
-            {state.status === 'won' ? (
-                <div className="word-reveal">
-                    {state.data?.word}
-                </div>
-            ) : (
-                <>
-                  <div className="audio-btn-large" onClick={handlePlayWord} title="Play Word">
-                       <span className="audio-icon">🔊</span>
-                  </div>
-                  {state.data?.phonetic && (
-                      <div className="phonetic-display">
-                          {state.data.phonetic}
-                      </div>
-                  )}
-                </>
-            )}
-            
-            {state.status !== 'won' && (
-                <input 
-                    ref={inputRef}
-                    className="spelling-input"
-                    type="text" 
-                    value={state.input} 
-                    onChange={(e) => setState(s => ({...s, input: e.target.value}))}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-                    placeholder="TYPE HERE"
-                    autoComplete="off"
-                    spellCheck="false"
-                />
-            )}
-
-            <div className="hint-section">
-                {state.showDefinition && (
-                    <div className="hint-text">{state.data?.definition}</div>
-                )}
-                {state.showSentence && !state.showDefinition && (
-                     <div className="hint-text">"{state.data?.sentence}"</div>
-                )}
-            </div>
-            
-            <div className="message">{state.message}</div>
-
-            <div className="controls">
-                {state.status === 'won' ? (
-                     <button className="btn btn-primary" onClick={fetchWord}>Next Word →</button>
-                ) : (
-                    <>
-                     <button className="btn btn-primary" onClick={handleSubmit}>Check Spelling</button>
-                     <button className="btn btn-audio-small" onClick={handlePlaySentence}>🗣️ Read Sentence</button>
-                     <button className="btn btn-hint" onClick={() => setState(s => ({...s, showDefinition: true}))} disabled={state.showDefinition}>📖 Define (-5)</button>
-                     <button className="btn btn-secondary" onClick={fetchWord}>Skip</button>
-                    </>
-                )}
-            </div>
-        </div>
-    );
-}
-
 const styles = `
   :root {
     --bg-color: #2e8b57;
@@ -1303,8 +1560,8 @@ const styles = `
   }
   body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
   .app-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center; padding: 10px; box-sizing: border-box; }
-  .nav-tabs { display: flex; width: 100%; margin-bottom: 20px; background: var(--tab-inactive); border-radius: 12px; padding: 5px; gap: 5px; }
-  .nav-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; border-radius: 8px; font-weight: bold; color: rgba(255,255,255,0.7); transition: all 0.2s; }
+  .nav-tabs { display: flex; width: 100%; margin-bottom: 20px; background: var(--tab-inactive); border-radius: 12px; padding: 5px; gap: 5px; flex-wrap: wrap; }
+  .nav-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; border-radius: 8px; font-weight: bold; color: rgba(255,255,255,0.7); transition: all 0.2s; white-space: nowrap; }
   .nav-tab.active { background: var(--tab-active); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
   .header { width: 100%; display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; background: rgba(0, 0, 0, 0.2); padding: 15px 20px; border-radius: 12px; backdrop-filter: blur(5px); box-sizing: border-box; }
   .header-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
@@ -1367,12 +1624,47 @@ const styles = `
   .player-row { display: flex; justify-content: space-between; align-items: center; background: #f0f0f0; padding: 8px 15px; border-radius: 8px; font-weight: bold; }
   .player-row.active { background: var(--accent); color: #3e2700; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
   .opponent-view { margin-top: 20px; padding-top: 20px; border-top: 2px dashed rgba(255,255,255,0.3); width: 100%; text-align: center; opacity: 0.7; }
+  
+  /* New Styles */
+  .level-bar { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box; }
+  .level-info { display: flex; justify-content: space-between; font-weight: bold; color: white; margin-bottom: 5px; font-size: 0.9rem; }
+  .progress-track { background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; }
+  
+  .phonetics-container { background: white; border-radius: 12px; padding: 20px; width: 100%; box-sizing: border-box; }
+  .phonetics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 10px; width: 100%; }
+  .phonetic-btn { aspect-ratio: 1; border: 1px solid #ddd; background: #fff; font-family: sans-serif; font-size: 1.2rem; font-weight: bold; color: #333; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
+  .phonetic-btn:hover { transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+  .phonetic-btn.consonant { border-bottom: 3px solid #64b5f6; }
+  .phonetic-btn.vowel { border-bottom: 3px solid #81c784; }
+  .phonetic-btn.diphthong { border-bottom: 3px solid #ba68c8; }
+  
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); padding: 20px; }
+  .modal-content { max-width: 400px; margin: 0; animation: pop 0.3s ease-in-out; }
+  .badge { display: inline-block; background: #eee; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; color: #555; font-weight: bold; }
+
+  .level-select-inline {
+      background: rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: inherit;
+      font-family: inherit;
+      font-weight: bold;
+      border-radius: 4px;
+      padding: 2px 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+  }
+  .level-select-inline option {
+      color: #333;
+      background: white;
+  }
+
   @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
   .win-anim { animation: pop 0.3s ease-in-out; }
 `;
 
 const App = () => {
-  const [view, setView] = useState<GameMode>('scrabble');
+  const [view, setView] = useState<GameMode>('phonetics'); // Changed default to show phonetics first as requested by "add a section before"
   const [difficulty, setDifficulty] = useState<Difficulty>('Medium');
   const [totalScore, setTotalScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
@@ -1397,6 +1689,7 @@ const App = () => {
 
   return (
     <>
+      <Analytics />
       <style>{styles}</style>
       <div className="app-container">
         
@@ -1420,6 +1713,9 @@ const App = () => {
         </header>
 
         <div className="nav-tabs">
+            <div className={`nav-tab ${view === 'phonetics' ? 'active' : ''}`} onClick={() => setView('phonetics')}>
+                Sounds
+            </div>
             <div className={`nav-tab ${view === 'scrabble' ? 'active' : ''}`} onClick={() => setView('scrabble')}>
                 Definition Game
             </div>
@@ -1431,7 +1727,9 @@ const App = () => {
             </div>
         </div>
 
-        {view === 'scrabble' ? (
+        {view === 'phonetics' ? (
+            <PhoneticsGuide />
+        ) : view === 'scrabble' ? (
             <ScrabbleGame difficulty={difficulty} onScoreUpdate={updateScore} />
         ) : view === 'spelling' ? (
             <SpellingGame difficulty={difficulty} onScoreUpdate={updateScore} />
