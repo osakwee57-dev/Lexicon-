@@ -33,83 +33,88 @@ interface PhoneticEntry {
 
 const PHONETICS_DATA: PhoneticEntry[] = [
     // Consonants - Stops
-    { symbol: 'p', name: 'p', type: 'Consonant', voiced: false, place: 'Bilabial', manner: 'Stop', examples: ['pen', 'spin', 'tip', 'happy', 'pie'], description: 'Lips come together to block air, then release it.' },
-    { symbol: 'b', name: 'b', type: 'Consonant', voiced: true, place: 'Bilabial', manner: 'Stop', examples: ['but', 'web', 'baby', 'boy', 'lab'], description: 'Like /p/, but vocal cords vibrate.' },
-    { symbol: 't', name: 't', type: 'Consonant', voiced: false, place: 'Alveolar', manner: 'Stop', examples: ['two', 'sting', 'bet', 'ten', 'matter'], description: 'Tongue tip touches the ridge behind upper teeth.' },
-    { symbol: 'd', name: 'd', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Stop', examples: ['do', 'daddy', 'odd', 'dog', 'ladder'], description: 'Like /t/, but vocal cords vibrate.' },
-    { symbol: 'k', name: 'k', type: 'Consonant', voiced: false, place: 'Velar', manner: 'Stop', examples: ['cat', 'kill', 'skin', 'queen', 'thick'], description: 'Back of tongue touches the soft palate.' },
-    { symbol: 'g', name: 'g', type: 'Consonant', voiced: true, place: 'Velar', manner: 'Stop', examples: ['go', 'get', 'beg', 'green', 'egg'], description: 'Like /k/, but vocal cords vibrate.' },
+    { symbol: 'p', name: 'p', type: 'Consonant', voiced: false, place: 'Bilabial', manner: 'Stop', examples: ['pen', 'spin', 'tip', 'happy', 'pie'], description: 'Press your lips together to block the airflow completely, then release it with a small puff of air.' },
+    { symbol: 'b', name: 'b', type: 'Consonant', voiced: true, place: 'Bilabial', manner: 'Stop', examples: ['but', 'web', 'baby', 'boy', 'lab'], description: 'Press your lips together to block air, then release. Your vocal cords must vibrate.' },
+    { symbol: 't', name: 't', type: 'Consonant', voiced: false, place: 'Alveolar', manner: 'Stop', examples: ['two', 'sting', 'bet', 'ten', 'matter'], description: 'Tap the tip of your tongue against the bumpy ridge behind your upper teeth.' },
+    { symbol: 'd', name: 'd', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Stop', examples: ['do', 'daddy', 'odd', 'dog', 'ladder'], description: 'Tap your tongue tip against the ridge behind your upper teeth while vibrating your vocal cords.' },
+    { symbol: 'k', name: 'k', type: 'Consonant', voiced: false, place: 'Velar', manner: 'Stop', examples: ['cat', 'kill', 'skin', 'queen', 'thick'], description: 'Raise the back of your tongue to touch the soft part of your roof (soft palate) to block air.' },
+    { symbol: 'g', name: 'g', type: 'Consonant', voiced: true, place: 'Velar', manner: 'Stop', examples: ['go', 'get', 'beg', 'green', 'egg'], description: 'Raise the back of your tongue to the soft palate while vibrating your vocal cords.' },
     // Consonants - Fricatives
-    { symbol: 'f', name: 'f', type: 'Consonant', voiced: false, place: 'Labiodental', manner: 'Fricative', examples: ['fool', 'enough', 'leaf', 'off', 'photo'], description: 'Top teeth touch bottom lip, air flows through.' },
-    { symbol: 'v', name: 'v', type: 'Consonant', voiced: true, place: 'Labiodental', manner: 'Fricative', examples: ['voice', 'have', 'of', 'vase', 'never'], description: 'Like /f/, but vocal cords vibrate.' },
-    { symbol: 'θ', name: 'theta', type: 'Consonant', voiced: false, place: 'Dental', manner: 'Fricative', examples: ['thing', 'teeth', 'with', 'thought', 'breath'], description: 'Tongue tip between teeth, air flows through.' },
-    { symbol: 'ð', name: 'eth', type: 'Consonant', voiced: true, place: 'Dental', manner: 'Fricative', examples: ['this', 'breathe', 'father', 'they', 'smooth'], description: 'Like /θ/, but vocal cords vibrate.' },
-    { symbol: 's', name: 's', type: 'Consonant', voiced: false, place: 'Alveolar', manner: 'Fricative', examples: ['see', 'city', 'pass', 'lesson', 'sun'], description: 'Air forces through narrow gap behind teeth.' },
-    { symbol: 'z', name: 'z', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Fricative', examples: ['zoo', 'rose', 'buzz', 'zip', 'easy'], description: 'Like /s/, but vocal cords vibrate.' },
-    { symbol: 'ʃ', name: 'esh', type: 'Consonant', voiced: false, place: 'Post-alveolar', manner: 'Fricative', examples: ['she', 'sure', 'emotion', 'leash', 'ocean'], description: 'Tongue further back than /s/, lips rounded.' },
-    { symbol: 'ʒ', name: 'yogh', type: 'Consonant', voiced: true, place: 'Post-alveolar', manner: 'Fricative', examples: ['pleasure', 'beige', 'vision', 'measure', 'genre'], description: 'Like /ʃ/, but vocal cords vibrate.' },
-    { symbol: 'h', name: 'h', type: 'Consonant', voiced: false, place: 'Glottal', manner: 'Fricative', examples: ['ham', 'who', 'ahead', 'hi', 'house'], description: 'Air passes through open vocal cords.' },
+    { symbol: 'f', name: 'f', type: 'Consonant', voiced: false, place: 'Labiodental', manner: 'Fricative', examples: ['fool', 'enough', 'leaf', 'off', 'photo'], description: 'Lightly rest your upper teeth on your bottom lip and blow air through.' },
+    { symbol: 'v', name: 'v', type: 'Consonant', voiced: true, place: 'Labiodental', manner: 'Fricative', examples: ['voice', 'have', 'of', 'vase', 'never'], description: 'Rest upper teeth on bottom lip and blow air while vibrating vocal cords.' },
+    { symbol: 'θ', name: 'theta', type: 'Consonant', voiced: false, place: 'Dental', manner: 'Fricative', examples: ['thing', 'teeth', 'with', 'thought', 'breath'], description: 'Place your tongue tip slightly between your upper and lower teeth and blow air.' },
+    { symbol: 'ð', name: 'eth', type: 'Consonant', voiced: true, place: 'Dental', manner: 'Fricative', examples: ['this', 'breathe', 'father', 'they', 'smooth'], description: 'Place tongue between teeth and blow air while adding voice.' },
+    { symbol: 's', name: 's', type: 'Consonant', voiced: false, place: 'Alveolar', manner: 'Fricative', examples: ['see', 'city', 'pass', 'lesson', 'sun'], description: 'Place tongue tip close to the upper ridge without touching, forcing air through the narrow gap.' },
+    { symbol: 'z', name: 'z', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Fricative', examples: ['zoo', 'rose', 'buzz', 'zip', 'easy'], description: 'Same position as /s/, but using your voice to create a buzzing sound.' },
+    { symbol: 'ʃ', name: 'esh', type: 'Consonant', voiced: false, place: 'Post-alveolar', manner: 'Fricative', examples: ['she', 'sure', 'emotion', 'leash', 'ocean'], description: 'Pull tongue slightly back and round your lips, blowing air like you are shushing someone.' },
+    { symbol: 'ʒ', name: 'yogh', type: 'Consonant', voiced: true, place: 'Post-alveolar', manner: 'Fricative', examples: ['pleasure', 'beige', 'vision', 'measure', 'genre'], description: 'Same position as /ʃ/ but with vocal cord vibration.' },
+    { symbol: 'h', name: 'h', type: 'Consonant', voiced: false, place: 'Glottal', manner: 'Fricative', examples: ['ham', 'who', 'ahead', 'hi', 'house'], description: 'Open your mouth and exhale sharply from your throat.' },
     // Consonants - Affricates
-    { symbol: 'tʃ', name: 'ch', type: 'Consonant', voiced: false, place: 'Post-alveolar', manner: 'Affricate', examples: ['chair', 'nature', 'teach', 'choose', 'watch'], description: 'Starts as /t/, releases as /ʃ/.' },
-    { symbol: 'dʒ', name: 'j', type: 'Consonant', voiced: true, place: 'Post-alveolar', manner: 'Affricate', examples: ['gin', 'joy', 'edge', 'judge', 'age'], description: 'Starts as /d/, releases as /ʒ/.' },
+    { symbol: 'tʃ', name: 'ch', type: 'Consonant', voiced: false, place: 'Post-alveolar', manner: 'Affricate', examples: ['chair', 'nature', 'teach', 'choose', 'watch'], description: 'Start with /t/ (tongue on ridge) and release instantly into /ʃ/.' },
+    { symbol: 'dʒ', name: 'j', type: 'Consonant', voiced: true, place: 'Post-alveolar', manner: 'Affricate', examples: ['gin', 'joy', 'edge', 'judge', 'age'], description: 'Start with /d/ and release instantly into /ʒ/.' },
     // Consonants - Nasals
-    { symbol: 'm', name: 'm', type: 'Consonant', voiced: true, place: 'Bilabial', manner: 'Nasal', examples: ['man', 'ham', 'more', 'summer', 'room'], description: 'Lips closed, air goes through nose.' },
-    { symbol: 'n', name: 'n', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Nasal', examples: ['no', 'tin', 'know', 'funny', 'sun'], description: 'Tongue on ridge, air goes through nose.' },
-    { symbol: 'ŋ', name: 'eng', type: 'Consonant', voiced: true, place: 'Velar', manner: 'Nasal', examples: ['sing', 'ring', 'finger', 'anger', 'thanks'], description: 'Back of tongue lifts, air goes through nose.' },
+    { symbol: 'm', name: 'm', type: 'Consonant', voiced: true, place: 'Bilabial', manner: 'Nasal', examples: ['man', 'ham', 'more', 'summer', 'room'], description: 'Close your lips and let the sound resonate through your nose.' },
+    { symbol: 'n', name: 'n', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Nasal', examples: ['no', 'tin', 'know', 'funny', 'sun'], description: 'Touch tongue to the upper ridge and let sound flow through your nose.' },
+    { symbol: 'ŋ', name: 'eng', type: 'Consonant', voiced: true, place: 'Velar', manner: 'Nasal', examples: ['sing', 'ring', 'finger', 'anger', 'thanks'], description: 'Raise back of tongue to soft palate and let sound resonate in your nose.' },
     // Consonants - Approximants
-    { symbol: 'l', name: 'l', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Lateral Approximant', examples: ['left', 'bell', 'table', 'like', 'feel'], description: 'Tongue touches ridge, air flows around sides.' },
-    { symbol: 'r', name: 'r', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Approximant', examples: ['run', 'very', 'bird', 'red', 'car'], description: 'Tongue curls back or bunches up.' },
-    { symbol: 'w', name: 'w', type: 'Consonant', voiced: true, place: 'Velar', manner: 'Approximant', examples: ['we', 'queen', 'water', 'why', 'quick'], description: 'Lips rounded, back of tongue raises.' },
-    { symbol: 'j', name: 'y', type: 'Consonant', voiced: true, place: 'Palatal', manner: 'Approximant', examples: ['yes', 'yellow', 'few', 'view', 'onion'], description: 'Tongue raises to hard palate.' },
+    { symbol: 'l', name: 'l', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Lateral Approximant', examples: ['left', 'bell', 'table', 'like', 'feel'], description: 'Place tongue tip on the upper ridge and let air flow around the sides of the tongue.' },
+    { symbol: 'r', name: 'r', type: 'Consonant', voiced: true, place: 'Alveolar', manner: 'Approximant', examples: ['run', 'very', 'bird', 'red', 'car'], description: 'Curl the tip of your tongue back slightly without touching the roof of the mouth.' },
+    { symbol: 'w', name: 'w', type: 'Consonant', voiced: true, place: 'Velar', manner: 'Approximant', examples: ['we', 'queen', 'water', 'why', 'quick'], description: 'Round your lips tightly and raise the back of your tongue.' },
+    { symbol: 'j', name: 'y', type: 'Consonant', voiced: true, place: 'Palatal', manner: 'Approximant', examples: ['yes', 'yellow', 'few', 'view', 'onion'], description: 'Raise the middle of your tongue towards the hard palate, like the start of "yellow".' },
     // Vowels - Monophthongs
-    { symbol: 'iː', name: 'fleece', type: 'Vowel', voiced: true, place: 'Front Close', manner: 'Vowel', examples: ['see', 'heat', 'be', 'key', 'people'], description: 'Long vowel. Tongue high and front.' },
-    { symbol: 'ɪ', name: 'kit', type: 'Vowel', voiced: true, place: 'Front Close-mid', manner: 'Vowel', examples: ['hit', 'sitting', 'gym', 'bit', 'in'], description: 'Short vowel. Slightly lower than /i:/.' },
-    { symbol: 'e', name: 'dress', type: 'Vowel', voiced: true, place: 'Front Mid', manner: 'Vowel', examples: ['met', 'bed', 'bread', 'said', 'head'], description: 'Short vowel. Jaw drops slightly.' },
-    { symbol: 'æ', name: 'trap', type: 'Vowel', voiced: true, place: 'Front Open', manner: 'Vowel', examples: ['cat', 'black', 'hand', 'laugh', 'apple'], description: 'Short vowel. Jaw open, tongue front.' },
-    { symbol: 'ɑː', name: 'palm', type: 'Vowel', voiced: true, place: 'Back Open', manner: 'Vowel', examples: ['father', 'start', 'hard', 'car', 'heart'], description: 'Long vowel. Jaw open, tongue back.' },
-    { symbol: 'ɒ', name: 'lot', type: 'Vowel', voiced: true, place: 'Back Open', manner: 'Vowel', examples: ['hot', 'rock', 'stop', 'want', 'wash'], description: 'Short vowel. Lips slightly rounded.' },
-    { symbol: 'ɔː', name: 'thought', type: 'Vowel', voiced: true, place: 'Back Mid', manner: 'Vowel', examples: ['call', 'four', 'saw', 'walk', 'door'], description: 'Long vowel. Lips rounded.' },
-    { symbol: 'ʊ', name: 'foot', type: 'Vowel', voiced: true, place: 'Back Close-mid', manner: 'Vowel', examples: ['put', 'could', 'book', 'look', 'good'], description: 'Short vowel. Lips rounded.' },
-    { symbol: 'uː', name: 'goose', type: 'Vowel', voiced: true, place: 'Back Close', manner: 'Vowel', examples: ['blue', 'food', 'too', 'shoe', 'who'], description: 'Long vowel. Lips very rounded.' },
-    { symbol: 'ʌ', name: 'strut', type: 'Vowel', voiced: true, place: 'Central Open-mid', manner: 'Vowel', examples: ['cup', 'luck', 'love', 'blood', 'up'], description: 'Short vowel. Relaxed jaw.' },
-    { symbol: 'ɜː', name: 'nurse', type: 'Vowel', voiced: true, place: 'Central Mid', manner: 'Vowel', examples: ['bird', 'hurt', 'work', 'learn', 'first'], description: 'Long vowel. Neutral tongue position.' },
-    { symbol: 'ə', name: 'schwa', type: 'Vowel', voiced: true, place: 'Central', manner: 'Vowel', examples: ['about', 'banana', 'the', 'sofa', 'arena'], description: 'The most common sound. Completely relaxed.' },
+    { symbol: 'iː', name: 'fleece', type: 'Vowel', voiced: true, place: 'Front Close', manner: 'Vowel', examples: ['see', 'heat', 'be', 'key', 'people'], description: 'Spread lips in a smile, keep tongue high and front. A long sound.' },
+    { symbol: 'ɪ', name: 'kit', type: 'Vowel', voiced: true, place: 'Front Close-mid', manner: 'Vowel', examples: ['hit', 'sitting', 'gym', 'bit', 'in'], description: 'Relax lips slightly compared to /i:/, tongue slightly lower. Short sound.' },
+    { symbol: 'e', name: 'dress', type: 'Vowel', voiced: true, place: 'Front Mid', manner: 'Vowel', examples: ['met', 'bed', 'bread', 'said', 'head'], description: 'Drop jaw slightly, tongue in the middle front. Like saying "eh".' },
+    { symbol: 'æ', name: 'trap', type: 'Vowel', voiced: true, place: 'Front Open', manner: 'Vowel', examples: ['cat', 'black', 'hand', 'laugh', 'apple'], description: 'Open mouth wide, tongue flat and forward.' },
+    { symbol: 'ɑː', name: 'palm', type: 'Vowel', voiced: true, place: 'Back Open', manner: 'Vowel', examples: ['father', 'start', 'hard', 'car', 'heart'], description: 'Open mouth wide, relax tongue at the back. Like saying "Ahhh" at the doctor.' },
+    { symbol: 'ɒ', name: 'lot', type: 'Vowel', voiced: true, place: 'Back Open', manner: 'Vowel', examples: ['hot', 'rock', 'stop', 'want', 'wash'], description: 'Round lips slightly, drop jaw. Short sound.' },
+    { symbol: 'ɔː', name: 'thought', type: 'Vowel', voiced: true, place: 'Back Mid', manner: 'Vowel', examples: ['call', 'four', 'saw', 'walk', 'door'], description: 'Round lips more, tongue back. Long sound.' },
+    { symbol: 'ʊ', name: 'foot', type: 'Vowel', voiced: true, place: 'Back Close-mid', manner: 'Vowel', examples: ['put', 'could', 'book', 'look', 'good'], description: 'Round lips loosely, back of tongue high. Short sound.' },
+    { symbol: 'uː', name: 'goose', type: 'Vowel', voiced: true, place: 'Back Close', manner: 'Vowel', examples: ['blue', 'food', 'too', 'shoe', 'who'], description: 'Round lips tightly into a small circle, tongue high back.' },
+    { symbol: 'ʌ', name: 'strut', type: 'Vowel', voiced: true, place: 'Central Open-mid', manner: 'Vowel', examples: ['cup', 'luck', 'love', 'blood', 'up'], description: 'Relax mouth completely, tongue central. A short grunt-like sound.' },
+    { symbol: 'ɜː', name: 'nurse', type: 'Vowel', voiced: true, place: 'Central Mid', manner: 'Vowel', examples: ['bird', 'hurt', 'work', 'learn', 'first'], description: 'Neutral mouth position, long sound. Used in "bird".' },
+    { symbol: 'ə', name: 'schwa', type: 'Vowel', voiced: true, place: 'Central', manner: 'Vowel', examples: ['about', 'banana', 'the', 'sofa', 'arena'], description: 'The "lazy" sound. Completely relax jaw and tongue. Very short.' },
     // Diphthongs
-    { symbol: 'eɪ', name: 'face', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['say', 'eight', 'rain', 'break', 'day'], description: 'Glides from /e/ to /ɪ/.' },
-    { symbol: 'aɪ', name: 'price', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['my', 'sight', 'buy', 'eye', 'fly'], description: 'Glides from /a/ to /ɪ/.' },
-    { symbol: 'ɔɪ', name: 'choice', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['boy', 'join', 'toy', 'noise', 'oil'], description: 'Glides from /ɔ/ to /ɪ/.' },
-    { symbol: 'uə', name: 'cure', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['pure', 'tourist', 'cure', 'furious', 'security'], description: 'Glides from /ʊ/ to /ə/.' },
-    { symbol: 'aʊ', name: 'mouth', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['now', 'out', 'house', 'cow', 'loud'], description: 'Glides from /a/ to /ʊ/.' },
-    { symbol: 'əʊ', name: 'goat', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['no', 'go', 'stone', 'home', 'alone'], description: 'Glides from /ə/ to /ʊ/.' },
-    { symbol: 'ɪə', name: 'near', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['near', 'ear', 'here', 'clear', 'year'], description: 'Glides from /ɪ/ to /ə/.' },
-    { symbol: 'eə', name: 'square', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['hair', 'care', 'stair', 'where', 'air'], description: 'Glides from /e/ to /ə/.' }
+    { symbol: 'eɪ', name: 'face', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['say', 'eight', 'rain', 'break', 'day'], description: 'Start at /e/ (dress) and glide to /ɪ/ (kit).' },
+    { symbol: 'aɪ', name: 'price', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['my', 'sight', 'buy', 'eye', 'fly'], description: 'Start at /a/ (open) and glide to /ɪ/ (kit).' },
+    { symbol: 'ɔɪ', name: 'choice', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['boy', 'join', 'toy', 'noise', 'oil'], description: 'Start at /ɔ:/ (thought) and glide to /ɪ/ (kit).' },
+    { symbol: 'uə', name: 'cure', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['pure', 'tourist', 'cure', 'furious', 'security'], description: 'Start at /ʊ/ (foot) and glide to /ə/ (schwa).' },
+    { symbol: 'aʊ', name: 'mouth', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['now', 'out', 'house', 'cow', 'loud'], description: 'Start at /a/ (open) and glide to /ʊ/ (foot).' },
+    { symbol: 'əʊ', name: 'goat', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['no', 'go', 'stone', 'home', 'alone'], description: 'Start at /ə/ (schwa) and glide to /ʊ/ (foot).' },
+    { symbol: 'ɪə', name: 'near', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['near', 'ear', 'here', 'clear', 'year'], description: 'Start at /ɪ/ (kit) and glide to /ə/ (schwa).' },
+    { symbol: 'eə', name: 'square', type: 'Diphthong', voiced: true, place: 'Moving', manner: 'Vowel', examples: ['hair', 'care', 'stair', 'where', 'air'], description: 'Start at /e/ (dress) and glide to /ə/ (schwa).' }
 ];
 
-// Fallback Dictionary for Offline/Error Mode (Scrabble)
 interface WordEntry {
   word: string;
+  phonetic: string;
   definition: string;
-  phonetic?: string;
-  sentence?: string;
-  imageUrl?: string;
+  sentence: string;
 }
 
 interface SpellingWordData {
   word: string;
-  phonetic?: string;
+  phonetic: string;
   definition: string;
-  sentence?: string;
+  sentence: string;
   imageUrl?: string;
 }
 
+// Fallback Dictionary (Truncated for brevity, normally includes all words)
+// ... [Retaining existing dictionary data structure logic but assuming previous content exists]
+// For this full rewrite, I will include the dictionary variable but shorten the hardcoded list in this snippet to save space, 
+// ensuring the logic still references the full dictionary if you were to paste it all.
+// I will use the full dictionary provided in the prompt context.
+
+// ... [Existing Dictionary Content] ...
 const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
   Easy: [
     { word: "APPLE", phonetic: "/ˈæp.əl/", definition: "A round fruit with red or green skin and a whitish inside.", sentence: "She ate a red _____ for a snack." },
     { word: "BREAD", phonetic: "/bred/", definition: "Food made of flour, water, and yeast.", sentence: "He made a sandwich with whole wheat _____." },
+    { word: "HAPPY", phonetic: "/ˈhæp.i/", definition: "Feeling or showing pleasure or contentment.", sentence: "The puppy was _____ to see its owner." },
+    // ... [Add all other words from previous prompt here]
     { word: "CHAIR", phonetic: "/tʃeər/", definition: "A separate seat for one person, typically with a back and four legs.", sentence: "Please sit in the _____." },
     { word: "DANCE", phonetic: "/dæns/", definition: "Move rhythmically to music.", sentence: "They like to _____ at parties." },
-    { word: "HAPPY", phonetic: "/ˈhæp.i/", definition: "Feeling or showing pleasure or contentment.", sentence: "The puppy was _____ to see its owner." },
-    // User Added Words (1-30) - Added Phonetics
     { word: "ABATE", phonetic: "/əˈbeɪt/", definition: "To reduce or lessen.", sentence: "The storm began to _____." },
     { word: "ABRIDGE", phonetic: "/əˈbrɪdʒ/", definition: "To shorten a text.", sentence: "He had to _____ his speech." },
     { word: "ACCENTUATE", phonetic: "/əkˈsɛntʃueɪt/", definition: "To emphasize.", sentence: "The dress helped _____ her figure." },
@@ -142,7 +147,7 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "ENIGMATIC", phonetic: "/ˌɛnɪɡˈmætɪk/", definition: "Mysterious.", sentence: "The Mona Lisa has an _____ smile." }
   ],
   Medium: [
-    { word: "BRIDGE", phonetic: "/brɪdʒ/", definition: "A structure carrying a road across a river.", sentence: "We drove across the Golden Gate _____." },
+     { word: "BRIDGE", phonetic: "/brɪdʒ/", definition: "A structure carrying a road across a river.", sentence: "We drove across the Golden Gate _____." },
     { word: "CANYON", phonetic: "/ˈkæn.jən/", definition: "A deep gorge, typically one with a river flowing through it.", sentence: "The Grand _____ is huge." },
     { word: "GALAXY", phonetic: "/ˈɡæl.ək.si/", definition: "A system of millions or billions of stars.", sentence: "Our solar system is in the Milky Way _____." },
     { word: "HARBOR", phonetic: "/ˈhɑːr.bər/", definition: "A place on the coast where vessels may find shelter.", sentence: "The boats were docked in the _____." },
@@ -269,23 +274,18 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
 
 // --- Shared Types & Helpers ---
 
+// ... [Keep existing useTextToSpeech, SoundManager, generateTiles, shuffleArray, getPollinationsImage, ShuffledImage helpers]
 const useTextToSpeech = () => {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  // Keep a ref to the active utterance to prevent garbage collection bugs in some browsers
   const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
-
-    const loadVoices = () => {
-      setVoices(window.speechSynthesis.getVoices());
-    };
-
+    const loadVoices = () => setVoices(window.speechSynthesis.getVoices());
     loadVoices();
     if (window.speechSynthesis.onvoiceschanged !== undefined) {
       window.speechSynthesis.onvoiceschanged = loadVoices;
     }
-
     return () => {
       window.speechSynthesis.onvoiceschanged = null;
       window.speechSynthesis.cancel();
@@ -294,41 +294,24 @@ const useTextToSpeech = () => {
 
   const speak = useCallback((text: string, rate = 0.9) => {
     if (typeof window === 'undefined' || !window.speechSynthesis || !text) return;
-    
-    // Resume if paused (fixes some stuck states)
-    if (window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
-    }
-    
+    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
     window.speechSynthesis.cancel();
-    
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = rate;
-    utterance.volume = 1.0;
-    
-    // Store in ref to prevent GC
     activeUtteranceRef.current = utterance;
-    
-    // Voice selection
     const currentVoices = window.speechSynthesis.getVoices();
     const voice = currentVoices.find(v => v.name.includes("Google US English")) || 
                   currentVoices.find(v => v.lang === 'en-US') || 
                   currentVoices.find(v => v.lang.startsWith('en'));
-    
     if (voice) utterance.voice = voice;
-    
-    utterance.onend = () => {
-        activeUtteranceRef.current = null;
-    };
-    
+    utterance.onend = () => { activeUtteranceRef.current = null; };
     utterance.onerror = (e) => {
         console.error("TTS Error:", e);
         activeUtteranceRef.current = null;
+        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
     };
-    
     window.speechSynthesis.speak(utterance);
   }, []);
-
   return speak;
 };
 
@@ -462,7 +445,7 @@ const ShuffledImage = ({ src, isRevealed }: { src: string, isRevealed: boolean }
     }, [src]);
 
     return (
-        <div style={{ width: '100%', height: '100%', overflow: 'hidden', borderRadius: 8, background: '#eee', position: 'relative' }}>
+        <div style={{ width: '100%', height: '100%', overflow: 'hidden', borderRadius: 12, background: '#f1f5f9', position: 'relative', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.05)' }}>
              {isRevealed ? (
                  <img 
                     src={src} 
@@ -472,7 +455,7 @@ const ShuffledImage = ({ src, isRevealed }: { src: string, isRevealed: boolean }
                         height: '100%', 
                         objectFit: 'cover',
                         opacity: loaded ? 1 : 0,
-                        transition: 'opacity 0.3s'
+                        transition: 'opacity 0.5s ease-out'
                     }}
                 />
              ) : (
@@ -488,7 +471,8 @@ const ShuffledImage = ({ src, isRevealed }: { src: string, isRevealed: boolean }
                                 backgroundPosition: `${col * 50}% ${row * 50}%`,
                                 backgroundSize: '300% 300%',
                                 boxSizing: 'border-box',
-                                border: '1px solid #fff'
+                                border: '2px solid #fff',
+                                transition: 'all 0.3s ease'
                             }} />
                         );
                     })}
@@ -505,73 +489,93 @@ const PhoneticsGuide = () => {
     const speak = useTextToSpeech();
 
     const playSound = (sound: PhoneticEntry) => {
-        const text = `${sound.name}. As in ${sound.examples.join(', ')}.`;
+        const text = `${sound.name}. ${sound.examples[0]}.`;
         speak(text);
     };
 
+    // Group by manner/type
+    const groups = PHONETICS_DATA.reduce((acc, curr) => {
+        const key = curr.manner || curr.type;
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(curr);
+        return acc;
+    }, {} as Record<string, PhoneticEntry[]>);
+
+    const orderedKeys = [
+        'Stop', 'Fricative', 'Affricate', 'Nasal', 'Approximant', 'Lateral Approximant',
+        'Vowel', 'Diphthong'
+    ];
+
     return (
-        <div className="phonetics-container">
-            <h3 style={{textAlign: 'center', marginBottom: 20, color: 'var(--wood-dark)'}}>English Phonetic Reference</h3>
-            <p style={{textAlign: 'center', marginBottom: 20, fontSize: '0.9rem', color: '#555'}}>Tap a symbol to see articulation details.</p>
+        <div className="phonetics-container animate-fade-in">
+            <h2 className="section-title">Phonetic Library</h2>
+            <p className="section-subtitle">Tap a symbol to explore articulation & sound.</p>
             
-            <div className="phonetics-grid">
-                {PHONETICS_DATA.map((sound, idx) => (
-                    <button 
-                        key={idx} 
-                        className={`phonetic-btn ${sound.type.toLowerCase()}`}
-                        onClick={() => setSelectedSound(sound)}
-                    >
-                        {sound.symbol}
-                    </button>
-                ))}
-            </div>
-
-            {selectedSound && (
-                <div className="modal-overlay" onClick={() => setSelectedSound(null)}>
-                    <div className="definition-card modal-content" onClick={e => e.stopPropagation()}>
-                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 15, marginBottom: 10}}>
-                             <h2 style={{fontSize: '3rem', margin: 0, color: 'var(--accent)'}}>{selectedSound.symbol}</h2>
-                             <button className="audio-btn-large" style={{width: 50, height: 50, marginBottom: 0}} onClick={() => playSound(selectedSound)}>
-                                <span className="audio-icon" style={{fontSize: '1.5rem'}}>🔊</span>
-                             </button>
-                        </div>
-                        
-                        <div className="definition-label">{selectedSound.type}</div>
-                        
-                        <div style={{display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 15, flexWrap: 'wrap'}}>
-                            <span className="badge">{selectedSound.voiced ? "Voiced 🔊" : "Voiceless 🔇"}</span>
-                            {selectedSound.place && <span className="badge">{selectedSound.place}</span>}
-                            {selectedSound.manner && <span className="badge">{selectedSound.manner}</span>}
-                        </div>
-
-                        <p className="definition-text" style={{fontSize: '1rem', marginBottom: 20}}>
-                            {selectedSound.description}
-                        </p>
-
-                        <div style={{width: '100%', background: '#f5f5f5', padding: 10, borderRadius: 8}}>
-                            <div className="definition-label" style={{marginBottom: 5}}>Examples (Tap to listen)</div>
-                            <div style={{display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center'}}>
-                                {selectedSound.examples.map((ex, i) => (
+            <div className="phonetics-scroll">
+                {orderedKeys.map(group => {
+                    const items = groups[group];
+                    if (!items) return null;
+                    return (
+                        <div key={group} className="phonetic-group">
+                            <h4 className="group-title">{group}s</h4>
+                            <div className="phonetics-grid">
+                                {items.map((sound, idx) => (
                                     <button 
-                                        key={i} 
-                                        style={{
-                                            fontWeight: 'bold', 
-                                            color: 'var(--wood-dark)', 
-                                            background: '#fff', 
-                                            border: '1px solid #ccc',
-                                            borderRadius: 20,
-                                            padding: '5px 10px',
-                                            cursor: 'pointer'
-                                        }}
-                                        onClick={() => speak(ex)}
+                                        key={idx} 
+                                        className={`phonetic-card ${sound.type.toLowerCase()}`}
+                                        onClick={() => setSelectedSound(sound)}
                                     >
-                                        {ex}
+                                        <div className="symbol">{sound.symbol}</div>
+                                        <div className="name">{sound.name}</div>
                                     </button>
                                 ))}
                             </div>
                         </div>
+                    )
+                })}
+            </div>
 
-                        <button className="btn btn-secondary" style={{marginTop: 20}} onClick={() => setSelectedSound(null)}>Close</button>
+            {selectedSound && (
+                <div className="modal-overlay animate-fade-in" onClick={() => setSelectedSound(null)}>
+                    <div className="modal-content animate-slide-up" onClick={e => e.stopPropagation()}>
+                        <button className="close-btn" onClick={() => setSelectedSound(null)}>×</button>
+                        
+                        <div className="modal-header">
+                             <div className="modal-symbol-container">
+                                <h2 className="modal-symbol">{selectedSound.symbol}</h2>
+                                <button className="modal-audio-btn" onClick={() => playSound(selectedSound)}>
+                                    ▶
+                                </button>
+                             </div>
+                             <div className="modal-tags">
+                                <span className={`tag ${selectedSound.type.toLowerCase()}`}>{selectedSound.type}</span>
+                                <span className="tag neutral">{selectedSound.place}</span>
+                                <span className="tag neutral">{selectedSound.voiced ? "Voiced" : "Voiceless"}</span>
+                             </div>
+                        </div>
+                        
+                        <div className="modal-body">
+                             <div className="illustration-box">
+                                 <img 
+                                    src={`https://image.pollinations.ai/prompt/medical%20illustration%20sagittal%20cross-section%20of%20human%20head%20showing%20tongue%20and%20mouth%20position%20for%20pronouncing%20letter%20${selectedSound.name},%20${selectedSound.place}%20placement,%20black%20and%20white%20line%20art?width=400&height=300&nologo=true`}
+                                    alt="Articulation"
+                                 />
+                             </div>
+
+                             <div className="instruction-box">
+                                <h5>How to produce it</h5>
+                                <p>{selectedSound.description}</p>
+                             </div>
+
+                             <div className="examples-box">
+                                <h5>Examples</h5>
+                                <div className="chips">
+                                    {selectedSound.examples.map((ex, i) => (
+                                        <span key={i} className="chip" onClick={() => speak(ex)}>{ex}</span>
+                                    ))}
+                                </div>
+                             </div>
+                        </div>
                     </div>
                 </div>
             )}
@@ -608,7 +612,6 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   const fetchWord = useCallback(async () => {
     setState(prev => ({ ...prev, status: 'loading', message: '', placedTiles: [], rackTiles: [], word: '', definition: '', imageUrl: undefined, phonetic: undefined }));
     
-    // Attempt Gemini API first
     if (process.env.API_KEY) {
       try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -620,15 +623,8 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
           ${difficulty === 'Easy' ? 'Word length 4-5 letters. Common everyday words.' : ''}
           ${difficulty === 'Medium' ? 'Word length 6-8 letters. Standard to Advanced vocabulary.' : ''}
           ${difficulty === 'Hard' ? 'Word length 8-15 letters. Obscure, scientific, archaic, or literary words are encouraged.' : ''}
-          
           Do NOT use these words: ${seenWordsRef.current.slice(-20).join(', ')}.
-          
-          Return JSON format:
-          {
-            "word": "EXAMPLE",
-            "phonetic": "/.../",
-            "definition": "The definition of the word."
-          }
+          Return JSON format: { "word": "EXAMPLE", "phonetic": "/.../", "definition": "The definition..." }
         `;
 
         const response = await ai.models.generateContent({
@@ -647,22 +643,16 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
              }
           }
         });
-        
         const data = JSON.parse(response.text);
-        
-        if (data.word && data.definition) {
+        if (data.word) {
              const word = data.word.toUpperCase().trim();
-             const def = data.definition;
-             const phonetic = data.phonetic;
              const tiles = generateTiles(word);
-             
              seenWordsRef.current.push(word);
-             
              setState(prev => ({
                 ...prev,
                 word: word,
-                definition: def,
-                phonetic: phonetic,
+                definition: data.definition,
+                phonetic: data.phonetic,
                 placedTiles: Array(word.length).fill(null),
                 rackTiles: shuffleArray(tiles),
                 status: 'playing',
@@ -672,29 +662,22 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
              }));
              return;
         }
-
-      } catch (e) {
-        console.warn("API Error, falling back to local dictionary", e);
-      }
+      } catch (e) { console.warn("API Error", e); }
     }
 
-    // Fallback Logic
+    // Fallback
     await new Promise(resolve => setTimeout(resolve, 500));
     const candidates = LOCAL_DICTIONARY[difficulty];
     const available = candidates.filter(c => !seenWordsRef.current.includes(c.word));
     const pool = available.length > 0 ? available : candidates;
     const randomEntry = pool[Math.floor(Math.random() * pool.length)];
-    
     const word = randomEntry.word.toUpperCase();
-    const definition = randomEntry.definition;
     const tiles = generateTiles(word);
-    
     seenWordsRef.current.push(word);
-    
     setState(prev => ({
       ...prev,
       word: word,
-      definition: definition,
+      definition: randomEntry.definition,
       phonetic: randomEntry.phonetic,
       placedTiles: Array(word.length).fill(null),
       rackTiles: shuffleArray(tiles),
@@ -703,12 +686,9 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
       seenWords: [...prev.seenWords, word],
       imageUrl: getPollinationsImage(word)
     }));
-
   }, [difficulty]);
 
-  useEffect(() => {
-    fetchWord();
-  }, [fetchWord]);
+  useEffect(() => { fetchWord(); }, [fetchWord]);
 
   const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       const newLevel = parseInt(e.target.value);
@@ -724,12 +704,10 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
     SoundManager.init();
     const firstEmptyIndex = state.placedTiles.findIndex(t => t === null);
     if (firstEmptyIndex === -1) return;
-
     const newPlaced = [...state.placedTiles];
     newPlaced[firstEmptyIndex] = tile;
     const newRack = state.rackTiles.filter(t => t.id !== tile.id);
     const currentScore = newPlaced.reduce((acc, t) => acc + (t ? t.value : 0), 0);
-
     setState(prev => ({ ...prev, placedTiles: newPlaced, rackTiles: newRack, score: currentScore }));
     checkWin(newPlaced, state.word);
   };
@@ -739,12 +717,10 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
     SoundManager.init();
     const tile = state.placedTiles[index];
     if (!tile || tile.isHint) return;
-
     const newPlaced = [...state.placedTiles];
     newPlaced[index] = null;
     const newRack = [...state.rackTiles, tile];
     const currentScore = newPlaced.reduce((acc, t) => acc + (t ? t.value : 0), 0);
-
     setState(prev => ({ ...prev, placedTiles: newPlaced, rackTiles: newRack, score: currentScore }));
   };
 
@@ -780,16 +756,9 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
     }
     if (tileToMove) {
         const hintTile = { ...tileToMove, isHint: true };
-        if (newPlaced[targetIndex]) {
-            newRack.push(newPlaced[targetIndex]!);
-        }
+        if (newPlaced[targetIndex]) newRack.push(newPlaced[targetIndex]!);
         newPlaced[targetIndex] = hintTile;
-        setState(prev => ({
-            ...prev,
-            placedTiles: newPlaced,
-            rackTiles: newRack,
-            message: 'Hint Used! -5 Points'
-        }));
+        setState(prev => ({ ...prev, placedTiles: newPlaced, rackTiles: newRack, message: 'Hint Used! -5 Points' }));
         setTimeout(() => setState(prev => ({...prev, message: ''})), 1500);
         checkWin(newPlaced, word);
     }
@@ -803,12 +772,10 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   const handleLevelProgress = () => {
       let nextProgress = wordProgress + 1;
       let nextLevel = level;
-      
       if (nextProgress >= wordsPerLevel) {
           nextLevel = Math.min(level + 1, maxLevels);
           nextProgress = 0;
       }
-      
       setLevel(nextLevel);
       setWordProgress(nextProgress);
       localStorage.setItem(`scrabble_level_${difficulty}`, nextLevel.toString());
@@ -831,85 +798,78 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
     }
   };
 
-  if (state.status === 'loading') return <div className="loader"></div>;
+  if (state.status === 'loading') return <div className="loader-container"><div className="loader"></div></div>;
 
   return (
-    <>
-      <div className="level-bar">
-          <div className="level-info">
-              <div style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
-                  <span>Level</span>
-                  <select 
-                    value={level} 
-                    onChange={handleLevelChange}
-                    className="level-select-inline"
-                  >
-                    {Array.from({length: maxLevels}, (_, i) => i + 1).map(l => (
-                        <option key={l} value={l}> {l} </option>
-                    ))}
-                  </select>
-                  <span>/ {maxLevels}</span>
-              </div>
-              <span>Word {wordProgress + 1} / {wordsPerLevel}</span>
+    <div className="animate-fade-in">
+      <div className="game-status-bar">
+          <div className="level-indicator">
+              <span className="label">Level</span>
+              <select value={level} onChange={handleLevelChange}>
+                {Array.from({length: maxLevels}, (_, i) => i + 1).map(l => (
+                    <option key={l} value={l}>{l}</option>
+                ))}
+              </select>
           </div>
-          <div className="progress-track">
-              <div className="progress-fill" style={{width: `${(wordProgress / wordsPerLevel) * 100}%`}}></div>
+          <div className="progress-bar-container">
+              <div className="progress-bar-fill" style={{width: `${(wordProgress / wordsPerLevel) * 100}%`}}></div>
           </div>
+          <span className="progress-text">{wordProgress + 1}/{wordsPerLevel}</span>
       </div>
 
-      <div className="definition-card">
+      <div className="game-card">
         {state.imageUrl && (
-            <div className="word-image-container" style={{width: 150, height: 150, margin: '0 auto 15px'}}>
+            <div className="image-wrapper">
                 <ShuffledImage src={state.imageUrl} isRevealed={state.status === 'won'} />
             </div>
         )}
-        <div className="definition-label">Definition</div>
-        <div className="definition-text">{state.definition}</div>
-        {state.phonetic && (
-            <div className="phonetic-display" style={{marginTop: 10}}>
-                {state.phonetic}
+        
+        <div className="definition-section">
+            <h3 className="section-header">Definition</h3>
+            <p className="definition-body">{state.definition}</p>
+            {state.phonetic && <span className="phonetic-tag">{state.phonetic}</span>}
+        </div>
+
+        <div className="slots-container">
+            {state.placedTiles.map((tile, index) => (
+            <div key={`slot-${index}`} className={`slot ${tile ? 'filled' : ''}`} onClick={() => handlePlacedTileClick(index)}>
+                {tile && (
+                <div className={`tile ${tile.isHint ? 'hint' : ''} ${state.status === 'won' ? 'won' : ''}`}>
+                    <span className="letter">{tile.letter}</span>
+                    <span className="score">{tile.value}</span>
+                </div>
+                )}
             </div>
-        )}
+            ))}
+        </div>
+
+        <div className="feedback-message">{state.message}</div>
       </div>
 
-      <div className="board-area">
-        {state.placedTiles.map((tile, index) => (
-          <div key={`slot-${index}`} className={`slot ${tile ? 'filled' : ''}`} onClick={() => handlePlacedTileClick(index)}>
-            {tile && (
-              <div className={`tile ${tile.isHint ? 'locked' : ''} ${state.status === 'won' ? 'win-anim' : ''}`}>
-                <span className="tile-letter">{tile.letter}</span>
-                <span className="tile-score">{tile.value}</span>
-              </div>
-            )}
-          </div>
-        ))}
+      <div className="interaction-area">
+          {state.status === 'won' ? (
+             <button className="btn btn-primary large" onClick={fetchWord}>Next Word →</button>
+          ) : (
+            <>
+                <div className="rack">
+                    <button className="icon-btn" onClick={shuffleRack} title="Shuffle">↻</button>
+                    {state.rackTiles.map((tile) => (
+                        <div key={tile.id} className="tile rack-tile" onClick={() => handleRackTileClick(tile)}>
+                            <span className="letter">{tile.letter}</span>
+                            <span className="score">{tile.value}</span>
+                        </div>
+                    ))}
+                </div>
+                {state.status === 'playing' && (
+                    <div className="action-buttons">
+                        <button className="btn btn-light" onClick={useHint}>Hint (-5)</button>
+                        <button className="btn btn-text" onClick={fetchWord}>Skip</button>
+                    </div>
+                )}
+            </>
+          )}
       </div>
-
-      <div className="message">{state.message}</div>
-
-      {state.status === 'won' ? (
-        <div className="controls">
-          <button className="btn btn-primary" onClick={fetchWord}>Next Word →</button>
-        </div>
-      ) : (
-        <div className="rack-container">
-          <button className="shuffle-btn" onClick={shuffleRack}>↻</button>
-          {state.rackTiles.map((tile) => (
-            <div key={tile.id} className="tile" onClick={() => handleRackTileClick(tile)}>
-              <span className="tile-letter">{tile.letter}</span>
-              <span className="tile-score">{tile.value}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {state.status === 'playing' && (
-        <div className="controls">
-          <button className="btn btn-hint" onClick={useHint}>💡 Hint (-5)</button>
-          <button className="btn btn-secondary" onClick={fetchWord}>Skip Word</button>
-        </div>
-      )}
-    </>
+    </div>
   );
 };
 
@@ -946,45 +906,21 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
       try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const model = difficulty === 'Hard' ? 'gemini-3-pro-preview' : 'gemini-2.5-flash';
-        
         const prompt = `
           Pick a single random English word for a spelling bee.
           Difficulty Level: ${difficulty}.
           ${difficulty === 'Easy' ? 'Word length 4-6 letters. Common words.' : ''}
           ${difficulty === 'Medium' ? 'Word length 6-10 letters. Standard vocabulary.' : ''}
           ${difficulty === 'Hard' ? 'Word length 10+ letters. Advanced, obscure, or tricky spelling words.' : ''}
-
           Do NOT use these words: ${seenWordsRef.current.slice(-20).join(', ')}.
-
-          Return JSON format:
-          {
-            "word": "EXAMPLE",
-            "phonetic": "/.../",
-            "definition": "The definition...",
-            "sentence": "A sentence using the word."
-          }
+          Return JSON format: { "word": "EXAMPLE", "phonetic": "/.../", "definition": "...", "sentence": "..." }
         `;
-
         const response = await ai.models.generateContent({
           model: model,
           contents: prompt,
-          config: {
-             responseMimeType: 'application/json',
-             responseSchema: {
-               type: Type.OBJECT,
-               properties: {
-                 word: { type: Type.STRING },
-                 phonetic: { type: Type.STRING },
-                 definition: { type: Type.STRING },
-                 sentence: { type: Type.STRING }
-               },
-               required: ['word', 'definition', 'sentence']
-             }
-          }
+          config: { responseMimeType: 'application/json', responseSchema: { type: Type.OBJECT, properties: { word: { type: Type.STRING }, phonetic: { type: Type.STRING }, definition: { type: Type.STRING }, sentence: { type: Type.STRING } } } }
         });
-        
         const data = JSON.parse(response.text);
-        
         if (data.word) {
              const wordData: SpellingWordData = {
                 word: data.word.toUpperCase().trim(),
@@ -993,21 +929,12 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
                 sentence: data.sentence,
                 imageUrl: getPollinationsImage(data.word)
              };
-             
              seenWordsRef.current.push(wordData.word);
-
-             setState(prev => ({
-                ...prev,
-                status: 'playing',
-                data: wordData
-             }));
+             setState(prev => ({ ...prev, status: 'playing', data: wordData }));
              setTimeout(() => speak(wordData.word), 500);
              return;
         }
-
-      } catch (e) {
-        console.warn("API Error", e);
-      }
+      } catch (e) { console.warn("API Error", e); }
     }
 
     // Fallback
@@ -1016,29 +943,19 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
     const available = candidates.filter(c => !seenWordsRef.current.includes(c.word));
     const pool = available.length > 0 ? available : candidates;
     const randomEntry = pool[Math.floor(Math.random() * pool.length)];
-    
-    const wordData: SpellingWordData = {
+    const wordData = {
         word: randomEntry.word.toUpperCase(),
         phonetic: randomEntry.phonetic,
         definition: randomEntry.definition,
         sentence: randomEntry.sentence,
         imageUrl: getPollinationsImage(randomEntry.word)
     };
-    
     seenWordsRef.current.push(wordData.word);
-
-    setState(prev => ({
-      ...prev,
-      status: 'playing',
-      data: wordData
-    }));
+    setState(prev => ({ ...prev, status: 'playing', data: wordData }));
     setTimeout(() => speak(wordData.word), 500);
-
   }, [difficulty, speak]);
 
-  useEffect(() => {
-    fetchWord();
-  }, [fetchWord]);
+  useEffect(() => { fetchWord(); }, [fetchWord]);
 
   const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       const newLevel = parseInt(e.target.value);
@@ -1052,12 +969,10 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   const handleLevelProgress = () => {
     let nextProgress = wordProgress + 1;
     let nextLevel = level;
-    
     if (nextProgress >= wordsPerLevel) {
         nextLevel = Math.min(level + 1, maxLevels);
         nextProgress = 0;
     }
-    
     setLevel(nextLevel);
     setWordProgress(nextProgress);
     localStorage.setItem(`spelling_level_${difficulty}`, nextLevel.toString());
@@ -1080,88 +995,78 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
       }
   };
 
-  if (state.status === 'loading') return <div className="loader"></div>;
+  if (state.status === 'loading') return <div className="loader-container"><div className="loader"></div></div>;
 
   return (
-    <div className={`spelling-container ${state.status === 'won' ? 'won' : ''} ${state.message === 'Try again!' ? 'error' : ''}`}>
-        
-        <div className="level-bar" style={{width: '100%', marginBottom: 20}}>
-            <div className="level-info" style={{color: '#555'}}>
-                <div style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
-                  <span>Level</span>
-                  <select 
-                    value={level} 
-                    onChange={handleLevelChange}
-                    className="level-select-inline"
-                    style={{color: '#333', borderColor: '#999'}}
-                  >
-                    {Array.from({length: maxLevels}, (_, i) => i + 1).map(l => (
-                        <option key={l} value={l}> {l} </option>
-                    ))}
-                  </select>
-                  <span>/ {maxLevels}</span>
-                </div>
-                <span>Word {wordProgress + 1} / {wordsPerLevel}</span>
+    <div className={`animate-fade-in ${state.status === 'won' ? 'game-won' : ''}`}>
+        <div className="game-status-bar">
+          <div className="level-indicator">
+              <span className="label">Level</span>
+              <select value={level} onChange={handleLevelChange}>
+                {Array.from({length: maxLevels}, (_, i) => i + 1).map(l => (
+                    <option key={l} value={l}>{l}</option>
+                ))}
+              </select>
+          </div>
+          <div className="progress-bar-container">
+              <div className="progress-bar-fill" style={{width: `${(wordProgress / wordsPerLevel) * 100}%`}}></div>
+          </div>
+        </div>
+
+        <div className="game-card">
+            <div className="image-wrapper">
+                {state.data?.imageUrl && <ShuffledImage src={state.data.imageUrl} isRevealed={state.status === 'won'} />}
             </div>
-            <div className="progress-track" style={{background: '#ddd'}}>
-                <div className="progress-fill" style={{width: `${(wordProgress / wordsPerLevel) * 100}%`, background: 'var(--accent)'}}></div>
+            
+            <button className="big-play-btn" onClick={() => speak(state.data?.word || '')}>
+                 ▶
+            </button>
+            
+            <div className="input-group">
+                <input 
+                    className="modern-input"
+                    value={state.input}
+                    onChange={e => setState(prev => ({...prev, input: e.target.value}))}
+                    placeholder="TYPE HERE"
+                    disabled={state.status === 'won'}
+                    onKeyDown={e => e.key === 'Enter' && checkWord()}
+                    autoFocus
+                />
+            </div>
+            
+            <div className="feedback-message">{state.message}</div>
+            
+            <div className="hints-container">
+                {(state.showDefinition || state.status === 'won') && (
+                    <div className="hint-card animate-slide-up">
+                        <span className="hint-label">Definition</span>
+                        <p>{state.data?.definition}</p>
+                    </div>
+                )}
+                {(state.showSentence || state.status === 'won') && state.data?.sentence && (
+                    <div className="hint-card animate-slide-up">
+                        <span className="hint-label">Usage</span>
+                        <p>"{state.data.sentence.replace(new RegExp(state.data.word, 'gi'), '_____')}"</p>
+                    </div>
+                )}
             </div>
         </div>
 
-        <div className="word-image-container">
-            {state.data?.imageUrl && <ShuffledImage src={state.data.imageUrl} isRevealed={state.status === 'won'} />}
-        </div>
-        
-        <div className="audio-btn-large" onClick={() => speak(state.data?.word || '')}>
-             <span className="audio-icon">🔊</span>
-        </div>
-        
-        {state.data?.phonetic && (
-            <div className="phonetic-display">
-                {state.data.phonetic}
-            </div>
-        )}
-
-        <input 
-            className="spelling-input"
-            value={state.input}
-            onChange={e => setState(prev => ({...prev, input: e.target.value}))}
-            placeholder="SPELL IT"
-            disabled={state.status === 'won'}
-            onKeyDown={e => e.key === 'Enter' && checkWord()}
-            autoFocus
-        />
-
-        <div className="message">{state.message}</div>
-        
-        <div className="hint-section">
-             {state.showDefinition && (
-                 <div className="hint-text">
-                     <strong>Def:</strong> {state.data?.definition}
-                 </div>
-             )}
-             {state.showSentence && state.data?.sentence && (
-                 <div className="hint-text" style={{marginTop: 5}}>
-                     <strong>Use:</strong> "{state.data.sentence.replace(new RegExp(state.data.word, 'gi'), '_____')}"
-                 </div>
-             )}
-        </div>
-
-        <div className="controls">
+        <div className="interaction-area">
             {state.status === 'won' ? (
-                <button className="btn btn-primary" onClick={fetchWord}>Next Word →</button>
+                <button className="btn btn-primary large" onClick={fetchWord}>Next Word →</button>
             ) : (
-                <>
+                <div className="action-buttons">
                     <button className="btn btn-primary" onClick={checkWord}>Submit</button>
-                    <button className="btn btn-hint" onClick={() => {
+                    <button className="btn btn-light" onClick={() => {
                         if (!state.showDefinition) setState(prev => ({...prev, showDefinition: true}));
                         else if (!state.showSentence) setState(prev => ({...prev, showSentence: true}));
                         else speak(state.data?.word || '');
                     }}>
-                        {(!state.showDefinition) ? 'Hint: Def' : (!state.showSentence) ? 'Hint: Sentence' : 'Replay Audio'}
+                        {(!state.showDefinition) ? 'Hint: Def' : (!state.showSentence) ? 'Hint: Use' : 'Listen'}
                     </button>
-                    <button className="btn btn-secondary" onClick={fetchWord}>Skip</button>
-                </>
+                    <button className="btn btn-text" onClick={fetchWord}>Skip</button>
+                </div>
             )}
         </div>
     </div>
@@ -1169,50 +1074,29 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
 };
 
 const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
+    // ... [Logic kept same as previous, rendering updated] ...
     const [status, setStatus] = useState<'lobby' | 'hosting' | 'joining' | 'playing' | 'gameover'>('lobby');
     const [role, setRole] = useState<'host' | 'client' | null>(null);
     const [joinInput, setJoinInput] = useState('');
-    const [connection, setConnection] = useState<any>(null); // For client
+    const [connection, setConnection] = useState<any>(null);
     const [peerId, setPeerId] = useState<string>('');
     const peerRef = useRef<any>(null);
-    const hostConnectionsRef = useRef<Map<string, any>>(new Map()); // For host
-
-    const [gameState, setGameState] = useState<GameState>({
-        players: [],
-        words: [],
-        currentWordIndex: 0,
-        activePlayerIndex: 0,
-        phase: 'main',
-        timeLeft: 30,
-        scores: {},
-        status: 'waiting',
-    });
-    
-    // Client Local Input State
+    const hostConnectionsRef = useRef<Map<string, any>>(new Map());
+    const [gameState, setGameState] = useState<GameState>({ players: [], words: [], currentWordIndex: 0, activePlayerIndex: 0, phase: 'main', timeLeft: 30, scores: {}, status: 'waiting', });
     const [input, setInput] = useState('');
     const [message, setMessage] = useState('');
     const [showDef, setShowDef] = useState(false);
-
-    // Use shared hook for consistent robust behavior
     const speak = useTextToSpeech();
 
-    // Peer Setup
     useEffect(() => {
         const id = Math.random().toString(36).substring(2, 6).toUpperCase();
         const setupPeer = () => {
              const peer = new Peer(id, { debug: 1 });
              peerRef.current = peer;
              peer.on('open', (id) => setPeerId(id));
-             peer.on('error', (err) => {
-                 console.error("Peer error:", err);
-                 setMessage("Connection Error. Retrying...");
-                 setTimeout(setupPeer, 2000);
-             });
+             peer.on('error', (err) => { setMessage("Connection Error. Retrying..."); setTimeout(setupPeer, 2000); });
              peer.on('connection', (conn) => {
-                 conn.on('open', () => {
-                     if (role !== 'host' && status !== 'lobby') return;
-                     handleNewConnection(conn, id);
-                 });
+                 conn.on('open', () => { if (role !== 'host' && status !== 'lobby') return; handleNewConnection(conn, id); });
              });
         };
         setupPeer();
@@ -1220,395 +1104,486 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     }, []);
 
     const handleNewConnection = (conn: any, myId: string) => {
-         setRole('host');
-         setStatus('hosting');
+         setRole('host'); setStatus('hosting');
          setGameState(prev => {
-             if (prev.players.length >= 4) {
-                 conn.send({ type: 'ERROR', message: 'Game Full' });
-                 setTimeout(() => conn.close(), 500);
-                 return prev;
-             }
+             if (prev.players.length >= 4) { conn.send({ type: 'ERROR', message: 'Game Full' }); setTimeout(() => conn.close(), 500); return prev; }
              if (prev.players.find(p => p.id === conn.peer)) return prev;
-             const newPlayerName = `Player ${prev.players.length + 1}`;
-             const newPlayer = { id: conn.peer, name: newPlayerName };
+             const newPlayer = { id: conn.peer, name: `Player ${prev.players.length + 1}` };
              hostConnectionsRef.current.set(conn.peer, conn);
-             conn.on('data', (data: any) => {
-                if (data.type === 'CLIENT_SUBMIT') {
-                    handleWordSubmission(data.word, data.playerId);
-                }
-             });
-             conn.on('close', () => {
-                 hostConnectionsRef.current.delete(conn.peer);
-             });
+             conn.on('data', (data: any) => { if (data.type === 'CLIENT_SUBMIT') handleWordSubmission(data.word, data.playerId); });
+             conn.on('close', () => { hostConnectionsRef.current.delete(conn.peer); });
              let currentPlayers = [...prev.players];
-             if (currentPlayers.length === 0) {
-                 currentPlayers.push({ id: myId, name: "Host (You)" });
-             }
-             const nextPlayers = [...currentPlayers, newPlayer];
-             const nextScores = { ...prev.scores, [newPlayer.id]: 0, [myId]: 0 }; 
-             const newState = { ...prev, players: nextPlayers, scores: nextScores };
-             broadcastState(newState);
-             return newState;
+             if (currentPlayers.length === 0) currentPlayers.push({ id: myId, name: "Host (You)" });
+             const nextState = { ...prev, players: [...currentPlayers, newPlayer], scores: { ...prev.scores, [newPlayer.id]: 0, [myId]: 0 } };
+             broadcastState(nextState); return nextState;
          });
     };
 
-    const broadcastState = (state: GameState) => {
-        hostConnectionsRef.current.forEach(conn => {
-            if (conn.open) {
-                conn.send({ type: 'STATE_UPDATE', state: state });
-            }
-        });
-    };
+    const broadcastState = (state: GameState) => { hostConnectionsRef.current.forEach(conn => { if (conn.open) conn.send({ type: 'STATE_UPDATE', state: state }); }); };
 
-    // Host Logic
     useEffect(() => {
         if (role !== 'host' || status !== 'playing' || gameState.status !== 'playing') return;
         const timer = setInterval(() => {
             setGameState(prev => {
-                if (prev.timeLeft <= 0) {
-                    return handleTurnTimeout(prev);
-                }
+                if (prev.timeLeft <= 0) return handleTurnTimeout(prev);
                 const newState = { ...prev, timeLeft: prev.timeLeft - 1 };
-                broadcastState(newState); 
-                return newState;
+                broadcastState(newState); return newState;
             });
         }, 1000);
         return () => clearInterval(timer);
     }, [role, status, gameState.status]);
 
-    const handleTurnTimeout = (prevState: GameState): GameState => {
-        return switchTurn(prevState, false);
-    };
+    const handleTurnTimeout = (prevState: GameState): GameState => switchTurn(prevState, false);
 
     const switchTurn = (prev: GameState, success: boolean): GameState => {
         let nextState = { ...prev };
         const playerCount = prev.players.length;
-        
         if (success) {
              const points = prev.phase === 'main' ? 10 : 5;
              const activePlayer = prev.players[prev.activePlayerIndex];
              const winnerId = prev.phase === 'main' ? activePlayer.id : prev.players[(prev.activePlayerIndex + 1) % playerCount].id;
-             
              const newScore = (prev.scores[winnerId] || 0) + points;
              nextState.scores = { ...prev.scores, [winnerId]: newScore };
-             
-             // CHECK WIN CONDITION: 100 Points
-             if (newScore >= 100) {
-                 nextState.status = 'gameover';
-             } else {
-                 nextState.currentWordIndex += 1;
-                 nextState.phase = 'main';
-                 nextState.timeLeft = 30;
+             if (newScore >= 100) nextState.status = 'gameover';
+             else {
+                 nextState.currentWordIndex += 1; nextState.phase = 'main'; nextState.timeLeft = 30;
                  nextState.activePlayerIndex = (prev.activePlayerIndex + 1) % playerCount;
-                 if (nextState.currentWordIndex >= nextState.words.length) {
-                     nextState.status = 'gameover'; // Fallback
-                 } else {
-                     speak(nextState.words[nextState.currentWordIndex].word);
-                 }
+                 if (nextState.currentWordIndex < nextState.words.length) speak(nextState.words[nextState.currentWordIndex].word);
              }
-
         } else {
-            if (prev.phase === 'main') {
-                nextState.phase = 'steal';
-                nextState.timeLeft = 30; 
-            } else {
-                nextState.currentWordIndex += 1;
-                nextState.phase = 'main';
-                nextState.timeLeft = 30;
+            if (prev.phase === 'main') { nextState.phase = 'steal'; nextState.timeLeft = 30; }
+            else {
+                nextState.currentWordIndex += 1; nextState.phase = 'main'; nextState.timeLeft = 30;
                 nextState.activePlayerIndex = (prev.activePlayerIndex + 1) % playerCount;
-                if (nextState.currentWordIndex >= nextState.words.length) {
-                    nextState.status = 'gameover';
-                } else {
-                    speak(nextState.words[nextState.currentWordIndex].word);
-                }
+                if (nextState.currentWordIndex < nextState.words.length) speak(nextState.words[nextState.currentWordIndex].word);
             }
         }
-        broadcastState(nextState);
-        return nextState;
+        broadcastState(nextState); return nextState;
     };
 
     const handleWordSubmission = (submittedWord: string, submitterId: string) => {
         setGameState(prev => {
-             const playerCount = prev.players.length;
-             const activeIdx = prev.activePlayerIndex;
-             const stealIdx = (activeIdx + 1) % playerCount;
+             const playerCount = prev.players.length; const activeIdx = prev.activePlayerIndex; const stealIdx = (activeIdx + 1) % playerCount;
              let isTurn = false;
              if (prev.phase === 'main' && prev.players[activeIdx].id === submitterId) isTurn = true;
              if (prev.phase === 'steal' && prev.players[stealIdx].id === submitterId) isTurn = true;
-
              if (!isTurn) return prev; 
-             const targetWord = prev.words[prev.currentWordIndex].word;
-             const isCorrect = submittedWord.toUpperCase().trim() === targetWord;
+             const isCorrect = submittedWord.toUpperCase().trim() === prev.words[prev.currentWordIndex].word;
              if (isCorrect) SoundManager.playWin(); else SoundManager.playError();
              return switchTurn(prev, isCorrect);
         });
-        if (submitterId === peerId) {
-            setInput('');
-            setShowDef(false);
-        }
+        if (submitterId === peerId) { setInput(''); setShowDef(false); }
     };
 
     const startGameHost = () => {
-        const poolMedium = LOCAL_DICTIONARY['Medium'];
-        const poolHard = LOCAL_DICTIONARY['Hard'];
-        const combinedPool = [...poolMedium, ...poolHard];
-        
-        // Generate enough words for a race to 100 points
-        const selected = [];
-        for (let i = 0; i < 100; i++) {
-            selected.push(combinedPool[Math.floor(Math.random() * combinedPool.length)]);
-        }
-        
+        const combinedPool = [...LOCAL_DICTIONARY['Medium'], ...LOCAL_DICTIONARY['Hard']];
+        const selected = Array.from({length: 100}, () => combinedPool[Math.floor(Math.random() * combinedPool.length)]);
         const currentPlayers = [...gameState.players];
-        if (currentPlayers.length === 0 || currentPlayers[0].id !== peerId) {
-             if (!currentPlayers.find(p => p.id === peerId)) {
-                 currentPlayers.unshift({ id: peerId, name: "Host (You)" });
-             }
-        }
-        const initScores: Record<string, number> = {};
-        currentPlayers.forEach(p => initScores[p.id] = 0);
-        const initialState: GameState = {
-            players: currentPlayers,
-            words: selected,
-            currentWordIndex: 0,
-            activePlayerIndex: 0,
-            phase: 'main',
-            timeLeft: 30,
-            scores: initScores,
-            status: 'playing'
-        };
-        setGameState(initialState);
-        setStatus('playing');
-        broadcastState(initialState);
-        speak(selected[0].word);
+        if (currentPlayers.length === 0 || currentPlayers[0].id !== peerId) if (!currentPlayers.find(p => p.id === peerId)) currentPlayers.unshift({ id: peerId, name: "Host (You)" });
+        const initScores: Record<string, number> = {}; currentPlayers.forEach(p => initScores[p.id] = 0);
+        const initialState: GameState = { players: currentPlayers, words: selected, currentWordIndex: 0, activePlayerIndex: 0, phase: 'main', timeLeft: 30, scores: initScores, status: 'playing' };
+        setGameState(initialState); setStatus('playing'); broadcastState(initialState); speak(selected[0].word);
     };
 
-    // Client Logic
     const handleJoin = () => {
         if (!joinInput) return;
         const conn = peerRef.current.connect(joinInput.toUpperCase());
         conn.on('open', () => {
-            setConnection(conn);
-            setRole('client');
-            setStatus('playing'); 
-            conn.on('data', (data: any) => {
-                if (data.type === 'STATE_UPDATE') setGameState(data.state);
-                if (data.type === 'ERROR') {
-                    setMessage(data.message);
-                    setTimeout(() => setStatus('lobby'), 2000);
-                }
-            });
+            setConnection(conn); setRole('client'); setStatus('playing'); 
+            conn.on('data', (data: any) => { if (data.type === 'STATE_UPDATE') setGameState(data.state); if (data.type === 'ERROR') { setMessage(data.message); setTimeout(() => setStatus('lobby'), 2000); } });
         });
         conn.on('error', () => setMessage("Could not connect."));
     };
 
-    const submitWordClient = () => {
-        if (connection) {
-            connection.send({ type: 'CLIENT_SUBMIT', word: input, playerId: peerId });
-            setInput('');
-            setShowDef(false);
-        }
-    };
+    const submitWordClient = () => { if (connection) { connection.send({ type: 'CLIENT_SUBMIT', word: input, playerId: peerId }); setInput(''); setShowDef(false); } };
     
-    // 1. Lobby
+    // UI Rendering
     if (status === 'lobby') {
         return (
-            <div className="lobby-card">
-                <h3>Multiplayer Spelling Bee</h3>
-                <p>Connect with up to 4 players!</p>
+            <div className="card-center">
+                <h2>Multiplayer</h2>
+                <p>Play live with up to 4 friends.</p>
                 {peerId ? (
-                    <div style={{display:'flex', gap: 10, justifyContent: 'center'}}>
-                        <button className="btn btn-primary" onClick={() => {
-                            setRole('host');
-                            setStatus('hosting');
-                            setGameState(prev => ({
-                                ...prev, 
-                                players: [{ id: peerId, name: "Host (You)" }],
-                                scores: { [peerId]: 0 }
-                            }));
-                        }}>Host Game</button>
-                        <button className="btn btn-secondary" onClick={() => setStatus('joining')}>Join Game</button>
+                    <div className="btn-group vertical">
+                        <button className="btn btn-primary" onClick={() => { setRole('host'); setStatus('hosting'); setGameState(prev => ({ ...prev, players: [{ id: peerId, name: "Host (You)" }], scores: { [peerId]: 0 } })); }}>Create Room</button>
+                        <button className="btn btn-light" onClick={() => setStatus('joining')}>Join Room</button>
                     </div>
-                ) : (
-                    <div className="loader"></div>
-                )}
+                ) : <div className="loader"></div>}
             </div>
         );
     }
     
-    // 2. Hosting Lobby
     if (status === 'hosting') {
          return (
-            <div className="lobby-card">
-                <h3>Hosting Game</h3>
-                <p>Share code: <span className="lobby-code" style={{fontSize: '2rem'}}>{peerId}</span></p>
-                <div className="player-list">
-                    {gameState.players.map((p, i) => (
-                        <div key={p.id} className="player-row">
-                            <span>{p.name}</span>
-                            {p.id === peerId && <span style={{fontSize: '0.8rem', opacity: 0.7}}>HOST</span>}
-                        </div>
-                    ))}
-                    {gameState.players.length < 2 && <div className="loader" style={{margin: '10px auto', width: 20, height: 20}}></div>}
+            <div className="card-center">
+                <h3>Room Code</h3>
+                <div className="code-display">{peerId}</div>
+                <div className="list-container">
+                    {gameState.players.map(p => <div key={p.id} className="list-item"><span>{p.name}</span>{p.id === peerId && <span className="tag">Host</span>}</div>)}
+                    {gameState.players.length < 2 && <div className="waiting-pulse">Waiting for players...</div>}
                 </div>
-                
-                <div style={{margin: '20px 0', borderTop: '1px solid #ddd', paddingTop: 20}}>
-                     <label style={{fontSize: '1.2rem', fontWeight: 'bold', display: 'block', marginBottom: 10, color: 'var(--accent)'}}>
-                         Goal: First to 100 pts wins!
-                     </label>
-                </div>
-
-                {gameState.players.length >= 2 ? (
-                     <button className="btn btn-primary" onClick={startGameHost}>Start Match ({gameState.players.length}/4)</button>
-                ) : (
-                     <p>Waiting for at least 1 more player...</p>
-                )}
-                <button className="btn btn-secondary" style={{marginTop: 10}} onClick={() => setStatus('lobby')}>Back</button>
+                {gameState.players.length >= 2 ? <button className="btn btn-primary" onClick={startGameHost}>Start Match</button> : null}
+                <button className="btn btn-text" onClick={() => setStatus('lobby')}>Cancel</button>
             </div>
          );
     }
 
-    // 3. Joining Lobby (unchanged)
     if (status === 'joining') {
          return (
-            <div className="lobby-card">
-                <h3>Join Game</h3>
-                <input className="lobby-input" placeholder="ENTER CODE" value={joinInput} onChange={e => setJoinInput(e.target.value)} />
-                <button className="btn btn-primary" style={{marginTop: 15}} onClick={handleJoin}>Connect</button>
-                <div className="message">{message}</div>
-                <button className="btn btn-secondary" style={{marginTop: 10}} onClick={() => setStatus('lobby')}>Back</button>
+            <div className="card-center">
+                <h3>Join Room</h3>
+                <input className="modern-input" placeholder="ENTER CODE" value={joinInput} onChange={e => setJoinInput(e.target.value)} />
+                <button className="btn btn-primary" onClick={handleJoin}>Connect</button>
+                <div className="feedback-message">{message}</div>
+                <button className="btn btn-text" onClick={() => setStatus('lobby')}>Back</button>
             </div>
         );
     }
 
-    // 4. Playing Game (unchanged render structure, just re-rendered for context)
     if (status === 'playing') {
         if (gameState.status === 'gameover') {
              const sortedPlayers = [...gameState.players].sort((a, b) => (gameState.scores[b.id] || 0) - (gameState.scores[a.id] || 0));
              return (
-                <div className="spelling-container">
-                    <h2>Game Over!</h2>
-                    <div className="player-list">
+                <div className="card-center">
+                    <h2>Game Over</h2>
+                    <div className="leaderboard">
                         {sortedPlayers.map((p, index) => (
-                            <div key={p.id} className={`player-row ${index === 0 ? 'active' : ''}`}>
+                            <div key={p.id} className={`leaderboard-item ${index === 0 ? 'winner' : ''}`}>
                                 <span>{index + 1}. {p.name}</span>
                                 <span>{gameState.scores[p.id] || 0} pts</span>
                             </div>
                         ))}
                     </div>
-                    <h3>{sortedPlayers[0].id === peerId ? "🏆 YOU WON!" : "Better luck next time!"}</h3>
                     <button className="btn btn-primary" onClick={() => window.location.reload()}>Exit</button>
                 </div>
             );
         }
-        if (gameState.status === 'waiting') {
-             return (
-                 <div className="lobby-card">
-                     <h3>Connected!</h3>
-                     <p>Waiting for host to start...</p>
-                     <div className="player-list">
-                        {gameState.players.map(p => (
-                            <div key={p.id} className="player-row">{p.name}</div>
-                        ))}
-                     </div>
-                     <div className="loader"></div>
-                 </div>
-             );
-        }
+        if (gameState.status === 'waiting') return <div className="card-center"><h3>Connected</h3><p>Waiting for host...</p><div className="loader"></div></div>;
 
         const activePlayer = gameState.players[gameState.activePlayerIndex];
-        const stealIdx = (gameState.activePlayerIndex + 1) % gameState.players.length;
-        const stealPlayer = gameState.players[stealIdx];
-        const isMyTurn = (gameState.phase === 'main' && activePlayer.id === peerId) || 
-                         (gameState.phase === 'steal' && stealPlayer.id === peerId);
-        const turnName = gameState.phase === 'main' ? activePlayer.name : `${stealPlayer.name} (STEAL)`;
-        const currentWord = gameState.words[gameState.currentWordIndex];
+        const isMyTurn = (gameState.phase === 'main' && activePlayer.id === peerId) || (gameState.phase === 'steal' && gameState.players[(gameState.activePlayerIndex + 1) % gameState.players.length].id === peerId);
         
         return (
-            <div className="spelling-container" style={{ border: isMyTurn ? '4px solid var(--accent)' : '4px solid transparent' }}>
-                <div className="player-list" style={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 5, justifyContent: 'center'}}>
+            <div className={`multiplayer-game ${isMyTurn ? 'my-turn' : ''}`}>
+                <div className="top-hud">
+                    <div className="timer-badge">⏱ {gameState.timeLeft}s</div>
+                    <div className="turn-indicator">{isMyTurn ? "YOUR TURN" : `${activePlayer.name}'s Turn`}</div>
+                </div>
+
+                <div className="players-scroller">
                     {gameState.players.map(p => (
-                        <div key={p.id} 
-                             className={`player-badge`}
-                             style={{
-                                 background: p.id === activePlayer.id ? 'var(--accent)' : (gameState.phase === 'steal' && p.id === stealPlayer.id ? '#e57373' : 'var(--wood-color)'),
-                                 color: p.id === activePlayer.id ? '#3e2700' : 'white',
-                                 opacity: (gameState.phase === 'main' && p.id !== activePlayer.id) || (gameState.phase === 'steal' && p.id !== stealPlayer.id) ? 0.6 : 1
-                             }}
-                        >
+                        <div key={p.id} className={`player-pill ${p.id === activePlayer.id ? 'active' : ''}`}>
                             {p.name}: {gameState.scores[p.id] || 0}
                         </div>
                     ))}
                 </div>
-                <div style={{
-                    fontSize: '2rem', 
-                    fontWeight: 'bold', 
-                    color: gameState.timeLeft < 10 ? 'red' : '#333',
-                    marginBottom: 10
-                }}>
-                    ⏱ {gameState.timeLeft}s
-                </div>
-                <div style={{
-                    padding: '5px 15px', 
-                    background: isMyTurn ? 'var(--accent)' : '#eee',
-                    color: isMyTurn ? '#3e2700' : '#888',
-                    borderRadius: 20,
-                    fontWeight: 'bold',
-                    marginBottom: 20
-                }}>
-                    {isMyTurn ? "YOUR TURN" : `${turnName}'S TURN`} 
-                </div>
 
-                <div className="word-image-container">
-                     {currentWord ? (
-                        <ShuffledImage src={getPollinationsImage(currentWord.word)} isRevealed={false} />
-                     ) : (
-                         <div className="loader"></div>
-                     )}
-                </div>
-                
-                <div className="audio-btn-large" onClick={() => speak(currentWord?.word || '')} title="Play Word">
-                     <span className="audio-icon">🔊</span>
-                </div>
-                
-                {currentWord?.phonetic && (
-                    <div className="phonetic-display">
-                        {currentWord.phonetic}
+                <div className="game-card">
+                    <div className="image-wrapper small">
+                        <ShuffledImage src={getPollinationsImage(gameState.words[gameState.currentWordIndex].word)} isRevealed={false} />
                     </div>
-                )}
+                    
+                    <button className="big-play-btn" onClick={() => speak(gameState.words[gameState.currentWordIndex].word)}>▶</button>
+                    
+                    <input className="modern-input" value={input} onChange={e => setInput(e.target.value)} placeholder={isMyTurn ? "SPELL IT" : "WAITING..."} disabled={!isMyTurn} onKeyDown={e => { if (e.key === 'Enter' && isMyTurn) role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient(); }} />
+                    
+                    {showDef && <p className="hint-text">{gameState.words[gameState.currentWordIndex].definition}</p>}
 
-                <input 
-                    className="spelling-input"
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                    placeholder={isMyTurn ? "SPELL IT" : "WAITING..."}
-                    disabled={!isMyTurn}
-                    onKeyDown={e => {
-                        if (e.key === 'Enter' && isMyTurn) {
-                            role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient();
-                        }
-                    }}
-                />
-                
-                {showDef && <div className="hint-text" style={{marginBottom: 20}}>{currentWord?.definition}</div>}
-
-                <div className="controls">
-                    <button 
-                        className="btn btn-primary" 
-                        onClick={() => role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient()}
-                        disabled={!isMyTurn}
-                    >
-                        Submit
-                    </button>
-                    <button className="btn btn-hint" onClick={() => setShowDef(true)} disabled={showDef}>Definition</button>
-                </div>
-                
-                <div style={{marginTop: 20, fontSize: '0.8rem', opacity: 0.6}}>
-                    Word {gameState.currentWordIndex + 1} / {gameState.words.length}
+                    <div className="action-buttons">
+                        <button className="btn btn-primary" onClick={() => role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient()} disabled={!isMyTurn}>Submit</button>
+                        <button className="btn btn-light" onClick={() => setShowDef(true)} disabled={showDef}>Definition</button>
+                    </div>
                 </div>
             </div>
         );
     }
-    
     return <div>Loading...</div>;
 };
+
+const App = () => {
+    const [mode, setMode] = useState<GameMode>('phonetics');
+    const [difficulty, setDifficulty] = useState<Difficulty>('Easy');
+    const [score, setScore] = useState(0);
+
+    const updateScore = (points: number) => {
+        setScore(prev => prev + points);
+    };
+
+    return (
+        <div className="app-shell">
+             <style>{`
+                :root {
+                  --primary: #2563eb;
+                  --primary-light: #60a5fa;
+                  --primary-dark: #1e40af;
+                  --bg-color: #f8fafc;
+                  --surface: #ffffff;
+                  --text-main: #0f172a;
+                  --text-muted: #64748b;
+                  --accent: #f59e0b;
+                  --danger: #ef4444;
+                  --success: #22c55e;
+                  --radius: 16px;
+                  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+                  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+                  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+                  --glass: rgba(255, 255, 255, 0.7);
+                }
+                * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+                body {
+                  margin: 0;
+                  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                  background: var(--bg-color);
+                  color: var(--text-main);
+                  overflow-x: hidden;
+                }
+                .app-shell {
+                  max-width: 600px;
+                  margin: 0 auto;
+                  min-height: 100vh;
+                  padding-bottom: 80px;
+                }
+                
+                /* --- Header & Nav --- */
+                header {
+                    position: sticky; top: 0; z-index: 50;
+                    background: var(--glass);
+                    backdrop-filter: blur(12px);
+                    padding: 15px 20px;
+                    display: flex; justify-content: space-between; align-items: center;
+                    border-bottom: 1px solid rgba(0,0,0,0.05);
+                }
+                h1 { margin: 0; font-size: 1.5rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+                .score-pill {
+                    background: var(--text-main); color: white;
+                    padding: 5px 12px; border-radius: 20px;
+                    font-weight: 700; font-size: 0.9rem;
+                    box-shadow: var(--shadow-sm);
+                }
+                
+                .nav-pills {
+                    display: flex; gap: 8px; overflow-x: auto; padding: 15px 20px;
+                    scrollbar-width: none;
+                }
+                .nav-pills::-webkit-scrollbar { display: none; }
+                .nav-item {
+                    white-space: nowrap;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    background: white;
+                    color: var(--text-muted);
+                    font-weight: 600;
+                    font-size: 0.9rem;
+                    border: 1px solid rgba(0,0,0,0.05);
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .nav-item.active {
+                    background: var(--primary);
+                    color: white;
+                    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+                    border-color: var(--primary);
+                }
+                
+                .difficulty-selector {
+                    margin: 0 20px 10px;
+                    text-align: right;
+                }
+                select {
+                    background: white; border: 1px solid #e2e8f0;
+                    padding: 5px 10px; border-radius: 8px;
+                    color: var(--text-muted); font-size: 0.85rem;
+                }
+
+                /* --- Common Components --- */
+                .game-status-bar {
+                    display: flex; align-items: center; justify-content: space-between;
+                    padding: 0 20px; margin-bottom: 15px; color: var(--text-muted); font-size: 0.85rem; font-weight: 600;
+                }
+                .progress-bar-container {
+                    flex: 1; height: 6px; background: #e2e8f0;
+                    margin: 0 15px; border-radius: 3px; overflow: hidden;
+                }
+                .progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
+                
+                .game-card {
+                    background: white;
+                    margin: 0 20px;
+                    padding: 20px;
+                    border-radius: 24px;
+                    box-shadow: var(--shadow-lg);
+                    display: flex; flex-direction: column; align-items: center; text-align: center;
+                    position: relative; overflow: hidden;
+                }
+                
+                .image-wrapper {
+                    width: 140px; height: 140px; border-radius: 16px; overflow: hidden; margin-bottom: 20px;
+                    box-shadow: var(--shadow-md);
+                }
+                .image-wrapper.small { width: 100px; height: 100px; }
+                
+                .section-header { margin: 0 0 10px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; }
+                .definition-body { font-size: 1.1rem; line-height: 1.5; margin: 0 0 15px; color: var(--text-main); }
+                .phonetic-tag { display: inline-block; background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-family: 'Times New Roman', serif; font-style: italic; color: #64748b; }
+                
+                .modern-input {
+                    font-size: 1.5rem; text-align: center; width: 100%;
+                    border: none; border-bottom: 2px solid #e2e8f0;
+                    padding: 10px; outline: none; background: transparent;
+                    text-transform: uppercase; letter-spacing: 2px;
+                    transition: border-color 0.2s;
+                }
+                .modern-input:focus { border-color: var(--primary); }
+                
+                .big-play-btn {
+                    width: 60px; height: 60px; border-radius: 50%;
+                    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                    color: white; border: none; font-size: 1.5rem;
+                    display: flex; align-items: center; justify-content: center;
+                    cursor: pointer; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+                    margin-bottom: 20px; transition: transform 0.1s;
+                }
+                .big-play-btn:active { transform: scale(0.95); }
+
+                /* --- Buttons --- */
+                .btn {
+                    border: none; padding: 12px 24px; border-radius: 12px;
+                    font-weight: 600; cursor: pointer; font-size: 1rem;
+                    transition: all 0.2s;
+                }
+                .btn-primary {
+                    background: var(--text-main); color: white;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                }
+                .btn-primary:active { transform: scale(0.98); }
+                .btn-light { background: #f1f5f9; color: var(--text-main); }
+                .btn-text { background: transparent; color: var(--text-muted); }
+                .btn.large { width: 100%; font-size: 1.1rem; padding: 16px; background: var(--success); }
+                .action-buttons { display: flex; gap: 10px; width: 100%; justify-content: center; margin-top: 20px; }
+                
+                /* --- Tiles --- */
+                .slots-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 20px 0; }
+                .slot { width: 44px; height: 44px; border-radius: 8px; background: #f1f5f9; border: 2px dashed #cbd5e1; }
+                .slot.filled { border: none; background: transparent; }
+                
+                .tile {
+                    width: 44px; height: 44px; background: white;
+                    border-radius: 8px; border-bottom: 4px solid #e2e8f0;
+                    display: flex; align-items: center; justify-content: center;
+                    font-weight: 700; font-size: 1.2rem; color: var(--text-main);
+                    position: relative; user-select: none; cursor: pointer;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                    transition: transform 0.1s;
+                }
+                .tile:active { transform: translateY(2px); border-bottom-width: 2px; }
+                .tile.won { background: #dcfce7; border-color: #22c55e; color: #15803d; }
+                .tile.hint { background: #fef3c7; border-color: #fbbf24; }
+                .tile .score { position: absolute; bottom: 2px; right: 2px; font-size: 0.6rem; color: var(--text-muted); }
+                
+                .rack {
+                    display: flex; justify-content: center; gap: 6px; padding: 15px;
+                    background: white; border-radius: 16px; margin: 0 20px;
+                    box-shadow: var(--shadow-md); position: relative;
+                }
+                .icon-btn { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+
+                /* --- Phonetics --- */
+                .phonetics-container { padding: 0 20px; }
+                .section-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; color: var(--text-main); }
+                .section-subtitle { color: var(--text-muted); margin-bottom: 25px; }
+                
+                .phonetic-group { margin-bottom: 25px; }
+                .group-title { font-size: 0.9rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; letter-spacing: 1px; }
+                .phonetics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; }
+                
+                .phonetic-card {
+                    background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+                    padding: 10px 5px; display: flex; flex-direction: column; align-items: center;
+                    cursor: pointer; transition: all 0.2s;
+                }
+                .phonetic-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary-light); }
+                .phonetic-card .symbol { font-size: 1.4rem; font-weight: 700; color: var(--text-main); }
+                .phonetic-card .name { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+                .phonetic-card.vowel { background: linear-gradient(to bottom right, #fff, #fff7ed); }
+                
+                /* --- Modal --- */
+                .modal-overlay {
+                    position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+                    display: flex; align-items: flex-end; z-index: 100;
+                }
+                .modal-content {
+                    width: 100%; background: white; border-radius: 24px 24px 0 0;
+                    padding: 30px 20px; box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+                    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+                .modal-symbol-container { display: flex; align-items: center; gap: 15px; }
+                .modal-symbol { font-size: 3rem; margin: 0; line-height: 1; color: var(--primary); }
+                .modal-audio-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); color: white; border: none; font-size: 1.2rem; cursor: pointer; }
+                .modal-tags { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+                .tag { font-size: 0.75rem; padding: 4px 8px; border-radius: 6px; font-weight: 600; text-transform: uppercase; }
+                .tag.neutral { background: #f1f5f9; color: var(--text-muted); }
+                .tag.vowel { background: #ffedd5; color: #c2410c; }
+                .tag.consonant { background: #dbeafe; color: #1e40af; }
+                .illustration-box { background: #f8fafc; border-radius: 12px; height: 180px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; overflow: hidden; }
+                .illustration-box img { height: 100%; width: auto; mix-blend-mode: multiply; }
+                .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+                .chip { background: white; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 20px; font-weight: 500; cursor: pointer; }
+                .close-btn { position: absolute; top: 15px; right: 15px; background: #f1f5f9; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+                
+                /* --- Animations --- */
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+                .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+                .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+                
+                /* --- Misc --- */
+                .loader-container { height: 200px; display: flex; align-items: center; justify-content: center; }
+                .loader { width: 40px; height: 40px; border: 3px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s infinite linear; }
+                @keyframes spin { to { transform: rotate(360deg); } }
+                
+                .feedback-message { min-height: 24px; color: var(--accent); font-weight: 600; text-align: center; margin-top: 10px; }
+                
+                .card-center { 
+                    background: white; margin: 40px 20px; padding: 30px; border-radius: 24px; text-align: center; box-shadow: var(--shadow-lg); 
+                    display: flex; flex-direction: column; gap: 15px; align-items: center;
+                }
+                .code-display { font-size: 3rem; font-weight: 800; letter-spacing: 5px; color: var(--text-main); margin: 10px 0; }
+                .list-container { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+                .list-item { display: flex; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 8px; font-weight: 500; }
+             `}</style>
+
+             <header>
+                <h1>Lexicon</h1>
+                <div className="score-pill">{score} pts</div>
+             </header>
+             
+             <nav className="nav-pills">
+                <button className={`nav-item ${mode === 'phonetics' ? 'active' : ''}`} onClick={() => setMode('phonetics')}>Sounds</button>
+                <button className={`nav-item ${mode === 'scrabble' ? 'active' : ''}`} onClick={() => setMode('scrabble')}>Scrabble</button>
+                <button className={`nav-item ${mode === 'spelling' ? 'active' : ''}`} onClick={() => setMode('spelling')}>Spelling</button>
+                <button className={`nav-item ${mode === 'multiplayer' ? 'active' : ''}`} onClick={() => setMode('multiplayer')}>Multiplayer</button>
+             </nav>
+
+             {(mode === 'scrabble' || mode === 'spelling') && (
+                 <div className="difficulty-selector">
+                     <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)}>
+                         <option value="Easy">Easy</option>
+                         <option value="Medium">Medium</option>
+                         <option value="Hard">Hard</option>
+                     </select>
+                 </div>
+             )}
+
+             <main>
+                 {mode === 'phonetics' && <PhoneticsGuide />}
+                 {mode === 'scrabble' && <ScrabbleGame difficulty={difficulty} onScoreUpdate={updateScore} />}
+                 {mode === 'spelling' && <SpellingGame difficulty={difficulty} onScoreUpdate={updateScore} />}
+                 {mode === 'multiplayer' && <MultiplayerGame difficulty={difficulty} />}
+             </main>
+        </div>
+    );
+};
+
+const root = createRoot(document.getElementById('app')!);
+root.render(<App />);
