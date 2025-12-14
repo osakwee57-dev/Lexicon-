@@ -23,10 +23,10 @@ const LEVEL_CONFIG: Record<Difficulty, { maxLevels: number, wordsPerLevel: numbe
 interface PhoneticEntry {
     symbol: string;
     name: string;
-    type: string; // Vowel, Consonant, Diphthong
-    voiced?: boolean; // True if voiced, false if voiceless
-    place?: string; // e.g., Bilabial
-    manner?: string; // e.g., Stop
+    type: string;
+    voiced?: boolean;
+    place?: string;
+    manner?: string;
     examples: string[];
     description: string;
 }
@@ -66,7 +66,7 @@ const PHONETICS_DATA: PhoneticEntry[] = [
     { symbol: 'ɪ', name: 'kit', type: 'Vowel', voiced: true, place: 'Front Close-mid', manner: 'Vowel', examples: ['hit', 'sitting', 'gym', 'bit', 'in'], description: 'Relax lips slightly compared to /i:/, tongue slightly lower. Short sound.' },
     { symbol: 'e', name: 'dress', type: 'Vowel', voiced: true, place: 'Front Mid', manner: 'Vowel', examples: ['met', 'bed', 'bread', 'said', 'head'], description: 'Drop jaw slightly, tongue in the middle front. Like saying "eh".' },
     { symbol: 'æ', name: 'trap', type: 'Vowel', voiced: true, place: 'Front Open', manner: 'Vowel', examples: ['cat', 'black', 'hand', 'laugh', 'apple'], description: 'Open mouth wide, tongue flat and forward.' },
-    { symbol: 'ɑː', name: 'palm', type: 'Vowel', voiced: true, place: 'Back Open', manner: 'Vowel', examples: ['father', 'start', 'hard', 'car', 'heart'], description: 'Open mouth wide, relax tongue at the back. Like saying "Ahhh" at the doctor.' },
+    { symbol: 'ɑː', name: 'palm', type: 'Vowel', voiced: true, place: 'Back Open', manner: 'Vowel', examples: ['father', 'start', 'hard', 'car', 'part'], description: 'Open mouth wide, tongue low and back.' },
     { symbol: 'ɒ', name: 'lot', type: 'Vowel', voiced: true, place: 'Back Open', manner: 'Vowel', examples: ['hot', 'rock', 'stop', 'want', 'wash'], description: 'Round lips slightly, drop jaw. Short sound.' },
     { symbol: 'ɔː', name: 'thought', type: 'Vowel', voiced: true, place: 'Back Mid', manner: 'Vowel', examples: ['call', 'four', 'saw', 'walk', 'door'], description: 'Round lips more, tongue back. Long sound.' },
     { symbol: 'ʊ', name: 'foot', type: 'Vowel', voiced: true, place: 'Back Close-mid', manner: 'Vowel', examples: ['put', 'could', 'book', 'look', 'good'], description: 'Round lips loosely, back of tongue high. Short sound.' },
@@ -100,51 +100,31 @@ interface SpellingWordData {
   imageUrl?: string;
 }
 
-// Fallback Dictionary (Truncated for brevity, normally includes all words)
-// ... [Retaining existing dictionary data structure logic but assuming previous content exists]
-// For this full rewrite, I will include the dictionary variable but shorten the hardcoded list in this snippet to save space, 
-// ensuring the logic still references the full dictionary if you were to paste it all.
-// I will use the full dictionary provided in the prompt context.
-
-// ... [Existing Dictionary Content] ...
 const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
   Easy: [
-    { word: "APPLE", phonetic: "/ˈæp.əl/", definition: "A round fruit with red or green skin and a whitish inside.", sentence: "She ate a red _____ for a snack." },
-    { word: "BREAD", phonetic: "/bred/", definition: "Food made of flour, water, and yeast.", sentence: "He made a sandwich with whole wheat _____." },
-    { word: "HAPPY", phonetic: "/ˈhæp.i/", definition: "Feeling or showing pleasure or contentment.", sentence: "The puppy was _____ to see its owner." },
-    // ... [Add all other words from previous prompt here]
-    { word: "CHAIR", phonetic: "/tʃeər/", definition: "A separate seat for one person, typically with a back and four legs.", sentence: "Please sit in the _____." },
-    { word: "DANCE", phonetic: "/dæns/", definition: "Move rhythmically to music.", sentence: "They like to _____ at parties." },
-    { word: "ABATE", phonetic: "/əˈbeɪt/", definition: "To reduce or lessen.", sentence: "The storm began to _____." },
-    { word: "ABRIDGE", phonetic: "/əˈbrɪdʒ/", definition: "To shorten a text.", sentence: "He had to _____ his speech." },
-    { word: "ACCENTUATE", phonetic: "/əkˈsɛntʃueɪt/", definition: "To emphasize.", sentence: "The dress helped _____ her figure." },
-    { word: "AFFLUENT", phonetic: "/ˈæfluənt/", definition: "Rich, wealthy.", sentence: "They lived in an _____ neighborhood." },
-    { word: "ALLUDE", phonetic: "/əˈluːd/", definition: "To indirectly refer to something.", sentence: "He did _____ to the problem." },
-    { word: "AMELIORATE", phonetic: "/əˈmiːliəreɪt/", definition: "To make something better.", sentence: "Medicine can _____ pain." },
-    { word: "APATHETIC", phonetic: "/ˌæpəˈθɛtɪk/", definition: "Not caring; showing little emotion.", sentence: "Voters were _____ about the election." },
-    { word: "ARDUOUS", phonetic: "/ˈɑːrdʒuəs/", definition: "Very difficult or tiring.", sentence: "It was an _____ climb." },
-    { word: "AUSPICIOUS", phonetic: "/ɔːˈspɪʃəs/", definition: "Favorable; showing good signs.", sentence: "It was an _____ start." },
-    { word: "BANAL", phonetic: "/bəˈnɑːl/", definition: "Boring, not original.", sentence: "The conversation was _____." },
-    { word: "BENIGN", phonetic: "/bɪˈnaɪn/", definition: "Harmless.", sentence: "The tumor was _____." },
-    { word: "BOLSTER", phonetic: "/ˈboʊlstər/", definition: "To support or strengthen.", sentence: "We need to _____ morale." },
-    { word: "CANDID", phonetic: "/ˈkændɪd/", definition: "Honest and truthful.", sentence: "To be _____, I don't like it." },
-    { word: "CHRONICLE", phonetic: "/ˈkrɑːnɪkəl/", definition: "To record events in order.", sentence: "The book will _____ the war." },
-    { word: "COHERENT", phonetic: "/koʊˈhɪərənt/", definition: "Clear and logical.", sentence: "He gave a _____ explanation." },
-    { word: "COLLOQUIAL", phonetic: "/kəˈloʊkwiəl/", definition: "Informal language.", sentence: "It's a _____ expression." },
-    { word: "CONCUR", phonetic: "/kənˈkɜːr/", definition: "To agree.", sentence: "I _____ with your opinion." },
-    { word: "CONSPICUOUS", phonetic: "/kənˈspɪkjuəs/", definition: "Easily seen or noticed.", sentence: "He was _____ in a bright suit." },
-    { word: "CURSORY", phonetic: "/ˈkɜːrsəri/", definition: "Quick and not detailed.", sentence: "A _____ glance." },
-    { word: "DAUNTING", phonetic: "/ˈdɔːntɪŋ/", definition: "Intimidating; scary to start.", sentence: "The task was _____." },
-    { word: "DEBILITATE", phonetic: "/dɪˈbɪlɪteɪt/", definition: "To weaken.", sentence: "The virus can _____ you." },
-    { word: "DELINEATE", phonetic: "/dɪˈlɪnieɪt/", definition: "To describe clearly.", sentence: "The plan will _____ the steps." },
-    { word: "DERIVE", phonetic: "/dɪˈraɪv/", definition: "To obtain from a source.", sentence: "We _____ pleasure from music." },
-    { word: "DILIGENT", phonetic: "/ˈdɪlɪdʒənt/", definition: "Hardworking.", sentence: "She is a _____ student." },
-    { word: "DISCERN", phonetic: "/dɪˈsɜːrn/", definition: "To notice or recognize.", sentence: "I could _____ a faint light." },
-    { word: "DISCREET", phonetic: "/dɪˈskriːt/", definition: "Careful not to attract attention.", sentence: "Be _____ about the gift." },
-    { word: "ELICIT", phonetic: "/ɪˈlɪsɪt/", definition: "To draw out (information or reaction).", sentence: "The joke failed to _____ a laugh." },
-    { word: "ELUSIVE", phonetic: "/ɪˈluːsɪv/", definition: "Hard to find or catch.", sentence: "Success remained _____." },
-    { word: "EMULATE", phonetic: "/ˈɛmjuleɪt/ ", definition: "To imitate to match or surpass.", sentence: "Sons often _____ their fathers." },
-    { word: "ENIGMATIC", phonetic: "/ˌɛnɪɡˈmætɪk/", definition: "Mysterious.", sentence: "The Mona Lisa has an _____ smile." }
+    { word: "CAT", phonetic: "/kæt/", definition: "A small animal kept as a pet.", sentence: "The _____ meowed loudly." },
+    { word: "DOG", phonetic: "/dɒɡ/", definition: "A loyal animal often kept as a pet.", sentence: "The _____ barked at the stranger." },
+    { word: "SUN", phonetic: "/sʌn/", definition: "The star that gives light and heat.", sentence: "The _____ shines brightly today." },
+    { word: "MOON", phonetic: "/muːn/", definition: "The natural light seen at night.", sentence: "The _____ is full tonight." },
+    { word: "SKY", phonetic: "/skaɪ/", definition: "The space above the earth.", sentence: "The _____ is very blue." },
+    { word: "BOOK", phonetic: "/bʊk/", definition: "Pages with written or printed words.", sentence: "I read a good _____." },
+    { word: "PEN", phonetic: "/pen/", definition: "A tool for writing.", sentence: "Use a _____ to sign your name." },
+    { word: "CUP", phonetic: "/kʌp/", definition: "A small container for drinking.", sentence: "Would you like a _____ of tea?" },
+    { word: "HAT", phonetic: "/hæt/", definition: "Something worn on the head.", sentence: "Put on your _____." },
+    { word: "BAG", phonetic: "/bæɡ/", definition: "Used to carry things.", sentence: "My _____ is heavy." },
+    { word: "BALL", phonetic: "/bɔːl/", definition: "A round object used in games.", sentence: "Kick the _____." },
+    { word: "TREE", phonetic: "/triː/", definition: "A tall plant with branches.", sentence: "The _____ has green leaves." },
+    { word: "CAR", phonetic: "/kɑːr/", definition: "A vehicle with four wheels.", sentence: "We drive the _____ to work." },
+    { word: "BUS", phonetic: "/bʌs/", definition: "A large vehicle for passengers.", sentence: "I take the _____ to school." },
+    { word: "ROAD", phonetic: "/rəʊd/", definition: "A path for cars and people.", sentence: "Look both ways before crossing the _____." },
+    { word: "HOUSE", phonetic: "/haʊs/", definition: "A place where people live.", sentence: "They bought a new _____." },
+    { word: "DOOR", phonetic: "/dɔːr/", definition: "Used to enter or leave a room.", sentence: "Close the _____ behind you." },
+    { word: "CHAIR", phonetic: "/tʃeə(r)/", definition: "Furniture for sitting.", sentence: "Sit on the _____." },
+    { word: "TABLE", phonetic: "/ˈteɪbəl/", definition: "Furniture with a flat top.", sentence: "Dinner is on the _____." },
+    { word: "BED", phonetic: "/bed/", definition: "Used for sleeping.", sentence: "It is time to go to _____." },
+    { word: "WATER", phonetic: "/ˈwɔːtə(r)/", definition: "A clear liquid we drink.", sentence: "Drink plenty of _____." },
+    { word: "FOOD", phonetic: "/fuːd/", definition: "What people eat.", sentence: "We need _____ to survive." },
+    { word: "MILK", phonetic: "/mɪlk/", definition: "A white drink from animals.", sentence: "Cows produce _____." }
   ],
   Medium: [
      { word: "BRIDGE", phonetic: "/brɪdʒ/", definition: "A structure carrying a road across a river.", sentence: "We drove across the Golden Gate _____." },
@@ -163,16 +143,7 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "MUNDANE", phonetic: "/mʌnˈdeɪn/", definition: "Ordinary, not exciting.", sentence: "A _____ routine." },
     { word: "REFRAIN", phonetic: "/rɪˈfreɪn/", definition: "To stop yourself from doing something.", sentence: "Please _____ from talking." },
     { word: "ADEQUATE", phonetic: "/ˈæd.ə.kwət/", definition: "Good enough.", sentence: "The food was _____." },
-    { word: "ARBITRARY", phonetic: "/ˈɑːr.bə.trer.i/", definition: "Based on random choice, not reason.", sentence: "An _____ decision." },
-    { word: "CONVENTIONAL", phonetic: "/kənˈven.ʃən.əl/", definition: "Normal, traditional.", sentence: "A _____ oven." },
-    { word: "RELUCTANT", phonetic: "/rɪˈlʌk.tənt/", definition: "Not wanting to do something.", sentence: "He is _____ to go." },
-    { word: "AMPLE", phonetic: "/ˈæm.pəl/", definition: "More than enough.", sentence: "There is _____ room." },
-    { word: "BRITTLE", phonetic: "/ˈbrɪt.əl/", definition: "Easily broken.", sentence: "Dry twigs are _____." },
-    { word: "PONDER", phonetic: "/ˈpɑːn.dɚ/", definition: "To think deeply.", sentence: "I need to _____ this." },
-    { word: "RIGID", phonetic: "/ˈrɪdʒ.ɪd/", definition: "Not flexible.", sentence: "A _____ board." },
-    { word: "TRIVIAL", phonetic: "/ˈtrɪv.i.əl/", definition: "Not important.", sentence: "A _____ mistake." },
-    { word: "PROFOUND", phonetic: "/prəˈfaʊnd/", definition: "Deep or meaningful.", sentence: "A _____ silence." },
-    { word: "CUMULATIVE", phonetic: "/ˈkjuː.mjə.lə.tɪv/", definition: "Increasing by adding over time.", sentence: "The _____ effect." }
+    { word: "ARBITRARY", phonetic: "/ˈɑːr.bə.trer.i/", definition: "Based on random choice, not reason.", sentence: "An _____ decision." }
   ],
   Hard: [
     { word: "ECLIPSE", phonetic: "/ɪˈklɪps/", definition: "An obscuring of the light from one celestial body by another.", sentence: "The solar _____ darkened the sky." },
@@ -188,129 +159,107 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "ESOTERIC", phonetic: "/ˌes.əˈter.ɪk/", definition: "Known only by a small group.", sentence: "An _____ hobby." },
     { word: "FASTIDIOUS", phonetic: "/fæsˈtɪd.i.əs/", definition: "Very picky; hard to please.", sentence: "He is _____ about food." },
     { word: "BELLIGERENT", phonetic: "/bəˈlɪdʒ.ɚ.ənt/", definition: "Aggressive or ready to fight.", sentence: "A _____ attitude." },
-    { word: "EQUANIMITY", phonetic: "/ˌiː.kwəˈnɪm.ə.t̬i/", definition: "Calmness under stress.", sentence: "She accepted it with _____." },
-    { word: "HEGEMONY", phonetic: "/hɪˈdʒem.ə.ni/", definition: "Dominance or control over others.", sentence: "Cultural _____." },
-    { word: "PERFUNCTORY", phonetic: "/pɚˈfʌŋk.tɚ.i/", definition: "Done quickly without care.", sentence: "A _____ greeting." },
-    { word: "OBSTINATE", phonetic: "/ˈɑːb.stə.nət/", definition: "Stubborn and unwilling to change.", sentence: "An _____ child." },
-    { word: "SARDONIC", phonetic: "/sɑːrˈdɑː.nɪk/", definition: "Mocking in a bitter way.", sentence: "A _____ smile." },
-    { word: "RECALCITRANT", phonetic: "/rɪˈkæl.sɪ.trənt/", definition: "Refusing to obey rules.", sentence: "A _____ pupil." },
-    { word: "SAGACIOUS", phonetic: "/səˈɡeɪ.ʃəs/", definition: "Wise and good at judging.", sentence: "A _____ leader." },
-    { word: "INTRANSIGENT", phonetic: "/ɪnˈtræn.sə.dʒənt/", definition: "Refusing to compromise.", sentence: "They remained _____." },
-    { word: "ANACHRONISTIC", phonetic: "/əˌnæk.rəˈnɪs.tɪk/", definition: "Out of its proper time period.", sentence: "That sword is _____." },
-    { word: "PULCHRITUDE", phonetic: "/ˈpʌl.krə.tuːd/", definition: "Physical beauty.", sentence: "A woman of great _____." },
-    { word: "DISPARATE", phonetic: "/ˈdɪs.pɚ.ət/", definition: "Very different; not related.", sentence: "Two _____ concepts." },
-    { word: "MENDACIOUS", phonetic: "/menˈdeɪ.ʃəs/", definition: "Lying; not truthful.", sentence: "A _____ report." },
-    { word: "INDEFATIGABLE", phonetic: "/ˌɪn.dɪˈfæt.ɪ.ɡə.bəl/", definition: "Never getting tired.", sentence: "An _____ worker." },
-    { word: "EXTEMPORANEOUS", phonetic: "/ɪkˌstem.pəˈreɪ.ni.əs/", definition: "Spoken or done without preparation.", sentence: "An _____ speech." },
-    { word: "QUINTESSENTIAL", phonetic: "/ˌkwɪn.tɪˈsen.ʃəl/", definition: "The purest example of something.", sentence: "The _____ English gentleman." },
-    { word: "CONFLAGRATION", phonetic: "/ˌkɑːn.fləˈɡreɪ.ʃən/", definition: "A large, destructive fire.", sentence: "The city was destroyed by a _____." },
-    { word: "INSCRUTABLE", phonetic: "/ɪnˈskruː.t̬ə.bəl/", definition: "Impossible to understand.", sentence: "An _____ face." },
-    { word: "PUGNACIOUS", phonetic: "/pʌɡˈneɪ.ʃəs/", definition: "Eager to fight or argue.", sentence: "A _____ dog." },
-    { word: "IMPETUOUS", phonetic: "/ɪmˈpetʃ.u.əs/", definition: "Acting quickly without thinking.", sentence: "An _____ decision." },
-    { word: "INELUCTABLE", phonetic: "/ˌɪn.ɪˈlʌk.tə.bəl/", definition: "Unavoidable.", sentence: "The _____ end." },
-    { word: "SUPERCILIOUS", phonetic: "/ˌsuː.pɚˈsɪl.i.əs/", definition: "Behaving as if better than others.", sentence: "A _____ waiter." },
-    { word: "GRANDILOQUENT", phonetic: "/ɡrænˈdɪl.ə.kwənt/", definition: "Using fancy or exaggerated language.", sentence: "A _____ speech." },
-    { word: "LUGUBRIOUS", phonetic: "/luːˈɡuː.bri.əs/", definition: "Sad and gloomy.", sentence: "A _____ expression." },
-    { word: "INEFFABLE", phonetic: "/ˌɪnˈef.ə.bəl/", definition: "Too great to be described with words.", sentence: "Use _____ joy." },
-    { word: "OBSEQUIOUS", phonetic: "/əbˈsiː.kwi.əs/", definition: "Too eager to please or obey.", sentence: "An _____ servant." },
-    { word: "VICISSITUDE", phonetic: "/vɪˈsɪs.ə.tuːd/", definition: "A sudden change, usually unpleasant.", sentence: "The _____ of life." },
-    { word: "ABSTRUSE", phonetic: "/æbˈstruːs/", definition: "Difficult to understand.", sentence: "An _____ theory." },
-    { word: "RECONDITE", phonetic: "/ˈrek.ən.daɪt/", definition: "Little-known; obscure.", sentence: "A _____ subject." },
-    { word: "CACOPHONY", phonetic: "/kəˈkɑː.fə.ni/", definition: "Harsh, unpleasant mixture of sounds.", sentence: "A _____ of horns." },
-    { word: "PHLEGMATIC", phonetic: "/fleɡˈmæt.ɪk/", definition: "Calm and not easily excited.", sentence: "A _____ temperament." },
-    { word: "OBDURATE", phonetic: "/ˈɑːb.dʊ.rət/", definition: "Very stubborn.", sentence: "He remained _____." },
-    { word: "INIMICAL", phonetic: "/ɪˈnɪm.ɪ.kəl/", definition: "Harmful or unfriendly.", sentence: "Actions _____ to peace." },
-    { word: "PERSPICACIOUS", phonetic: "/ˌpɝː.spəˈkeɪ.ʃəs/", definition: "Very smart; able to notice details.", sentence: "A _____ analysis." },
-    { word: "MUNIFICENT", phonetic: "/mjuːˈnɪf.ə.sənt/", definition: "Extremely generous.", sentence: "A _____ donation." },
-    { word: "PARSIMONIOUS", phonetic: "/ˌpɑːr.səˈmoʊ.ni.əs/", definition: "Very unwilling to spend money.", sentence: "A _____ old man." },
-    { word: "IMPLACABLE", phonetic: "/ɪmˈplæk.ə.bəl/", definition: "Cannot be calmed or stopped.", sentence: "An _____ enemy." },
-    { word: "SYCOPHANT", phonetic: "/ˈsɪk.ə.fænt/", definition: "Someone who flatters to gain favor.", sentence: "A brown-nosing _____." },
-    { word: "ASSIDUOUS", phonetic: "/əˈsɪd.ju.əs/", definition: "Persistent and hardworking.", sentence: "An _____ student." },
-    { word: "INSIDIOUS", phonetic: "/ɪnˈsɪd.i.əs/", definition: "Sneaky and harmful.", sentence: "An _____ disease." },
-    { word: "PERIPATETIC", phonetic: "/ˌper.ə.pəˈtet.ɪk/", definition: "Traveling from place to place.", sentence: "A _____ teacher." },
-    { word: "QUERULOUS", phonetic: "/ˈkwer.ə.ləs/", definition: "Always complaining.", sentence: "A _____ voice." },
-    { word: "REPLETE", phonetic: "/rɪˈpliːt/", definition: "Completely filled.", sentence: "A room _____ with antiques." },
-    { word: "TREPIDATION", phonetic: "/ˌtrep.əˈdeɪ.ʃən/", definition: "Fear or worry.", sentence: "With some _____." },
-    { word: "AMBIVALENT", phonetic: "/æmˈbɪv.ə.lənt/", definition: "Having mixed feelings.", sentence: "She is _____ about the job." },
-    { word: "JUXTAPOSE", phonetic: "/ˌdʒʌk.stəˈpoʊz/", definition: "To place side by side for comparison.", sentence: "To _____ two images." },
-    { word: "IMPROVIDENT", phonetic: "/ɪmˈprɑː.və.dənt/", definition: "Not planning for the future.", sentence: "An _____ spender." },
-    { word: "EXECRABLE", phonetic: "/ˈek.sə.krə.bəl/", definition: "Extremely bad.", sentence: "The food was _____." },
-    { word: "OBVIATE", phonetic: "/ˈɑːb.vi.eɪt/", definition: "To remove a need or problem.", sentence: "This will _____ the delay." },
-    { word: "VITRIOLIC", phonetic: "/ˌvɪt.riˈɑː.lɪk/", definition: "Extremely harsh or bitter.", sentence: "A _____ attack." },
-    { word: "PUSILLANIMOUS", phonetic: "/ˌpjuː.səˈlæn.ə.məs/", definition: "Cowardly.", sentence: "A _____ leader." },
-    // User Added Words (31-60)
-    { word: "ERRATIC", phonetic: "/ɪˈrætɪk/", definition: "Unpredictable.", sentence: "His driving was ____." },
-    { word: "EXACERBATE", phonetic: "/ɪɡˈzæsərbeɪt/", definition: "To make worse.", sentence: "Stress can ____ the pain." },
-    { word: "FEASIBLE", phonetic: "/ˈfiːzəbl/", definition: "Possible or doable.", sentence: "The plan is ____." },
-    { word: "FERVENT", phonetic: "/ˈfɜːrvənt/", definition: "Very passionate.", sentence: "A _____ supporter." },
-    { word: "FRIVOLOUS", phonetic: "/ˈfrɪvələs/", definition: "Not serious; unimportant.", sentence: "A _____ lawsuit." },
-    { word: "GALVANIZE", phonetic: "/ˈɡælvənaɪz/", definition: "To inspire to take action.", sentence: "The speech will _____ them." },
-    { word: "GRAVITATE", phonetic: "/ˈɡrævɪteɪt/", definition: "To be drawn toward something.", sentence: "Kids _____ toward the toys." },
-    { word: "IMMINENT", phonetic: "/ˈɪmɪnənt/", definition: "About to happen.", sentence: "The danger was _____." },
-    { word: "IMPARTIAL", phonetic: "/ɪmˈpɑːrʃl/", definition: "Fair, not biased.", sentence: "An _____ judge." },
-    { word: "IMPLICIT", phonetic: "/ɪmˈplɪsɪt/", definition: "Implied, not directly stated.", sentence: "An _____ agreement." },
-    { word: "INCESSANT", phonetic: "/ɪnˈsɛsnt/", definition: "Nonstop.", sentence: "The _____ noise." },
-    { word: "INCREDULOUS", phonetic: "/ɪnˈkrɛdʒələs/", definition: "Unable to believe.", sentence: "He looked _____." },
-    { word: "INDOLENT", phonetic: "/ˈɪndələnt/", definition: "Lazy.", sentence: "An _____ employee." },
-    { word: "INSINUATE", phonetic: "/ɪnˈsɪnjueɪt/", definition: "To hint something negative.", sentence: "What are you trying to _____?" },
-    { word: "INSTIGATE", phonetic: "/ˈɪnstɪɡeɪt/", definition: "To start or provoke.", sentence: "To _____ a fight." },
-    { word: "INTREPID", phonetic: "/ɪnˈtrepɪd/", definition: "Brave, fearless.", sentence: "An _____ explorer." },
-    { word: "JUDICIOUS", phonetic: "/dʒuːˈdɪʃəs/", definition: "Wise, sensible.", sentence: "A _____ choice." },
-    { word: "LUCID", phonetic: "/ˈluːsɪd/", definition: "Clear and easy to understand.", sentence: "A _____ explanation." },
-    { word: "MEDIOCRE", phonetic: "/ˌmiːdiˈoʊkər/", definition: "Average, not very good.", sentence: "A _____ performance." },
-    { word: "MITIGATE", phonetic: "/ˈmɪtɪɡeɪt/", definition: "To reduce the effect.", sentence: "To _____ the damage." },
-    { word: "NOVEL", phonetic: "/ˈnɑːvəl/", definition: "New and original.", sentence: "A _____ idea." },
-    { word: "OBSOLETE", phonetic: "/ˌɑːbsəˈliːt/", definition: "Outdated.", sentence: "The old machine is _____." },
-    { word: "OMNIPRESENT", phonetic: "/ˌɑːmnɪˈpreznt/", definition: "Present everywhere.", sentence: "God is said to be _____." },
-    { word: "PERPLEX", phonetic: "/pərˈpleks/", definition: "To confuse.", sentence: "The question did _____ him." },
-    { word: "PRAGMATIC", phonetic: "/præɡˈmætɪk/", definition: "Practical.", sentence: "A _____ approach." },
-    { word: "PROLIFIC", phonetic: "/prəˈlɪfɪk/", definition: "Highly productive.", sentence: "A _____ writer." },
-    { word: "REITERATE", phonetic: "/riˈɪtəreɪt/", definition: "To repeat.", sentence: "Let me _____ that point." },
-    { word: "RESILIENT", phonetic: "/rɪˈzɪliənt/", definition: "Able to recover quickly.", sentence: "She is very _____." },
-    { word: "SCRUTINIZE", phonetic: "/ˈskruːtənaɪz/", definition: "To examine closely.", sentence: "To _____ the evidence." },
-    { word: "TANGIBLE", phonetic: "/ˈtændʒəbl/", definition: "Something you can touch or handle.", sentence: "There is no _____ proof." }
+    { word: "EQUANIMITY", phonetic: "/ˌiː.kwəˈnɪm.ə.t̬i/", definition: "Calmness under stress.", sentence: "She accepted it with _____." }
   ]
 };
 
 // --- Shared Types & Helpers ---
 
-// ... [Keep existing useTextToSpeech, SoundManager, generateTiles, shuffleArray, getPollinationsImage, ShuffledImage helpers]
+const SoundManager = {
+  ctx: null as AudioContext | null,
+  init() {
+    if (typeof window === 'undefined') return;
+    try {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+          if (AudioContextClass) {
+            this.ctx = new AudioContextClass();
+          }
+        }
+        if (this.ctx && this.ctx.state !== 'running') {
+          this.ctx.resume().catch(err => console.warn("AudioContext resume failed", err));
+        }
+    } catch (e) {
+        console.warn("Audio init failed", e);
+    }
+  },
+  playWin() {
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+      osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.4);
+    } catch (e) {}
+  },
+  playError() {
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(100, this.ctx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.2);
+    } catch (e) {}
+  }
+};
+
 const useTextToSpeech = () => {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
-    const loadVoices = () => setVoices(window.speechSynthesis.getVoices());
+    const loadVoices = () => {
+        const vs = window.speechSynthesis.getVoices();
+        if (vs.length > 0) setVoices(vs);
+    };
     loadVoices();
     if (window.speechSynthesis.onvoiceschanged !== undefined) {
       window.speechSynthesis.onvoiceschanged = loadVoices;
     }
     return () => {
       window.speechSynthesis.onvoiceschanged = null;
-      window.speechSynthesis.cancel();
     };
   }, []);
 
   const speak = useCallback((text: string, rate = 0.9) => {
     if (typeof window === 'undefined' || !window.speechSynthesis || !text) return;
-    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+    SoundManager.init();
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = rate;
-    activeUtteranceRef.current = utterance;
-    const currentVoices = window.speechSynthesis.getVoices();
-    const voice = currentVoices.find(v => v.name.includes("Google US English")) || 
-                  currentVoices.find(v => v.lang === 'en-US') || 
-                  currentVoices.find(v => v.lang.startsWith('en'));
-    if (voice) utterance.voice = voice;
-    utterance.onend = () => { activeUtteranceRef.current = null; };
-    utterance.onerror = (e) => {
-        console.error("TTS Error:", e);
-        activeUtteranceRef.current = null;
-        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-    };
-    window.speechSynthesis.speak(utterance);
+    setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = rate;
+        utterance.lang = 'en-US';
+        activeUtteranceRef.current = utterance;
+        const currentVoices = window.speechSynthesis.getVoices();
+        const voice = currentVoices.find(v => v.name.includes("Google US English")) || 
+                      currentVoices.find(v => v.lang === 'en-US') || 
+                      currentVoices.find(v => v.lang.startsWith('en'));
+        if (voice) utterance.voice = voice;
+        utterance.onend = () => { activeUtteranceRef.current = null; };
+        utterance.onerror = (e) => {
+            if (e.error === 'interrupted' || e.error === 'canceled') return;
+            console.error("TTS Error Detail:", e.error);
+            activeUtteranceRef.current = null;
+            if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+        };
+        try { window.speechSynthesis.speak(utterance); } catch (err) { console.error("TTS Speak Exception:", err); }
+    }, 10);
   }, []);
   return speak;
 };
@@ -349,6 +298,7 @@ interface ScrabbleState {
   seenWords: string[];
   imageUrl?: string;
   phonetic?: string; 
+  attempts: number;
 }
 
 interface SpellingState {
@@ -358,55 +308,8 @@ interface SpellingState {
     message: string;
     showDefinition: boolean;
     showSentence: boolean;
+    attempts: number;
 }
-
-const SoundManager = {
-  ctx: null as AudioContext | null,
-  init() {
-    if (!this.ctx && typeof window !== 'undefined') {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-      if (AudioContextClass) {
-        this.ctx = new AudioContextClass();
-      }
-    }
-    if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume().catch(() => {});
-    }
-  },
-  playWin() {
-    this.init();
-    if (!this.ctx) return;
-    try {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
-      osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
-      osc.start();
-      osc.stop(this.ctx.currentTime + 0.4);
-    } catch (e) {}
-  },
-  playError() {
-    this.init();
-    if (!this.ctx) return;
-    try {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(150, this.ctx.currentTime);
-      osc.frequency.linearRampToValueAtTime(100, this.ctx.currentTime + 0.2);
-      gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
-      osc.start();
-      osc.stop(this.ctx.currentTime + 0.2);
-    } catch (e) {}
-  }
-};
 
 const generateTiles = (word: string): Tile[] => {
   return word.split('').map((char, index) => ({
@@ -451,11 +354,8 @@ const ShuffledImage = ({ src, isRevealed }: { src: string, isRevealed: boolean }
                     src={src} 
                     onLoad={() => setLoaded(true)}
                     style={{
-                        width: '100%', 
-                        height: '100%', 
-                        objectFit: 'cover',
-                        opacity: loaded ? 1 : 0,
-                        transition: 'opacity 0.5s ease-out'
+                        width: '100%', height: '100%', objectFit: 'cover',
+                        opacity: loaded ? 1 : 0, transition: 'opacity 0.5s ease-out'
                     }}
                 />
              ) : (
@@ -465,13 +365,9 @@ const ShuffledImage = ({ src, isRevealed }: { src: string, isRevealed: boolean }
                         const col = tileIndex % 3;
                         return (
                             <div key={i} style={{
-                                width: '33.33%',
-                                height: '33.33%',
-                                backgroundImage: `url(${src})`,
-                                backgroundPosition: `${col * 50}% ${row * 50}%`,
-                                backgroundSize: '300% 300%',
-                                boxSizing: 'border-box',
-                                border: '2px solid #fff',
+                                width: '33.33%', height: '33.33%',
+                                backgroundImage: `url(${src})`, backgroundPosition: `${col * 50}% ${row * 50}%`,
+                                backgroundSize: '300% 300%', boxSizing: 'border-box', border: '2px solid #fff',
                                 transition: 'all 0.3s ease'
                             }} />
                         );
@@ -487,30 +383,17 @@ const ShuffledImage = ({ src, isRevealed }: { src: string, isRevealed: boolean }
 const PhoneticsGuide = () => {
     const [selectedSound, setSelectedSound] = useState<PhoneticEntry | null>(null);
     const speak = useTextToSpeech();
-
-    const playSound = (sound: PhoneticEntry) => {
-        const text = `${sound.name}. ${sound.examples[0]}.`;
-        speak(text);
-    };
-
-    // Group by manner/type
     const groups = PHONETICS_DATA.reduce((acc, curr) => {
         const key = curr.manner || curr.type;
         if (!acc[key]) acc[key] = [];
         acc[key].push(curr);
         return acc;
     }, {} as Record<string, PhoneticEntry[]>);
-
-    const orderedKeys = [
-        'Stop', 'Fricative', 'Affricate', 'Nasal', 'Approximant', 'Lateral Approximant',
-        'Vowel', 'Diphthong'
-    ];
+    const orderedKeys = ['Stop', 'Fricative', 'Affricate', 'Nasal', 'Approximant', 'Lateral Approximant', 'Vowel', 'Diphthong'];
 
     return (
         <div className="phonetics-container animate-fade-in">
             <h2 className="section-title">Phonetic Library</h2>
-            <p className="section-subtitle">Tap a symbol to explore articulation & sound.</p>
-            
             <div className="phonetics-scroll">
                 {orderedKeys.map(group => {
                     const items = groups[group];
@@ -520,11 +403,7 @@ const PhoneticsGuide = () => {
                             <h4 className="group-title">{group}s</h4>
                             <div className="phonetics-grid">
                                 {items.map((sound, idx) => (
-                                    <button 
-                                        key={idx} 
-                                        className={`phonetic-card ${sound.type.toLowerCase()}`}
-                                        onClick={() => setSelectedSound(sound)}
-                                    >
+                                    <button key={idx} className={`phonetic-card ${sound.type.toLowerCase()}`} onClick={() => setSelectedSound(sound)}>
                                         <div className="symbol">{sound.symbol}</div>
                                         <div className="name">{sound.name}</div>
                                     </button>
@@ -534,18 +413,14 @@ const PhoneticsGuide = () => {
                     )
                 })}
             </div>
-
             {selectedSound && (
                 <div className="modal-overlay animate-fade-in" onClick={() => setSelectedSound(null)}>
                     <div className="modal-content animate-slide-up" onClick={e => e.stopPropagation()}>
                         <button className="close-btn" onClick={() => setSelectedSound(null)}>×</button>
-                        
                         <div className="modal-header">
                              <div className="modal-symbol-container">
                                 <h2 className="modal-symbol">{selectedSound.symbol}</h2>
-                                <button className="modal-audio-btn" onClick={() => playSound(selectedSound)}>
-                                    ▶
-                                </button>
+                                <button className="modal-audio-btn" onClick={() => speak(`${selectedSound.name}. ${selectedSound.examples[0]}.`)}>▶</button>
                              </div>
                              <div className="modal-tags">
                                 <span className={`tag ${selectedSound.type.toLowerCase()}`}>{selectedSound.type}</span>
@@ -553,26 +428,15 @@ const PhoneticsGuide = () => {
                                 <span className="tag neutral">{selectedSound.voiced ? "Voiced" : "Voiceless"}</span>
                              </div>
                         </div>
-                        
                         <div className="modal-body">
-                             <div className="illustration-box">
-                                 <img 
-                                    src={`https://image.pollinations.ai/prompt/medical%20illustration%20sagittal%20cross-section%20of%20human%20head%20showing%20tongue%20and%20mouth%20position%20for%20pronouncing%20letter%20${selectedSound.name},%20${selectedSound.place}%20placement,%20black%20and%20white%20line%20art?width=400&height=300&nologo=true`}
-                                    alt="Articulation"
-                                 />
-                             </div>
-
                              <div className="instruction-box">
                                 <h5>How to produce it</h5>
                                 <p>{selectedSound.description}</p>
                              </div>
-
                              <div className="examples-box">
                                 <h5>Examples</h5>
                                 <div className="chips">
-                                    {selectedSound.examples.map((ex, i) => (
-                                        <span key={i} className="chip" onClick={() => speak(ex)}>{ex}</span>
-                                    ))}
+                                    {selectedSound.examples.map((ex, i) => <span key={i} className="chip" onClick={() => speak(ex)}>{ex}</span>)}
                                 </div>
                              </div>
                         </div>
@@ -587,7 +451,6 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   const [level, setLevel] = useState(1);
   const [wordProgress, setWordProgress] = useState(0);
 
-  // Load level from storage
   useEffect(() => {
     const savedLevel = localStorage.getItem(`scrabble_level_${difficulty}`);
     const savedProgress = localStorage.getItem(`scrabble_progress_${difficulty}`);
@@ -596,107 +459,73 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   }, [difficulty]);
 
   const [state, setState] = useState<ScrabbleState>({
-    word: '',
-    definition: '',
-    placedTiles: [],
-    rackTiles: [],
-    status: 'loading',
-    score: 0,
-    message: '',
-    seenWords: []
+    word: '', definition: '', placedTiles: [], rackTiles: [],
+    status: 'loading', score: 0, message: '', seenWords: [], attempts: 0
   });
 
   const seenWordsRef = useRef<string[]>([]);
   const { maxLevels, wordsPerLevel } = LEVEL_CONFIG[difficulty];
 
   const fetchWord = useCallback(async () => {
-    setState(prev => ({ ...prev, status: 'loading', message: '', placedTiles: [], rackTiles: [], word: '', definition: '', imageUrl: undefined, phonetic: undefined }));
-    
+    setState(prev => ({ ...prev, status: 'loading', message: '', placedTiles: [], rackTiles: [], word: '', definition: '', imageUrl: undefined, phonetic: undefined, attempts: 0 }));
     if (process.env.API_KEY) {
       try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const model = difficulty === 'Hard' ? 'gemini-3-pro-preview' : 'gemini-2.5-flash';
-        
-        const prompt = `
-          Pick a single random English word and its definition.
-          Difficulty Level: ${difficulty}.
-          ${difficulty === 'Easy' ? 'Word length 4-5 letters. Common everyday words.' : ''}
-          ${difficulty === 'Medium' ? 'Word length 6-8 letters. Standard to Advanced vocabulary.' : ''}
-          ${difficulty === 'Hard' ? 'Word length 8-15 letters. Obscure, scientific, archaic, or literary words are encouraged.' : ''}
-          Do NOT use these words: ${seenWordsRef.current.slice(-20).join(', ')}.
-          Return JSON format: { "word": "EXAMPLE", "phonetic": "/.../", "definition": "The definition..." }
-        `;
-
-        const response = await ai.models.generateContent({
-          model: model,
-          contents: prompt,
-          config: {
-             responseMimeType: 'application/json',
-             responseSchema: {
-               type: Type.OBJECT,
-               properties: {
-                 word: { type: Type.STRING },
-                 phonetic: { type: Type.STRING },
-                 definition: { type: Type.STRING }
-               },
-               required: ['word', 'definition']
-             }
-          }
-        });
+        const prompt = `Pick a random English word. Diff: ${difficulty}. Do NOT use: ${seenWordsRef.current.slice(-20).join(', ')}. JSON: { "word": "...", "phonetic": "...", "definition": "..." }`;
+        const response = await ai.models.generateContent({ model, contents: prompt, config: { responseMimeType: 'application/json', responseSchema: { type: Type.OBJECT, properties: { word: { type: Type.STRING }, phonetic: { type: Type.STRING }, definition: { type: Type.STRING } } } } });
         const data = JSON.parse(response.text);
         if (data.word) {
              const word = data.word.toUpperCase().trim();
-             const tiles = generateTiles(word);
              seenWordsRef.current.push(word);
-             setState(prev => ({
-                ...prev,
-                word: word,
-                definition: data.definition,
-                phonetic: data.phonetic,
-                placedTiles: Array(word.length).fill(null),
-                rackTiles: shuffleArray(tiles),
-                status: 'playing',
-                score: 0,
-                seenWords: [...prev.seenWords, word],
-                imageUrl: getPollinationsImage(word)
-             }));
+             setState(prev => ({ ...prev, word, definition: data.definition, phonetic: data.phonetic, placedTiles: Array(word.length).fill(null), rackTiles: shuffleArray(generateTiles(word)), status: 'playing', score: 0, seenWords: [...prev.seenWords, word], imageUrl: getPollinationsImage(word) }));
              return;
         }
       } catch (e) { console.warn("API Error", e); }
     }
-
-    // Fallback
-    await new Promise(resolve => setTimeout(resolve, 500));
     const candidates = LOCAL_DICTIONARY[difficulty];
     const available = candidates.filter(c => !seenWordsRef.current.includes(c.word));
     const pool = available.length > 0 ? available : candidates;
     const randomEntry = pool[Math.floor(Math.random() * pool.length)];
     const word = randomEntry.word.toUpperCase();
-    const tiles = generateTiles(word);
     seenWordsRef.current.push(word);
-    setState(prev => ({
-      ...prev,
-      word: word,
-      definition: randomEntry.definition,
-      phonetic: randomEntry.phonetic,
-      placedTiles: Array(word.length).fill(null),
-      rackTiles: shuffleArray(tiles),
-      status: 'playing',
-      score: 0,
-      seenWords: [...prev.seenWords, word],
-      imageUrl: getPollinationsImage(word)
-    }));
+    setState(prev => ({ ...prev, word, definition: randomEntry.definition, phonetic: randomEntry.phonetic, placedTiles: Array(word.length).fill(null), rackTiles: shuffleArray(generateTiles(word)), status: 'playing', score: 0, seenWords: [...prev.seenWords, word], imageUrl: getPollinationsImage(word) }));
   }, [difficulty]);
 
   useEffect(() => { fetchWord(); }, [fetchWord]);
 
   const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const newLevel = parseInt(e.target.value);
-      setLevel(newLevel);
-      setWordProgress(0);
+      const newLevel = parseInt(e.target.value); setLevel(newLevel); setWordProgress(0);
       localStorage.setItem(`scrabble_level_${difficulty}`, newLevel.toString());
       localStorage.setItem(`scrabble_progress_${difficulty}`, '0');
       setTimeout(fetchWord, 0); 
+  };
+
+  const checkWin = (currentPlaced: (Tile | null)[]) => {
+    if (currentPlaced.some(t => t === null)) return;
+    const formedWord = currentPlaced.map(t => t?.letter).join('');
+    if (formedWord === state.word) {
+      SoundManager.playWin();
+      const wordScore = currentPlaced.reduce((acc, t) => acc + (t ? t.value : 0), 0);
+      onScoreUpdate(wordScore);
+      let nextProgress = wordProgress + 1;
+      let nextLevel = level;
+      if (nextProgress >= wordsPerLevel) { nextLevel = Math.min(level + 1, maxLevels); nextProgress = 0; }
+      setLevel(nextLevel); setWordProgress(nextProgress);
+      localStorage.setItem(`scrabble_level_${difficulty}`, nextLevel.toString());
+      localStorage.setItem(`scrabble_progress_${difficulty}`, nextProgress.toString());
+      setState(prev => ({ ...prev, status: 'won', message: `Correct! +${wordScore} pts` }));
+    } else {
+      SoundManager.playError();
+      const newAttempts = state.attempts + 1;
+      if (newAttempts >= 3) {
+          const solvedTiles = generateTiles(state.word);
+          setState(prev => ({ ...prev, attempts: newAttempts, placedTiles: solvedTiles, rackTiles: [], status: 'won', message: `Out of tries! Word: ${state.word}` }));
+      } else {
+          setState(prev => ({ ...prev, attempts: newAttempts, message: `Try Again (${3 - newAttempts} left)` }));
+          setTimeout(() => setState(prev => ({ ...prev, message: '' })), 2000);
+      }
+    }
   };
 
   const handleRackTileClick = (tile: Tile) => {
@@ -704,12 +533,11 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
     SoundManager.init();
     const firstEmptyIndex = state.placedTiles.findIndex(t => t === null);
     if (firstEmptyIndex === -1) return;
-    const newPlaced = [...state.placedTiles];
-    newPlaced[firstEmptyIndex] = tile;
+    const newPlaced = [...state.placedTiles]; newPlaced[firstEmptyIndex] = tile;
     const newRack = state.rackTiles.filter(t => t.id !== tile.id);
     const currentScore = newPlaced.reduce((acc, t) => acc + (t ? t.value : 0), 0);
     setState(prev => ({ ...prev, placedTiles: newPlaced, rackTiles: newRack, score: currentScore }));
-    checkWin(newPlaced, state.word);
+    checkWin(newPlaced);
   };
 
   const handlePlacedTileClick = (index: number) => {
@@ -717,155 +545,43 @@ const ScrabbleGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
     SoundManager.init();
     const tile = state.placedTiles[index];
     if (!tile || tile.isHint) return;
-    const newPlaced = [...state.placedTiles];
-    newPlaced[index] = null;
+    const newPlaced = [...state.placedTiles]; newPlaced[index] = null;
     const newRack = [...state.rackTiles, tile];
     const currentScore = newPlaced.reduce((acc, t) => acc + (t ? t.value : 0), 0);
     setState(prev => ({ ...prev, placedTiles: newPlaced, rackTiles: newRack, score: currentScore }));
   };
 
-  const useHint = () => {
-    if (state.status !== 'playing') return;
-    SoundManager.init();
-    onScoreUpdate(-5);
-    const { word, placedTiles, rackTiles } = state;
-    let targetIndex = -1;
-    for (let i = 0; i < word.length; i++) {
-        if (!placedTiles[i] || placedTiles[i]?.letter !== word[i]) {
-            targetIndex = i;
-            break;
-        }
-    }
-    if (targetIndex === -1) return;
-    const targetLetter = word[targetIndex];
-    let tileToMove: Tile | undefined;
-    let newRack = [...rackTiles];
-    let newPlaced = [...placedTiles];
-    const rackIndex = newRack.findIndex(t => t.letter === targetLetter);
-    if (rackIndex !== -1) {
-        tileToMove = newRack[rackIndex];
-        newRack.splice(rackIndex, 1);
-    } else {
-        const placedIndex = newPlaced.findIndex((t, idx) => 
-            t?.letter === targetLetter && (idx !== targetIndex && newPlaced[idx]?.letter !== word[idx])
-        );
-        if (placedIndex !== -1) {
-            tileToMove = newPlaced[placedIndex]!;
-            newPlaced[placedIndex] = null; 
-        }
-    }
-    if (tileToMove) {
-        const hintTile = { ...tileToMove, isHint: true };
-        if (newPlaced[targetIndex]) newRack.push(newPlaced[targetIndex]!);
-        newPlaced[targetIndex] = hintTile;
-        setState(prev => ({ ...prev, placedTiles: newPlaced, rackTiles: newRack, message: 'Hint Used! -5 Points' }));
-        setTimeout(() => setState(prev => ({...prev, message: ''})), 1500);
-        checkWin(newPlaced, word);
-    }
-  };
-
-  const shuffleRack = () => {
-    SoundManager.init();
-    setState(prev => ({ ...prev, rackTiles: shuffleArray(prev.rackTiles) }));
-  };
-
-  const handleLevelProgress = () => {
-      let nextProgress = wordProgress + 1;
-      let nextLevel = level;
-      if (nextProgress >= wordsPerLevel) {
-          nextLevel = Math.min(level + 1, maxLevels);
-          nextProgress = 0;
-      }
-      setLevel(nextLevel);
-      setWordProgress(nextProgress);
-      localStorage.setItem(`scrabble_level_${difficulty}`, nextLevel.toString());
-      localStorage.setItem(`scrabble_progress_${difficulty}`, nextProgress.toString());
-  };
-
-  const checkWin = (currentPlaced: (Tile | null)[], targetWord: string) => {
-    if (currentPlaced.some(t => t === null)) return;
-    const formedWord = currentPlaced.map(t => t?.letter).join('');
-    if (formedWord === targetWord) {
-      SoundManager.playWin();
-      const wordScore = currentPlaced.reduce((acc, t) => acc + (t ? t.value : 0), 0);
-      onScoreUpdate(wordScore);
-      handleLevelProgress();
-      setState(prev => ({ ...prev, status: 'won', message: `Correct! +${wordScore} pts` }));
-    } else {
-      SoundManager.playError();
-      setState(prev => ({ ...prev, message: 'Not quite...' }));
-      setTimeout(() => setState(prev => ({ ...prev, message: '' })), 2000);
-    }
-  };
-
-  if (state.status === 'loading') return <div className="loader-container"><div className="loader"></div></div>;
-
   return (
     <div className="animate-fade-in">
       <div className="game-status-bar">
-          <div className="level-indicator">
-              <span className="label">Level</span>
-              <select value={level} onChange={handleLevelChange}>
-                {Array.from({length: maxLevels}, (_, i) => i + 1).map(l => (
-                    <option key={l} value={l}>{l}</option>
-                ))}
-              </select>
-          </div>
-          <div className="progress-bar-container">
-              <div className="progress-bar-fill" style={{width: `${(wordProgress / wordsPerLevel) * 100}%`}}></div>
-          </div>
+          <div className="level-indicator"><span className="label">Level</span><select value={level} onChange={handleLevelChange}>{Array.from({length: maxLevels}, (_, i) => i + 1).map(l => <option key={l} value={l}>{l}</option>)}</select></div>
+          <div className="progress-bar-container"><div className="progress-bar-fill" style={{width: `${(wordProgress / wordsPerLevel) * 100}%`}}></div></div>
           <span className="progress-text">{wordProgress + 1}/{wordsPerLevel}</span>
       </div>
-
       <div className="game-card">
-        {state.imageUrl && (
-            <div className="image-wrapper">
-                <ShuffledImage src={state.imageUrl} isRevealed={state.status === 'won'} />
-            </div>
-        )}
-        
+        {state.imageUrl && <div className="image-wrapper"><ShuffledImage src={state.imageUrl} isRevealed={state.status === 'won'} /></div>}
         <div className="definition-section">
             <h3 className="section-header">Definition</h3>
             <p className="definition-body">{state.definition}</p>
             {state.phonetic && <span className="phonetic-tag">{state.phonetic}</span>}
         </div>
-
         <div className="slots-container">
             {state.placedTiles.map((tile, index) => (
             <div key={`slot-${index}`} className={`slot ${tile ? 'filled' : ''}`} onClick={() => handlePlacedTileClick(index)}>
-                {tile && (
-                <div className={`tile ${tile.isHint ? 'hint' : ''} ${state.status === 'won' ? 'won' : ''}`}>
-                    <span className="letter">{tile.letter}</span>
-                    <span className="score">{tile.value}</span>
-                </div>
-                )}
+                {tile && <div className={`tile ${tile.isHint ? 'hint' : ''} ${state.status === 'won' ? 'won' : ''}`}><span className="letter">{tile.letter}</span><span className="score">{tile.value}</span></div>}
             </div>
             ))}
         </div>
-
         <div className="feedback-message">{state.message}</div>
       </div>
-
       <div className="interaction-area">
-          {state.status === 'won' ? (
-             <button className="btn btn-primary large" onClick={fetchWord}>Next Word →</button>
-          ) : (
+          {state.status === 'won' ? <button className="btn btn-primary large" onClick={fetchWord}>Next Word →</button> : (
             <>
                 <div className="rack">
-                    <button className="icon-btn" onClick={shuffleRack} title="Shuffle">↻</button>
-                    {state.rackTiles.map((tile) => (
-                        <div key={tile.id} className="tile rack-tile" onClick={() => handleRackTileClick(tile)}>
-                            <span className="letter">{tile.letter}</span>
-                            <span className="score">{tile.value}</span>
-                        </div>
-                    ))}
+                    <button className="icon-btn" onClick={() => setState(p => ({...p, rackTiles: shuffleArray(p.rackTiles)}))}>↻</button>
+                    {state.rackTiles.map((tile) => <div key={tile.id} className="tile rack-tile" onClick={() => handleRackTileClick(tile)}><span className="letter">{tile.letter}</span><span className="score">{tile.value}</span></div>)}
                 </div>
-                {state.status === 'playing' && (
-                    <div className="action-buttons">
-                        <button className="btn btn-light" onClick={useHint}>Hint (-5)</button>
-                        <button className="btn btn-text" onClick={fetchWord}>Skip</button>
-                    </div>
-                )}
+                {state.status === 'playing' && <div className="action-buttons"><button className="btn btn-text" onClick={fetchWord}>Skip</button></div>}
             </>
           )}
       </div>
@@ -878,7 +594,6 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   const [wordProgress, setWordProgress] = useState(0);
   const speak = useTextToSpeech();
   
-  // Load level from storage
   useEffect(() => {
     const savedLevel = localStorage.getItem(`spelling_level_${difficulty}`);
     const savedProgress = localStorage.getItem(`spelling_progress_${difficulty}`);
@@ -887,97 +602,33 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   }, [difficulty]);
 
   const { maxLevels, wordsPerLevel } = LEVEL_CONFIG[difficulty];
-
-  const [state, setState] = useState<SpellingState>({
-    data: null,
-    input: '',
-    status: 'loading',
-    message: '',
-    showDefinition: false,
-    showSentence: false
-  });
-
+  const [state, setState] = useState<SpellingState>({ data: null, input: '', status: 'loading', message: '', showDefinition: false, showSentence: false, attempts: 0 });
   const seenWordsRef = useRef<string[]>([]);
 
   const fetchWord = useCallback(async () => {
-    setState(prev => ({ ...prev, status: 'loading', message: '', input: '', showDefinition: false, showSentence: false, data: null }));
-
+    setState(prev => ({ ...prev, status: 'loading', message: '', input: '', showDefinition: false, showSentence: false, data: null, attempts: 0 }));
+    let wordData: SpellingWordData | null = null;
     if (process.env.API_KEY) {
       try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const model = difficulty === 'Hard' ? 'gemini-3-pro-preview' : 'gemini-2.5-flash';
-        const prompt = `
-          Pick a single random English word for a spelling bee.
-          Difficulty Level: ${difficulty}.
-          ${difficulty === 'Easy' ? 'Word length 4-6 letters. Common words.' : ''}
-          ${difficulty === 'Medium' ? 'Word length 6-10 letters. Standard vocabulary.' : ''}
-          ${difficulty === 'Hard' ? 'Word length 10+ letters. Advanced, obscure, or tricky spelling words.' : ''}
-          Do NOT use these words: ${seenWordsRef.current.slice(-20).join(', ')}.
-          Return JSON format: { "word": "EXAMPLE", "phonetic": "/.../", "definition": "...", "sentence": "..." }
-        `;
-        const response = await ai.models.generateContent({
-          model: model,
-          contents: prompt,
-          config: { responseMimeType: 'application/json', responseSchema: { type: Type.OBJECT, properties: { word: { type: Type.STRING }, phonetic: { type: Type.STRING }, definition: { type: Type.STRING }, sentence: { type: Type.STRING } } } }
-        });
+        const prompt = `Pick random spelling word. Diff: ${difficulty}. JSON: { "word": "...", "phonetic": "...", "definition": "...", "sentence": "..." }`;
+        const response = await ai.models.generateContent({ model, contents: prompt, config: { responseMimeType: 'application/json', responseSchema: { type: Type.OBJECT, properties: { word: { type: Type.STRING }, phonetic: { type: Type.STRING }, definition: { type: Type.STRING }, sentence: { type: Type.STRING } } } } });
         const data = JSON.parse(response.text);
-        if (data.word) {
-             const wordData: SpellingWordData = {
-                word: data.word.toUpperCase().trim(),
-                phonetic: data.phonetic,
-                definition: data.definition,
-                sentence: data.sentence,
-                imageUrl: getPollinationsImage(data.word)
-             };
-             seenWordsRef.current.push(wordData.word);
-             setState(prev => ({ ...prev, status: 'playing', data: wordData }));
-             setTimeout(() => speak(wordData.word), 500);
-             return;
-        }
+        if (data.word) wordData = { word: data.word.toUpperCase().trim(), phonetic: data.phonetic, definition: data.definition, sentence: data.sentence, imageUrl: getPollinationsImage(data.word) };
       } catch (e) { console.warn("API Error", e); }
     }
-
-    // Fallback
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const candidates = LOCAL_DICTIONARY[difficulty];
-    const available = candidates.filter(c => !seenWordsRef.current.includes(c.word));
-    const pool = available.length > 0 ? available : candidates;
-    const randomEntry = pool[Math.floor(Math.random() * pool.length)];
-    const wordData = {
-        word: randomEntry.word.toUpperCase(),
-        phonetic: randomEntry.phonetic,
-        definition: randomEntry.definition,
-        sentence: randomEntry.sentence,
-        imageUrl: getPollinationsImage(randomEntry.word)
-    };
-    seenWordsRef.current.push(wordData.word);
+    if (!wordData) {
+        const candidates = LOCAL_DICTIONARY[difficulty];
+        const randomEntry = candidates[Math.floor(Math.random() * candidates.length)];
+        wordData = { word: randomEntry.word.toUpperCase(), phonetic: randomEntry.phonetic, definition: randomEntry.definition, sentence: randomEntry.sentence, imageUrl: getPollinationsImage(randomEntry.word) };
+    }
+    seenWordsRef.current.push(wordData!.word);
     setState(prev => ({ ...prev, status: 'playing', data: wordData }));
-    setTimeout(() => speak(wordData.word), 500);
+    setTimeout(() => speak(wordData!.word), 500);
   }, [difficulty, speak]);
 
   useEffect(() => { fetchWord(); }, [fetchWord]);
-
-  const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const newLevel = parseInt(e.target.value);
-      setLevel(newLevel);
-      setWordProgress(0);
-      localStorage.setItem(`spelling_level_${difficulty}`, newLevel.toString());
-      localStorage.setItem(`spelling_progress_${difficulty}`, '0');
-      setTimeout(fetchWord, 0);
-  };
-
-  const handleLevelProgress = () => {
-    let nextProgress = wordProgress + 1;
-    let nextLevel = level;
-    if (nextProgress >= wordsPerLevel) {
-        nextLevel = Math.min(level + 1, maxLevels);
-        nextProgress = 0;
-    }
-    setLevel(nextLevel);
-    setWordProgress(nextProgress);
-    localStorage.setItem(`spelling_level_${difficulty}`, nextLevel.toString());
-    localStorage.setItem(`spelling_progress_${difficulty}`, nextProgress.toString());
-  };
 
   const checkWord = () => {
       SoundManager.init();
@@ -986,12 +637,22 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
           SoundManager.playWin();
           const points = difficulty === 'Hard' ? 15 : difficulty === 'Medium' ? 10 : 5;
           onScoreUpdate(points);
-          handleLevelProgress();
+          let nextProgress = wordProgress + 1;
+          let nextLevel = level;
+          if (nextProgress >= wordsPerLevel) { nextLevel = Math.min(level + 1, maxLevels); nextProgress = 0; }
+          setLevel(nextLevel); setWordProgress(nextProgress);
+          localStorage.setItem(`spelling_level_${difficulty}`, nextLevel.toString());
+          localStorage.setItem(`spelling_progress_${difficulty}`, nextProgress.toString());
           setState(prev => ({ ...prev, status: 'won', message: `Correct! +${points} pts` }));
       } else {
           SoundManager.playError();
-          setState(prev => ({ ...prev, message: 'Try again!' }));
-          setTimeout(() => setState(prev => ({...prev, message: ''})), 1500);
+          const newAttempts = state.attempts + 1;
+          if (newAttempts >= 3) {
+              setState(prev => ({ ...prev, attempts: newAttempts, input: state.data!.word, status: 'won', message: `Out of tries! Answer: ${state.data!.word}` }));
+          } else {
+              setState(prev => ({ ...prev, attempts: newAttempts, message: `Try again! (${3 - newAttempts} left)` }));
+              setTimeout(() => setState(prev => ({...prev, message: ''})), 1500);
+          }
       }
   };
 
@@ -1000,71 +661,25 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
   return (
     <div className={`animate-fade-in ${state.status === 'won' ? 'game-won' : ''}`}>
         <div className="game-status-bar">
-          <div className="level-indicator">
-              <span className="label">Level</span>
-              <select value={level} onChange={handleLevelChange}>
-                {Array.from({length: maxLevels}, (_, i) => i + 1).map(l => (
-                    <option key={l} value={l}>{l}</option>
-                ))}
-              </select>
-          </div>
-          <div className="progress-bar-container">
-              <div className="progress-bar-fill" style={{width: `${(wordProgress / wordsPerLevel) * 100}%`}}></div>
-          </div>
+          <div className="level-indicator"><span className="label">Level</span><select value={level} onChange={(e) => { const l = parseInt(e.target.value); setLevel(l); setWordProgress(0); localStorage.setItem(`spelling_level_${difficulty}`, l.toString()); localStorage.setItem(`spelling_progress_${difficulty}`, '0'); setTimeout(fetchWord,0); }}>{Array.from({length: maxLevels}, (_, i) => i + 1).map(l => <option key={l} value={l}>{l}</option>)}</select></div>
+          <div className="progress-bar-container"><div className="progress-bar-fill" style={{width: `${(wordProgress / wordsPerLevel) * 100}%`}}></div></div>
         </div>
-
         <div className="game-card">
-            <div className="image-wrapper">
-                {state.data?.imageUrl && <ShuffledImage src={state.data.imageUrl} isRevealed={state.status === 'won'} />}
-            </div>
-            
-            <button className="big-play-btn" onClick={() => speak(state.data?.word || '')}>
-                 ▶
-            </button>
-            
-            <div className="input-group">
-                <input 
-                    className="modern-input"
-                    value={state.input}
-                    onChange={e => setState(prev => ({...prev, input: e.target.value}))}
-                    placeholder="TYPE HERE"
-                    disabled={state.status === 'won'}
-                    onKeyDown={e => e.key === 'Enter' && checkWord()}
-                    autoFocus
-                />
-            </div>
-            
+            <div className="image-wrapper">{state.data?.imageUrl && <ShuffledImage src={state.data.imageUrl} isRevealed={state.status === 'won'} />}</div>
+            <button className="big-play-btn" onClick={() => speak(state.data?.word || '')}>▶</button>
+            {state.data?.phonetic && <div className="phonetic-display-box" style={{ background: '#f0f9ff', padding: '10px 20px', borderRadius: '15px', color: '#0284c7', fontSize: '1.4rem', fontWeight: 'bold', fontFamily: 'serif', marginBottom: '15px', border: '1px solid #bae6fd' }}>{state.data.phonetic}</div>}
+            <div className="input-group"><input className="modern-input" value={state.input} onChange={e => setState(prev => ({...prev, input: e.target.value}))} placeholder="TYPE HERE" disabled={state.status === 'won'} onKeyDown={e => e.key === 'Enter' && checkWord()} autoFocus /></div>
             <div className="feedback-message">{state.message}</div>
-            
             <div className="hints-container">
-                {(state.showDefinition || state.status === 'won') && (
-                    <div className="hint-card animate-slide-up">
-                        <span className="hint-label">Definition</span>
-                        <p>{state.data?.definition}</p>
-                    </div>
-                )}
-                {(state.showSentence || state.status === 'won') && state.data?.sentence && (
-                    <div className="hint-card animate-slide-up">
-                        <span className="hint-label">Usage</span>
-                        <p>"{state.data.sentence.replace(new RegExp(state.data.word, 'gi'), '_____')}"</p>
-                    </div>
-                )}
+                {(state.showDefinition || state.status === 'won') && <div className="hint-card animate-slide-up"><span className="hint-label">Definition</span><p>{state.data?.definition}</p></div>}
+                {(state.showSentence || state.status === 'won') && state.data?.sentence && <div className="hint-card animate-slide-up"><span className="hint-label">Usage</span><p>"{state.data.sentence.replace(new RegExp(state.data.word, 'gi'), '_____')}"</p></div>}
             </div>
         </div>
-
         <div className="interaction-area">
-            {state.status === 'won' ? (
-                <button className="btn btn-primary large" onClick={fetchWord}>Next Word →</button>
-            ) : (
+            {state.status === 'won' ? <button className="btn btn-primary large" onClick={fetchWord}>Next Word →</button> : (
                 <div className="action-buttons">
                     <button className="btn btn-primary" onClick={checkWord}>Submit</button>
-                    <button className="btn btn-light" onClick={() => {
-                        if (!state.showDefinition) setState(prev => ({...prev, showDefinition: true}));
-                        else if (!state.showSentence) setState(prev => ({...prev, showSentence: true}));
-                        else speak(state.data?.word || '');
-                    }}>
-                        {(!state.showDefinition) ? 'Hint: Def' : (!state.showSentence) ? 'Hint: Use' : 'Listen'}
-                    </button>
+                    <button className="btn btn-light" onClick={() => { if (!state.showDefinition) setState(prev => ({...prev, showDefinition: true})); else if (!state.showSentence) setState(prev => ({...prev, showSentence: true})); else speak(state.data?.word || ''); }}>{(!state.showDefinition) ? 'Hint: Def' : (!state.showSentence) ? 'Hint: Use' : 'Listen'}</button>
                     <button className="btn btn-text" onClick={fetchWord}>Skip</button>
                 </div>
             )}
@@ -1074,7 +689,6 @@ const SpellingGame = ({ difficulty, onScoreUpdate }: { difficulty: Difficulty, o
 };
 
 const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
-    // ... [Logic kept same as previous, rendering updated] ...
     const [status, setStatus] = useState<'lobby' | 'hosting' | 'joining' | 'playing' | 'gameover'>('lobby');
     const [role, setRole] = useState<'host' | 'client' | null>(null);
     const [joinInput, setJoinInput] = useState('');
@@ -1091,16 +705,12 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     useEffect(() => {
         const id = Math.random().toString(36).substring(2, 6).toUpperCase();
         const setupPeer = () => {
-             const peer = new Peer(id, { debug: 1 });
-             peerRef.current = peer;
+             const peer = new Peer(id, { debug: 1 }); peerRef.current = peer;
              peer.on('open', (id) => setPeerId(id));
-             peer.on('error', (err) => { setMessage("Connection Error. Retrying..."); setTimeout(setupPeer, 2000); });
-             peer.on('connection', (conn) => {
-                 conn.on('open', () => { if (role !== 'host' && status !== 'lobby') return; handleNewConnection(conn, id); });
-             });
+             peer.on('error', (err) => { setMessage("Connection Error."); setTimeout(setupPeer, 2000); });
+             peer.on('connection', (conn) => { conn.on('open', () => { if (role !== 'host' && status !== 'lobby') return; handleNewConnection(conn, id); }); });
         };
-        setupPeer();
-        return () => peerRef.current?.destroy();
+        setupPeer(); return () => peerRef.current?.destroy();
     }, []);
 
     const handleNewConnection = (conn: any, myId: string) => {
@@ -1120,20 +730,17 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     };
 
     const broadcastState = (state: GameState) => { hostConnectionsRef.current.forEach(conn => { if (conn.open) conn.send({ type: 'STATE_UPDATE', state: state }); }); };
-
     useEffect(() => {
         if (role !== 'host' || status !== 'playing' || gameState.status !== 'playing') return;
         const timer = setInterval(() => {
             setGameState(prev => {
-                if (prev.timeLeft <= 0) return handleTurnTimeout(prev);
+                if (prev.timeLeft <= 0) return switchTurn(prev, false);
                 const newState = { ...prev, timeLeft: prev.timeLeft - 1 };
                 broadcastState(newState); return newState;
             });
         }, 1000);
         return () => clearInterval(timer);
     }, [role, status, gameState.status]);
-
-    const handleTurnTimeout = (prevState: GameState): GameState => switchTurn(prevState, false);
 
     const switchTurn = (prev: GameState, success: boolean): GameState => {
         let nextState = { ...prev };
@@ -1197,102 +804,30 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
 
     const submitWordClient = () => { if (connection) { connection.send({ type: 'CLIENT_SUBMIT', word: input, playerId: peerId }); setInput(''); setShowDef(false); } };
     
-    // UI Rendering
-    if (status === 'lobby') {
-        return (
-            <div className="card-center">
-                <h2>Multiplayer</h2>
-                <p>Play live with up to 4 friends.</p>
-                {peerId ? (
-                    <div className="btn-group vertical">
-                        <button className="btn btn-primary" onClick={() => { setRole('host'); setStatus('hosting'); setGameState(prev => ({ ...prev, players: [{ id: peerId, name: "Host (You)" }], scores: { [peerId]: 0 } })); }}>Create Room</button>
-                        <button className="btn btn-light" onClick={() => setStatus('joining')}>Join Room</button>
-                    </div>
-                ) : <div className="loader"></div>}
-            </div>
-        );
-    }
-    
-    if (status === 'hosting') {
-         return (
-            <div className="card-center">
-                <h3>Room Code</h3>
-                <div className="code-display">{peerId}</div>
-                <div className="list-container">
-                    {gameState.players.map(p => <div key={p.id} className="list-item"><span>{p.name}</span>{p.id === peerId && <span className="tag">Host</span>}</div>)}
-                    {gameState.players.length < 2 && <div className="waiting-pulse">Waiting for players...</div>}
-                </div>
-                {gameState.players.length >= 2 ? <button className="btn btn-primary" onClick={startGameHost}>Start Match</button> : null}
-                <button className="btn btn-text" onClick={() => setStatus('lobby')}>Cancel</button>
-            </div>
-         );
-    }
-
-    if (status === 'joining') {
-         return (
-            <div className="card-center">
-                <h3>Join Room</h3>
-                <input className="modern-input" placeholder="ENTER CODE" value={joinInput} onChange={e => setJoinInput(e.target.value)} />
-                <button className="btn btn-primary" onClick={handleJoin}>Connect</button>
-                <div className="feedback-message">{message}</div>
-                <button className="btn btn-text" onClick={() => setStatus('lobby')}>Back</button>
-            </div>
-        );
-    }
+    if (status === 'lobby') return (
+            <div className="card-center"><h2>Multiplayer</h2><p>Play live with up to 4 friends.</p>{peerId ? (<div className="btn-group vertical"><button className="btn btn-primary" onClick={() => { setRole('host'); setStatus('hosting'); setGameState(prev => ({ ...prev, players: [{ id: peerId, name: "Host (You)" }], scores: { [peerId]: 0 } })); }}>Create Room</button><button className="btn btn-light" onClick={() => setStatus('joining')}>Join Room</button></div>) : <div className="loader"></div>}</div>
+    );
+    if (status === 'hosting') return (<div className="card-center"><h3>Room Code</h3><div className="code-display">{peerId}</div><div className="list-container">{gameState.players.map(p => <div key={p.id} className="list-item"><span>{p.name}</span>{p.id === peerId && <span className="tag">Host</span>}</div>)}</div>{gameState.players.length >= 2 && <button className="btn btn-primary" onClick={startGameHost}>Start Match</button>}<button className="btn btn-text" onClick={() => setStatus('lobby')}>Cancel</button></div>);
+    if (status === 'joining') return (<div className="card-center"><h3>Join Room</h3><input className="modern-input" placeholder="ENTER CODE" value={joinInput} onChange={e => setJoinInput(e.target.value)} /><button className="btn btn-primary" onClick={handleJoin}>Connect</button><div className="feedback-message">{message}</div><button className="btn btn-text" onClick={() => setStatus('lobby')}>Back</button></div>);
 
     if (status === 'playing') {
         if (gameState.status === 'gameover') {
              const sortedPlayers = [...gameState.players].sort((a, b) => (gameState.scores[b.id] || 0) - (gameState.scores[a.id] || 0));
-             return (
-                <div className="card-center">
-                    <h2>Game Over</h2>
-                    <div className="leaderboard">
-                        {sortedPlayers.map((p, index) => (
-                            <div key={p.id} className={`leaderboard-item ${index === 0 ? 'winner' : ''}`}>
-                                <span>{index + 1}. {p.name}</span>
-                                <span>{gameState.scores[p.id] || 0} pts</span>
-                            </div>
-                        ))}
-                    </div>
-                    <button className="btn btn-primary" onClick={() => window.location.reload()}>Exit</button>
-                </div>
-            );
+             return (<div className="card-center"><h2>Game Over</h2><div className="leaderboard">{sortedPlayers.map((p, index) => (<div key={p.id} className={`leaderboard-item ${index === 0 ? 'winner' : ''}`}><span>{index + 1}. {p.name}</span><span>{gameState.scores[p.id] || 0} pts</span></div>))}</div><button className="btn btn-primary" onClick={() => window.location.reload()}>Exit</button></div>);
         }
         if (gameState.status === 'waiting') return <div className="card-center"><h3>Connected</h3><p>Waiting for host...</p><div className="loader"></div></div>;
-
         const activePlayer = gameState.players[gameState.activePlayerIndex];
         const isMyTurn = (gameState.phase === 'main' && activePlayer.id === peerId) || (gameState.phase === 'steal' && gameState.players[(gameState.activePlayerIndex + 1) % gameState.players.length].id === peerId);
-        
         return (
             <div className={`multiplayer-game ${isMyTurn ? 'my-turn' : ''}`}>
-                <div className="top-hud">
-                    <div className="timer-badge">⏱ {gameState.timeLeft}s</div>
-                    <div className="turn-indicator">{isMyTurn ? "YOUR TURN" : `${activePlayer.name}'s Turn`}</div>
-                </div>
-
-                <div className="players-scroller">
-                    {gameState.players.map(p => (
-                        <div key={p.id} className={`player-pill ${p.id === activePlayer.id ? 'active' : ''}`}>
-                            {p.name}: {gameState.scores[p.id] || 0}
-                        </div>
-                    ))}
-                </div>
-
+                <div className="top-hud"><div className="timer-badge">⏱ {gameState.timeLeft}s</div><div className="turn-indicator">{isMyTurn ? "YOUR TURN" : `${activePlayer.name}'s Turn`}</div></div>
+                <div className="players-scroller">{gameState.players.map(p => <div key={p.id} className={`player-pill ${p.id === activePlayer.id ? 'active' : ''}`}>{p.name}: {gameState.scores[p.id] || 0}</div>)}</div>
                 <div className="game-card">
-                    <div className="image-wrapper small">
-                        <ShuffledImage src={getPollinationsImage(gameState.words[gameState.currentWordIndex].word)} isRevealed={false} />
-                    </div>
-                    
+                    <div className="image-wrapper small"><ShuffledImage src={getPollinationsImage(gameState.words[gameState.currentWordIndex].word)} isRevealed={false} /></div>
                     <button className="big-play-btn" onClick={() => speak(gameState.words[gameState.currentWordIndex].word)}>▶</button>
-                    
                     <input className="modern-input" value={input} onChange={e => setInput(e.target.value)} placeholder={isMyTurn ? "SPELL IT" : "WAITING..."} disabled={!isMyTurn} onKeyDown={e => { if (e.key === 'Enter' && isMyTurn) role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient(); }} />
-                    
                     {showDef && <p className="hint-text">{gameState.words[gameState.currentWordIndex].definition}</p>}
-
-                    <div className="action-buttons">
-                        <button className="btn btn-primary" onClick={() => role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient()} disabled={!isMyTurn}>Submit</button>
-                        <button className="btn btn-light" onClick={() => setShowDef(true)} disabled={showDef}>Definition</button>
-                    </div>
+                    <div className="action-buttons"><button className="btn btn-primary" onClick={() => role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient()} disabled={!isMyTurn}>Submit</button><button className="btn btn-light" onClick={() => setShowDef(true)} disabled={showDef}>Definition</button></div>
                 </div>
             </div>
         );
@@ -1305,285 +840,114 @@ const App = () => {
     const [difficulty, setDifficulty] = useState<Difficulty>('Easy');
     const [score, setScore] = useState(0);
 
-    const updateScore = (points: number) => {
-        setScore(prev => prev + points);
-    };
-
     return (
         <div className="app-shell">
              <style>{`
-                :root {
-                  --primary: #2563eb;
-                  --primary-light: #60a5fa;
-                  --primary-dark: #1e40af;
-                  --bg-color: #f8fafc;
-                  --surface: #ffffff;
-                  --text-main: #0f172a;
-                  --text-muted: #64748b;
-                  --accent: #f59e0b;
-                  --danger: #ef4444;
-                  --success: #22c55e;
-                  --radius: 16px;
-                  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-                  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-                  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-                  --glass: rgba(255, 255, 255, 0.7);
-                }
+                :root { --primary: #7c3aed; --primary-light: #a78bfa; --primary-dark: #5b21b6; --accent: #db2777; --accent-glow: rgba(219, 39, 119, 0.4); --bg-color: #f8fafc; --surface: rgba(255, 255, 255, 0.85); --text-main: #1e293b; --text-muted: #64748b; --success: #10b981; --radius: 20px; --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); --glass: rgba(255, 255, 255, 0.65); --glass-border: rgba(255, 255, 255, 0.5); }
                 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-                body {
-                  margin: 0;
-                  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-                  background: var(--bg-color);
-                  color: var(--text-main);
-                  overflow-x: hidden;
-                }
-                .app-shell {
-                  max-width: 600px;
-                  margin: 0 auto;
-                  min-height: 100vh;
-                  padding-bottom: 80px;
-                }
-                
-                /* --- Header & Nav --- */
-                header {
-                    position: sticky; top: 0; z-index: 50;
-                    background: var(--glass);
-                    backdrop-filter: blur(12px);
-                    padding: 15px 20px;
-                    display: flex; justify-content: space-between; align-items: center;
-                    border-bottom: 1px solid rgba(0,0,0,0.05);
-                }
-                h1 { margin: 0; font-size: 1.5rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
-                .score-pill {
-                    background: var(--text-main); color: white;
-                    padding: 5px 12px; border-radius: 20px;
-                    font-weight: 700; font-size: 0.9rem;
-                    box-shadow: var(--shadow-sm);
-                }
-                
-                .nav-pills {
-                    display: flex; gap: 8px; overflow-x: auto; padding: 15px 20px;
-                    scrollbar-width: none;
-                }
+                body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+                .app-shell { max-width: 600px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; }
+                header { position: sticky; top: 0; z-index: 50; background: var(--glass); backdrop-filter: blur(20px); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); }
+                h1 { margin: 0; font-size: 1.6rem; font-weight: 800; background: linear-gradient(135deg, var(--primary-dark), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+                .score-pill { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 6px 14px; border-radius: 30px; font-weight: 700; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); }
+                .nav-pills { display: flex; gap: 10px; overflow-x: auto; padding: 20px; scrollbar-width: none; }
                 .nav-pills::-webkit-scrollbar { display: none; }
-                .nav-item {
-                    white-space: nowrap;
-                    padding: 8px 16px;
-                    border-radius: 20px;
-                    background: white;
-                    color: var(--text-muted);
-                    font-weight: 600;
-                    font-size: 0.9rem;
-                    border: 1px solid rgba(0,0,0,0.05);
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                }
-                .nav-item.active {
-                    background: var(--primary);
-                    color: white;
-                    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-                    border-color: var(--primary);
-                }
-                
-                .difficulty-selector {
-                    margin: 0 20px 10px;
-                    text-align: right;
-                }
-                select {
-                    background: white; border: 1px solid #e2e8f0;
-                    padding: 5px 10px; border-radius: 8px;
-                    color: var(--text-muted); font-size: 0.85rem;
-                }
-
-                /* --- Common Components --- */
-                .game-status-bar {
-                    display: flex; align-items: center; justify-content: space-between;
-                    padding: 0 20px; margin-bottom: 15px; color: var(--text-muted); font-size: 0.85rem; font-weight: 600;
-                }
-                .progress-bar-container {
-                    flex: 1; height: 6px; background: #e2e8f0;
-                    margin: 0 15px; border-radius: 3px; overflow: hidden;
-                }
-                .progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
-                
-                .game-card {
-                    background: white;
-                    margin: 0 20px;
-                    padding: 20px;
-                    border-radius: 24px;
-                    box-shadow: var(--shadow-lg);
-                    display: flex; flex-direction: column; align-items: center; text-align: center;
-                    position: relative; overflow: hidden;
-                }
-                
-                .image-wrapper {
-                    width: 140px; height: 140px; border-radius: 16px; overflow: hidden; margin-bottom: 20px;
-                    box-shadow: var(--shadow-md);
-                }
+                .nav-item { white-space: nowrap; padding: 10px 18px; border-radius: 25px; background: rgba(255, 255, 255, 0.7); color: var(--text-muted); font-weight: 600; font-size: 0.9rem; border: 1px solid white; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(10px); }
+                .nav-item.active { background: var(--text-main); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-color: transparent; transform: scale(1.05); }
+                .difficulty-selector { margin: 0 20px 10px; text-align: right; }
+                select { background: rgba(255, 255, 255, 0.8); border: 1px solid white; padding: 6px 12px; border-radius: 12px; color: var(--primary-dark); font-size: 0.9rem; font-weight: 600; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+                .game-status-bar { display: flex; align-items: center; justify-content: space-between; padding: 0 25px; margin-bottom: 15px; color: var(--text-main); font-size: 0.9rem; font-weight: 700; }
+                .progress-bar-container { flex: 1; height: 8px; background: rgba(255,255,255,0.5); margin: 0 15px; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.6); }
+                .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); border-radius: 4px; }
+                .game-card { background: var(--surface); margin: 0 20px; padding: 25px; border-radius: 30px; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden; border: 1px solid var(--glass-border); backdrop-filter: blur(25px); }
+                .image-wrapper { width: 150px; height: 150px; border-radius: 24px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 4px solid white; }
                 .image-wrapper.small { width: 100px; height: 100px; }
-                
-                .section-header { margin: 0 0 10px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; }
-                .definition-body { font-size: 1.1rem; line-height: 1.5; margin: 0 0 15px; color: var(--text-main); }
-                .phonetic-tag { display: inline-block; background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-family: 'Times New Roman', serif; font-style: italic; color: #64748b; }
-                
-                .modern-input {
-                    font-size: 1.5rem; text-align: center; width: 100%;
-                    border: none; border-bottom: 2px solid #e2e8f0;
-                    padding: 10px; outline: none; background: transparent;
-                    text-transform: uppercase; letter-spacing: 2px;
-                    transition: border-color 0.2s;
-                }
-                .modern-input:focus { border-color: var(--primary); }
-                
-                .big-play-btn {
-                    width: 60px; height: 60px; border-radius: 50%;
-                    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-                    color: white; border: none; font-size: 1.5rem;
-                    display: flex; align-items: center; justify-content: center;
-                    cursor: pointer; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-                    margin-bottom: 20px; transition: transform 0.1s;
-                }
-                .big-play-btn:active { transform: scale(0.95); }
-
-                /* --- Buttons --- */
-                .btn {
-                    border: none; padding: 12px 24px; border-radius: 12px;
-                    font-weight: 600; cursor: pointer; font-size: 1rem;
-                    transition: all 0.2s;
-                }
-                .btn-primary {
-                    background: var(--text-main); color: white;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                }
-                .btn-primary:active { transform: scale(0.98); }
-                .btn-light { background: #f1f5f9; color: var(--text-main); }
+                .section-header { margin: 0 0 10px; font-size: 0.8rem; text-transform: uppercase; color: var(--primary); letter-spacing: 1.5px; font-weight: 800; }
+                .definition-body { font-size: 1.15rem; line-height: 1.6; margin: 0 0 15px; color: var(--text-main); font-weight: 500; }
+                .phonetic-tag { display: inline-block; background: rgba(255,255,255,0.8); padding: 5px 12px; border-radius: 12px; font-family: 'Times New Roman', serif; font-style: italic; color: var(--primary-dark); border: 1px solid rgba(0,0,0,0.05); }
+                .modern-input { font-size: 2rem; text-align: center; width: 100%; border: none; border-bottom: 3px solid #cbd5e1; padding: 10px; outline: none; background: transparent; text-transform: uppercase; letter-spacing: 4px; transition: all 0.3s; color: var(--primary-dark); font-weight: 700; }
+                .modern-input:focus { border-color: var(--accent); }
+                .big-play-btn { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 25px var(--accent-glow); margin-bottom: 25px; transition: transform 0.1s; }
+                .big-play-btn:active { transform: scale(0.92); }
+                .btn { border: none; padding: 14px 28px; border-radius: 16px; font-weight: 700; cursor: pointer; font-size: 1rem; transition: all 0.2s; letter-spacing: 0.5px; }
+                .btn-primary { background: linear-gradient(135deg, #1e293b, #0f172a); color: white; box-shadow: 0 5px 15px rgba(30, 41, 59, 0.3); }
+                .btn-primary:active { transform: scale(0.97); }
+                .btn-light { background: white; color: var(--primary-dark); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
                 .btn-text { background: transparent; color: var(--text-muted); }
-                .btn.large { width: 100%; font-size: 1.1rem; padding: 16px; background: var(--success); }
-                .action-buttons { display: flex; gap: 10px; width: 100%; justify-content: center; margin-top: 20px; }
-                
-                /* --- Tiles --- */
-                .slots-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 20px 0; }
-                .slot { width: 44px; height: 44px; border-radius: 8px; background: #f1f5f9; border: 2px dashed #cbd5e1; }
+                .btn.large { width: 100%; font-size: 1.1rem; padding: 18px; background: linear-gradient(135deg, var(--success), #059669); color: white; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4); }
+                .action-buttons { display: flex; gap: 12px; width: 100%; justify-content: center; margin-top: 25px; }
+                .slots-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 25px 0; }
+                .slot { width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,0.4); border: 2px dashed #cbd5e1; }
                 .slot.filled { border: none; background: transparent; }
-                
-                .tile {
-                    width: 44px; height: 44px; background: white;
-                    border-radius: 8px; border-bottom: 4px solid #e2e8f0;
-                    display: flex; align-items: center; justify-content: center;
-                    font-weight: 700; font-size: 1.2rem; color: var(--text-main);
-                    position: relative; user-select: none; cursor: pointer;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                    transition: transform 0.1s;
-                }
-                .tile:active { transform: translateY(2px); border-bottom-width: 2px; }
+                .tile { width: 48px; height: 48px; background: white; border-radius: 12px; border-bottom: 4px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.3rem; color: var(--text-main); position: relative; user-select: none; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.1s; }
+                .tile:active { transform: translateY(3px); border-bottom-width: 1px; }
                 .tile.won { background: #dcfce7; border-color: #22c55e; color: #15803d; }
                 .tile.hint { background: #fef3c7; border-color: #fbbf24; }
-                .tile .score { position: absolute; bottom: 2px; right: 2px; font-size: 0.6rem; color: var(--text-muted); }
-                
-                .rack {
-                    display: flex; justify-content: center; gap: 6px; padding: 15px;
-                    background: white; border-radius: 16px; margin: 0 20px;
-                    box-shadow: var(--shadow-md); position: relative;
-                }
-                .icon-btn { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
-
-                /* --- Phonetics --- */
+                .tile .score { position: absolute; bottom: 3px; right: 3px; font-size: 0.65rem; color: var(--text-muted); font-weight: 600; }
+                .rack { display: flex; justify-content: center; gap: 8px; padding: 20px; background: rgba(255, 255, 255, 0.9); border-radius: 24px; margin: 0 20px; box-shadow: var(--shadow-lg); position: relative; backdrop-filter: blur(20px); }
+                .icon-btn { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: #f1f5f9; width: 32px; height: 32px; border-radius: 50%; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+                .icon-btn:hover { background: var(--primary-light); color: white; }
                 .phonetics-container { padding: 0 20px; }
-                .section-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; color: var(--text-main); }
-                .section-subtitle { color: var(--text-muted); margin-bottom: 25px; }
-                
-                .phonetic-group { margin-bottom: 25px; }
-                .group-title { font-size: 0.9rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; letter-spacing: 1px; }
-                .phonetics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; }
-                
-                .phonetic-card {
-                    background: white; border: 1px solid #e2e8f0; border-radius: 12px;
-                    padding: 10px 5px; display: flex; flex-direction: column; align-items: center;
-                    cursor: pointer; transition: all 0.2s;
-                }
-                .phonetic-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary-light); }
-                .phonetic-card .symbol { font-size: 1.4rem; font-weight: 700; color: var(--text-main); }
-                .phonetic-card .name { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
-                .phonetic-card.vowel { background: linear-gradient(to bottom right, #fff, #fff7ed); }
-                
-                /* --- Modal --- */
-                .modal-overlay {
-                    position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-                    display: flex; align-items: flex-end; z-index: 100;
-                }
-                .modal-content {
-                    width: 100%; background: white; border-radius: 24px 24px 0 0;
-                    padding: 30px 20px; box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
-                    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-                }
-                .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-                .modal-symbol-container { display: flex; align-items: center; gap: 15px; }
-                .modal-symbol { font-size: 3rem; margin: 0; line-height: 1; color: var(--primary); }
-                .modal-audio-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); color: white; border: none; font-size: 1.2rem; cursor: pointer; }
-                .modal-tags { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
-                .tag { font-size: 0.75rem; padding: 4px 8px; border-radius: 6px; font-weight: 600; text-transform: uppercase; }
+                .section-title { font-size: 2rem; font-weight: 900; margin-bottom: 5px; color: var(--primary-dark); letter-spacing: -1px; }
+                .phonetic-group { margin-bottom: 30px; }
+                .group-title { font-size: 0.95rem; text-transform: uppercase; color: var(--primary); margin-bottom: 12px; letter-spacing: 1.2px; font-weight: 800; }
+                .phonetics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 12px; }
+                .phonetic-card { background: rgba(255, 255, 255, 0.8); border: 1px solid white; border-radius: 16px; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+                .phonetic-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 10px 20px rgba(124, 58, 237, 0.15); border-color: var(--primary-light); background: white; }
+                .phonetic-card .symbol { font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
+                .phonetic-card .name { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; font-weight: 600; }
+                .modal-overlay { position: fixed; inset: 0; background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(8px); display: flex; align-items: flex-end; z-index: 100; }
+                .modal-content { width: 100%; background: #ffffff; border-radius: 32px 32px 0 0; padding: 35px 25px; box-shadow: 0 -10px 50px rgba(0,0,0,0.2); animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+                .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+                .modal-symbol-container { display: flex; align-items: center; gap: 20px; }
+                .modal-symbol { font-size: 3.5rem; margin: 0; line-height: 1; color: var(--primary); font-weight: 800; }
+                .modal-audio-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3); transition: transform 0.1s; display: flex; align-items: center; justify-content: center; }
+                .modal-audio-btn:active { transform: scale(0.9); }
+                .modal-tags { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+                .tag { font-size: 0.75rem; padding: 6px 12px; border-radius: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
                 .tag.neutral { background: #f1f5f9; color: var(--text-muted); }
-                .tag.vowel { background: #ffedd5; color: #c2410c; }
-                .tag.consonant { background: #dbeafe; color: #1e40af; }
-                .illustration-box { background: #f8fafc; border-radius: 12px; height: 180px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; overflow: hidden; }
-                .illustration-box img { height: 100%; width: auto; mix-blend-mode: multiply; }
-                .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-                .chip { background: white; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 20px; font-weight: 500; cursor: pointer; }
-                .close-btn { position: absolute; top: 15px; right: 15px; background: #f1f5f9; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
-                
-                /* --- Animations --- */
+                .examples-box { margin-top: 20px; }
+                .chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+                .chip { background: white; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 24px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s; }
+                .chip:active { transform: scale(0.95); background: var(--primary-light); color: white; }
+                .close-btn { position: absolute; top: 20px; right: 20px; background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.4rem; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
                 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
                 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-                .animate-fade-in { animation: fadeIn 0.4s ease-out; }
-                .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-                
-                /* --- Misc --- */
+                .animate-fade-in { animation: fadeIn 0.5s ease-out; }
+                .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
                 .loader-container { height: 200px; display: flex; align-items: center; justify-content: center; }
-                .loader { width: 40px; height: 40px; border: 3px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s infinite linear; }
+                .loader { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s infinite linear; }
                 @keyframes spin { to { transform: rotate(360deg); } }
-                
-                .feedback-message { min-height: 24px; color: var(--accent); font-weight: 600; text-align: center; margin-top: 10px; }
-                
-                .card-center { 
-                    background: white; margin: 40px 20px; padding: 30px; border-radius: 24px; text-align: center; box-shadow: var(--shadow-lg); 
-                    display: flex; flex-direction: column; gap: 15px; align-items: center;
-                }
-                .code-display { font-size: 3rem; font-weight: 800; letter-spacing: 5px; color: var(--text-main); margin: 10px 0; }
-                .list-container { width: 100%; display: flex; flex-direction: column; gap: 8px; }
-                .list-item { display: flex; justify-content: space-between; padding: 12px; background: #f8fafc; border-radius: 8px; font-weight: 500; }
+                .feedback-message { min-height: 24px; color: var(--accent); font-weight: 800; text-align: center; margin-top: 15px; font-size: 1.1rem; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+                .card-center { background: rgba(255, 255, 255, 0.9); margin: 40px 20px; padding: 35px; border-radius: 30px; text-align: center; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; gap: 20px; align-items: center; backdrop-filter: blur(20px); border: 1px solid white; }
+                .code-display { font-size: 3.5rem; font-weight: 900; letter-spacing: 8px; color: var(--primary); margin: 15px 0; text-shadow: 2px 2px 0px rgba(0,0,0,0.05); }
+                .list-container { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+                .list-item { display: flex; justify-content: space-between; padding: 15px; background: white; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
              `}</style>
-
-             <header>
-                <h1>Lexicon</h1>
-                <div className="score-pill">{score} pts</div>
-             </header>
-             
+             <header><h1>Lexicon</h1><div className="score-pill">{score} pts</div></header>
              <nav className="nav-pills">
                 <button className={`nav-item ${mode === 'phonetics' ? 'active' : ''}`} onClick={() => setMode('phonetics')}>Sounds</button>
                 <button className={`nav-item ${mode === 'scrabble' ? 'active' : ''}`} onClick={() => setMode('scrabble')}>Scrabble</button>
                 <button className={`nav-item ${mode === 'spelling' ? 'active' : ''}`} onClick={() => setMode('spelling')}>Spelling</button>
                 <button className={`nav-item ${mode === 'multiplayer' ? 'active' : ''}`} onClick={() => setMode('multiplayer')}>Multiplayer</button>
              </nav>
-
              {(mode === 'scrabble' || mode === 'spelling') && (
                  <div className="difficulty-selector">
-                     <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)}>
-                         <option value="Easy">Easy</option>
-                         <option value="Medium">Medium</option>
-                         <option value="Hard">Hard</option>
-                     </select>
+                     <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)}><option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option></select>
                  </div>
              )}
-
              <main>
                  {mode === 'phonetics' && <PhoneticsGuide />}
-                 {mode === 'scrabble' && <ScrabbleGame difficulty={difficulty} onScoreUpdate={updateScore} />}
-                 {mode === 'spelling' && <SpellingGame difficulty={difficulty} onScoreUpdate={updateScore} />}
+                 {mode === 'scrabble' && <ScrabbleGame difficulty={difficulty} onScoreUpdate={(p) => setScore(s => s + p)} />}
+                 {mode === 'spelling' && <SpellingGame difficulty={difficulty} onScoreUpdate={(p) => setScore(s => s + p)} />}
                  {mode === 'multiplayer' && <MultiplayerGame difficulty={difficulty} />}
              </main>
         </div>
     );
 };
 
-const root = createRoot(document.getElementById('app')!);
-root.render(<App />);
+const container = document.getElementById('app');
+if (container) {
+    const root = createRoot(container);
+    root.render(<App />);
+}
