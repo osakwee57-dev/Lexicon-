@@ -694,140 +694,391 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     const [joinInput, setJoinInput] = useState('');
     const [connection, setConnection] = useState<any>(null);
     const [peerId, setPeerId] = useState<string>('');
+    const [statusLog, setStatusLog] = useState<string>('Initializing...');
     const peerRef = useRef<any>(null);
     const hostConnectionsRef = useRef<Map<string, any>>(new Map());
     const [gameState, setGameState] = useState<GameState>({ players: [], words: [], currentWordIndex: 0, activePlayerIndex: 0, phase: 'main', timeLeft: 30, scores: {}, status: 'waiting', });
+    
+    // We use a ref to track the latest game state to avoid stale closures in PeerJS callbacks
+    const gameStateRef = useRef(gameState); 
+    useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
+
     const [input, setInput] = useState('');
     const [message, setMessage] = useState('');
     const [showDef, setShowDef] = useState(false);
     const speak = useTextToSpeech();
 
     useEffect(() => {
+        // Initialize PeerJS only once
         const id = Math.random().toString(36).substring(2, 6).toUpperCase();
-        const setupPeer = () => {
-             const peer = new Peer(id, { debug: 1 }); peerRef.current = peer;
-             peer.on('open', (id) => setPeerId(id));
-             peer.on('error', (err) => { setMessage("Connection Error."); setTimeout(setupPeer, 2000); });
-             peer.on('connection', (conn) => { conn.on('open', () => { if (role !== 'host' && status !== 'lobby') return; handleNewConnection(conn, id); }); });
+        let peer: any;
+        
+        const initPeer = async () => {
+             try {
+                 peer = new Peer(id, { debug: 1 });
+                 peerRef.current = peer;
+                 
+                 peer.on('open', (pid: string) => {
+                     setPeerId(pid);
+                     setStatusLog('Ready.');
+                 });
+
+                 peer.on('error', (err: any) => {
+                     console.error("Peer Error:", err);
+                     setStatusLog(`Error: ${err.type}`);
+                     // If ID is taken (rare with random string), try again? 
+                     if (err.type === 'unavailable-id') {
+                        // handle retry if needed
+                     }
+                 });
+
+                 peer.on('connection', (conn: any) => {
+                     conn.on('open', () => {
+                         handleNewConnection(conn); 
+                     });
+                 });
+             } catch (e) {
+                 console.error("Peer Init Failed", e);
+             }
         };
-        setupPeer(); return () => peerRef.current?.destroy();
+
+        initPeer();
+
+        return () => {
+            if (peer) peer.destroy();
+        };
     }, []);
 
-    const handleNewConnection = (conn: any, myId: string) => {
-         setRole('host'); setStatus('hosting');
+    // Broadcast state to all connected clients whenever it changes (Host only)
+    useEffect(() => {
+        if (role === 'host' && hostConnectionsRef.current.size > 0) {
+            hostConnectionsRef.current.forEach(conn => { 
+                if (conn.open) conn.send({ type: 'STATE_UPDATE', state: gameState }); 
+            }); 
+        }
+    }, [gameState, role]);
+
+    const handleNewConnection = (conn: any) => {
          setGameState(prev => {
-             if (prev.players.length >= 4) { conn.send({ type: 'ERROR', message: 'Game Full' }); setTimeout(() => conn.close(), 500); return prev; }
+             // Only accept connections if we have already set ourselves up as a host
+             // Check if we are in the player list (host always adds self first)
+             const isHostSetup = prev.players.some(p => p.id === peerRef.current?.id);
+             
+             if (!isHostSetup) {
+                 // If we receive a connection but haven't created a room, we could auto-create?
+                 // Or reject. For now, let's assume valid flow.
+             }
+
+             if (prev.players.length >= 4) { 
+                 conn.send({ type: 'ERROR', message: 'Game Full' }); 
+                 setTimeout(() => conn.close(), 500); 
+                 return prev; 
+             }
+             
              if (prev.players.find(p => p.id === conn.peer)) return prev;
+             
              const newPlayer = { id: conn.peer, name: `Player ${prev.players.length + 1}` };
              hostConnectionsRef.current.set(conn.peer, conn);
-             conn.on('data', (data: any) => { if (data.type === 'CLIENT_SUBMIT') handleWordSubmission(data.word, data.playerId); });
+             
+             conn.on('data', (data: any) => { 
+                 if (data.type === 'CLIENT_SUBMIT') {
+                     // Pass payload to handler
+                     handleWordSubmission(data.word, data.playerId); 
+                 }
+             });
+             
              conn.on('close', () => { hostConnectionsRef.current.delete(conn.peer); });
+             
+             // Ensure host is in list if not already (should be done by start button, but safety net)
              let currentPlayers = [...prev.players];
-             if (currentPlayers.length === 0) currentPlayers.push({ id: myId, name: "Host (You)" });
-             const nextState = { ...prev, players: [...currentPlayers, newPlayer], scores: { ...prev.scores, [newPlayer.id]: 0, [myId]: 0 } };
-             broadcastState(nextState); return nextState;
+             const myId = peerRef.current?.id;
+             if (myId && !currentPlayers.find(p => p.id === myId)) {
+                  currentPlayers.push({ id: myId, name: "Host (You)" });
+             }
+
+             // Add new player
+             const nextState = { ...prev, players: [...currentPlayers, newPlayer], scores: { ...prev.scores, [newPlayer.id]: 0, [myId || '']: 0 } };
+             return nextState;
          });
     };
 
-    const broadcastState = (state: GameState) => { hostConnectionsRef.current.forEach(conn => { if (conn.open) conn.send({ type: 'STATE_UPDATE', state: state }); }); };
+    // Timer Logic (Host Only)
     useEffect(() => {
         if (role !== 'host' || status !== 'playing' || gameState.status !== 'playing') return;
+        
         const timer = setInterval(() => {
             setGameState(prev => {
-                if (prev.timeLeft <= 0) return switchTurn(prev, false);
-                const newState = { ...prev, timeLeft: prev.timeLeft - 1 };
-                broadcastState(newState); return newState;
+                if (prev.timeLeft <= 0) {
+                    return nextTurnState(prev, false);
+                }
+                return { ...prev, timeLeft: prev.timeLeft - 1 };
             });
         }, 1000);
+        
         return () => clearInterval(timer);
-    }, [role, status, gameState.status]);
+    }, [role, status, gameState.status]); 
 
-    const switchTurn = (prev: GameState, success: boolean): GameState => {
+    // Helper to calculate next state without side effects
+    const nextTurnState = (prev: GameState, success: boolean): GameState => {
         let nextState = { ...prev };
         const playerCount = prev.players.length;
+        if (playerCount === 0) return prev;
+
         if (success) {
              const points = prev.phase === 'main' ? 10 : 5;
              const activePlayer = prev.players[prev.activePlayerIndex];
              const winnerId = prev.phase === 'main' ? activePlayer.id : prev.players[(prev.activePlayerIndex + 1) % playerCount].id;
              const newScore = (prev.scores[winnerId] || 0) + points;
              nextState.scores = { ...prev.scores, [winnerId]: newScore };
-             if (newScore >= 100) nextState.status = 'gameover';
-             else {
-                 nextState.currentWordIndex += 1; nextState.phase = 'main'; nextState.timeLeft = 30;
+             
+             if (newScore >= 100) {
+                 nextState.status = 'gameover';
+             } else {
+                 nextState.currentWordIndex += 1; 
+                 nextState.phase = 'main'; 
+                 nextState.timeLeft = 30;
                  nextState.activePlayerIndex = (prev.activePlayerIndex + 1) % playerCount;
-                 if (nextState.currentWordIndex < nextState.words.length) speak(nextState.words[nextState.currentWordIndex].word);
              }
         } else {
-            if (prev.phase === 'main') { nextState.phase = 'steal'; nextState.timeLeft = 30; }
-            else {
-                nextState.currentWordIndex += 1; nextState.phase = 'main'; nextState.timeLeft = 30;
+            // Failure / Time out
+            if (prev.phase === 'main') { 
+                nextState.phase = 'steal'; 
+                nextState.timeLeft = 15; 
+            } else {
+                nextState.currentWordIndex += 1; 
+                nextState.phase = 'main'; 
+                nextState.timeLeft = 30;
                 nextState.activePlayerIndex = (prev.activePlayerIndex + 1) % playerCount;
-                if (nextState.currentWordIndex < nextState.words.length) speak(nextState.words[nextState.currentWordIndex].word);
             }
         }
-        broadcastState(nextState); return nextState;
+        
+        if (nextState.currentWordIndex >= nextState.words.length) {
+            nextState.status = 'gameover';
+        }
+        
+        return nextState;
     };
 
     const handleWordSubmission = (submittedWord: string, submitterId: string) => {
         setGameState(prev => {
-             const playerCount = prev.players.length; const activeIdx = prev.activePlayerIndex; const stealIdx = (activeIdx + 1) % playerCount;
+             const playerCount = prev.players.length; 
+             if (playerCount === 0) return prev;
+             
+             const activeIdx = prev.activePlayerIndex; 
+             const stealIdx = (activeIdx + 1) % playerCount;
+             
              let isTurn = false;
              if (prev.phase === 'main' && prev.players[activeIdx].id === submitterId) isTurn = true;
              if (prev.phase === 'steal' && prev.players[stealIdx].id === submitterId) isTurn = true;
+             
              if (!isTurn) return prev; 
+             
              const isCorrect = submittedWord.toUpperCase().trim() === prev.words[prev.currentWordIndex].word;
-             if (isCorrect) SoundManager.playWin(); else SoundManager.playError();
-             return switchTurn(prev, isCorrect);
+             return nextTurnState(prev, isCorrect);
         });
+        
         if (submitterId === peerId) { setInput(''); setShowDef(false); }
     };
 
-    const startGameHost = () => {
+    const handleStartGame = () => {
         const combinedPool = [...LOCAL_DICTIONARY['Medium'], ...LOCAL_DICTIONARY['Hard']];
-        const selected = Array.from({length: 100}, () => combinedPool[Math.floor(Math.random() * combinedPool.length)]);
-        const currentPlayers = [...gameState.players];
-        if (currentPlayers.length === 0 || currentPlayers[0].id !== peerId) if (!currentPlayers.find(p => p.id === peerId)) currentPlayers.unshift({ id: peerId, name: "Host (You)" });
-        const initScores: Record<string, number> = {}; currentPlayers.forEach(p => initScores[p.id] = 0);
-        const initialState: GameState = { players: currentPlayers, words: selected, currentWordIndex: 0, activePlayerIndex: 0, phase: 'main', timeLeft: 30, scores: initScores, status: 'playing' };
-        setGameState(initialState); setStatus('playing'); broadcastState(initialState); speak(selected[0].word);
+        const selected = Array.from({length: 50}, () => combinedPool[Math.floor(Math.random() * combinedPool.length)]);
+        
+        setGameState(prev => {
+            // Ensure we are in the players list before starting
+            let currentPlayers = [...prev.players];
+            if (!currentPlayers.find(p => p.id === peerId)) {
+                currentPlayers.unshift({ id: peerId, name: "Host (You)" });
+            }
+            
+            // Initialize scores
+            const initScores: Record<string, number> = {}; 
+            currentPlayers.forEach(p => initScores[p.id] = 0);
+
+            return {
+                players: currentPlayers, 
+                words: selected, 
+                currentWordIndex: 0, 
+                activePlayerIndex: 0, 
+                phase: 'main', 
+                timeLeft: 30, 
+                scores: initScores, 
+                status: 'playing' 
+            };
+        });
+        setStatus('playing'); 
     };
 
     const handleJoin = () => {
         if (!joinInput) return;
+        if (!peerRef.current) {
+            setMessage("Peer client not ready.");
+            return;
+        }
+        setMessage("Connecting...");
         const conn = peerRef.current.connect(joinInput.toUpperCase());
+        
         conn.on('open', () => {
-            setConnection(conn); setRole('client'); setStatus('playing'); 
-            conn.on('data', (data: any) => { if (data.type === 'STATE_UPDATE') setGameState(data.state); if (data.type === 'ERROR') { setMessage(data.message); setTimeout(() => setStatus('lobby'), 2000); } });
+            setConnection(conn); 
+            setRole('client'); 
+            setStatus('playing'); 
+            setMessage("");
+            
+            conn.on('data', (data: any) => { 
+                if (data.type === 'STATE_UPDATE') {
+                    setGameState(data.state); 
+                }
+                if (data.type === 'ERROR') { 
+                    setMessage(data.message); 
+                    setTimeout(() => setStatus('lobby'), 2000); 
+                }
+            });
         });
-        conn.on('error', () => setMessage("Could not connect."));
+        
+        conn.on('error', (err: any) => {
+            console.error("Connection Error", err);
+            setMessage("Could not connect.");
+        });
+        
+        conn.on('close', () => {
+            setMessage("Disconnected from host.");
+            setStatus('lobby');
+        });
     };
 
-    const submitWordClient = () => { if (connection) { connection.send({ type: 'CLIENT_SUBMIT', word: input, playerId: peerId }); setInput(''); setShowDef(false); } };
+    const submitWordClient = () => { 
+        if (connection && connection.open) { 
+            connection.send({ type: 'CLIENT_SUBMIT', word: input, playerId: peerId }); 
+            setInput(''); 
+            setShowDef(false); 
+        } 
+    };
     
+    // Auto-speak new words
+    useEffect(() => {
+        if (status === 'playing' && gameState.status === 'playing' && gameState.words.length > 0) {
+             const word = gameState.words[gameState.currentWordIndex]?.word;
+             if (word) {
+                 setTimeout(() => speak(word), 500);
+             }
+        }
+    }, [gameState.currentWordIndex, status, gameState.status]);
+
     if (status === 'lobby') return (
-            <div className="card-center"><h2>Multiplayer</h2><p>Play live with up to 4 friends.</p>{peerId ? (<div className="btn-group vertical"><button className="btn btn-primary" onClick={() => { setRole('host'); setStatus('hosting'); setGameState(prev => ({ ...prev, players: [{ id: peerId, name: "Host (You)" }], scores: { [peerId]: 0 } })); }}>Create Room</button><button className="btn btn-light" onClick={() => setStatus('joining')}>Join Room</button></div>) : <div className="loader"></div>}</div>
+            <div className="card-center">
+                <h2>Multiplayer</h2>
+                <p>Play live with up to 4 friends.</p>
+                <div style={{fontSize: '0.8rem', color: '#64748b', marginBottom: '10px'}}>{statusLog}</div>
+                {peerId ? (
+                    <div className="btn-group vertical">
+                        <button className="btn btn-primary" onClick={() => { 
+                            setRole('host'); 
+                            setStatus('hosting'); 
+                            setGameState(prev => ({ 
+                                ...prev, 
+                                players: [{ id: peerId, name: "Host (You)" }], 
+                                scores: { [peerId]: 0 } 
+                            })); 
+                        }}>Create Room</button>
+                        <button className="btn btn-light" onClick={() => setStatus('joining')}>Join Room</button>
+                    </div>
+                ) : <div className="loader"></div>}
+            </div>
     );
-    if (status === 'hosting') return (<div className="card-center"><h3>Room Code</h3><div className="code-display">{peerId}</div><div className="list-container">{gameState.players.map(p => <div key={p.id} className="list-item"><span>{p.name}</span>{p.id === peerId && <span className="tag">Host</span>}</div>)}</div>{gameState.players.length >= 2 && <button className="btn btn-primary" onClick={startGameHost}>Start Match</button>}<button className="btn btn-text" onClick={() => setStatus('lobby')}>Cancel</button></div>);
-    if (status === 'joining') return (<div className="card-center"><h3>Join Room</h3><input className="modern-input" placeholder="ENTER CODE" value={joinInput} onChange={e => setJoinInput(e.target.value)} /><button className="btn btn-primary" onClick={handleJoin}>Connect</button><div className="feedback-message">{message}</div><button className="btn btn-text" onClick={() => setStatus('lobby')}>Back</button></div>);
+    
+    if (status === 'hosting') return (
+        <div className="card-center">
+            <h3>Room Code</h3>
+            <div className="code-display">{peerId}</div>
+            <p className="hint-text">Share this code with friends</p>
+            <div className="list-container">
+                {gameState.players.map(p => (
+                    <div key={p.id} className="list-item">
+                        <span>{p.name}</span>
+                        {p.id === peerId && <span className="tag">Host</span>}
+                    </div>
+                ))}
+            </div>
+            {gameState.players.length >= 2 && <button className="btn btn-primary" onClick={handleStartGame}>Start Match</button>}
+            <button className="btn btn-text" onClick={() => setStatus('lobby')}>Cancel</button>
+        </div>
+    );
+    
+    if (status === 'joining') return (
+        <div className="card-center">
+            <h3>Join Room</h3>
+            <input className="modern-input" placeholder="ENTER CODE" value={joinInput} onChange={e => setJoinInput(e.target.value)} />
+            <button className="btn btn-primary" onClick={handleJoin}>Connect</button>
+            <div className="feedback-message">{message}</div>
+            <button className="btn btn-text" onClick={() => setStatus('lobby')}>Back</button>
+        </div>
+    );
 
     if (status === 'playing') {
         if (gameState.status === 'gameover') {
              const sortedPlayers = [...gameState.players].sort((a, b) => (gameState.scores[b.id] || 0) - (gameState.scores[a.id] || 0));
-             return (<div className="card-center"><h2>Game Over</h2><div className="leaderboard">{sortedPlayers.map((p, index) => (<div key={p.id} className={`leaderboard-item ${index === 0 ? 'winner' : ''}`}><span>{index + 1}. {p.name}</span><span>{gameState.scores[p.id] || 0} pts</span></div>))}</div><button className="btn btn-primary" onClick={() => window.location.reload()}>Exit</button></div>);
+             return (
+                 <div className="card-center">
+                    <h2>Game Over</h2>
+                    <div className="leaderboard">
+                        {sortedPlayers.map((p, index) => (
+                            <div key={p.id} className={`leaderboard-item ${index === 0 ? 'winner' : ''}`}>
+                                <span>{index + 1}. {p.name}</span>
+                                <span>{gameState.scores[p.id] || 0} pts</span>
+                            </div>
+                        ))}
+                    </div>
+                    <button className="btn btn-primary" onClick={() => window.location.reload()}>Exit</button>
+                 </div>
+             );
         }
+        
         if (gameState.status === 'waiting') return <div className="card-center"><h3>Connected</h3><p>Waiting for host...</p><div className="loader"></div></div>;
+        
         const activePlayer = gameState.players[gameState.activePlayerIndex];
-        const isMyTurn = (gameState.phase === 'main' && activePlayer.id === peerId) || (gameState.phase === 'steal' && gameState.players[(gameState.activePlayerIndex + 1) % gameState.players.length].id === peerId);
+        if (!activePlayer) return <div className="loader"></div>;
+
+        const isMyTurn = (gameState.phase === 'main' && activePlayer.id === peerId) || 
+                         (gameState.phase === 'steal' && gameState.players[(gameState.activePlayerIndex + 1) % gameState.players.length]?.id === peerId);
+        
         return (
             <div className={`multiplayer-game ${isMyTurn ? 'my-turn' : ''}`}>
-                <div className="top-hud"><div className="timer-badge">⏱ {gameState.timeLeft}s</div><div className="turn-indicator">{isMyTurn ? "YOUR TURN" : `${activePlayer.name}'s Turn`}</div></div>
-                <div className="players-scroller">{gameState.players.map(p => <div key={p.id} className={`player-pill ${p.id === activePlayer.id ? 'active' : ''}`}>{p.name}: {gameState.scores[p.id] || 0}</div>)}</div>
+                <div className="top-hud">
+                    <div className="timer-badge">⏱ {gameState.timeLeft}s</div>
+                    <div className="turn-indicator">{isMyTurn ? "YOUR TURN" : `${activePlayer.name}'s Turn`}</div>
+                </div>
+                <div className="players-scroller">
+                    {gameState.players.map(p => (
+                        <div key={p.id} className={`player-pill ${p.id === activePlayer.id ? 'active' : ''}`}>
+                            {p.name}: {gameState.scores[p.id] || 0}
+                        </div>
+                    ))}
+                </div>
                 <div className="game-card">
-                    <div className="image-wrapper small"><ShuffledImage src={getPollinationsImage(gameState.words[gameState.currentWordIndex].word)} isRevealed={false} /></div>
+                    <div className="image-wrapper small">
+                        <ShuffledImage src={getPollinationsImage(gameState.words[gameState.currentWordIndex].word)} isRevealed={false} />
+                    </div>
                     <button className="big-play-btn" onClick={() => speak(gameState.words[gameState.currentWordIndex].word)}>▶</button>
-                    <input className="modern-input" value={input} onChange={e => setInput(e.target.value)} placeholder={isMyTurn ? "SPELL IT" : "WAITING..."} disabled={!isMyTurn} onKeyDown={e => { if (e.key === 'Enter' && isMyTurn) role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient(); }} />
+                    
+                    <input 
+                        className="modern-input" 
+                        value={input} 
+                        onChange={e => setInput(e.target.value)} 
+                        placeholder={isMyTurn ? "SPELL IT" : "WAITING..."} 
+                        disabled={!isMyTurn} 
+                        onKeyDown={e => { 
+                            if (e.key === 'Enter' && isMyTurn) {
+                                role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient();
+                            }
+                        }} 
+                    />
+                    
                     {showDef && <p className="hint-text">{gameState.words[gameState.currentWordIndex].definition}</p>}
-                    <div className="action-buttons"><button className="btn btn-primary" onClick={() => role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient()} disabled={!isMyTurn}>Submit</button><button className="btn btn-light" onClick={() => setShowDef(true)} disabled={showDef}>Definition</button></div>
+                    
+                    <div className="action-buttons">
+                        <button className="btn btn-primary" onClick={() => role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient()} disabled={!isMyTurn}>Submit</button>
+                        <button className="btn btn-light" onClick={() => setShowDef(true)} disabled={showDef}>Definition</button>
+                    </div>
                 </div>
             </div>
         );
@@ -842,7 +1093,7 @@ const App = () => {
 
     return (
         <div className="app-shell">
-             <style>{`
+            <style>{`
                 :root { --primary: #7c3aed; --primary-light: #a78bfa; --primary-dark: #5b21b6; --accent: #db2777; --accent-glow: rgba(219, 39, 119, 0.4); --bg-color: #f8fafc; --surface: rgba(255, 255, 255, 0.85); --text-main: #1e293b; --text-muted: #64748b; --success: #10b981; --radius: 20px; --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); --glass: rgba(255, 255, 255, 0.65); --glass-border: rgba(255, 255, 255, 0.5); }
                 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
                 body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
@@ -923,8 +1174,20 @@ const App = () => {
                 .code-display { font-size: 3.5rem; font-weight: 900; letter-spacing: 8px; color: var(--primary); margin: 15px 0; text-shadow: 2px 2px 0px rgba(0,0,0,0.05); }
                 .list-container { width: 100%; display: flex; flex-direction: column; gap: 10px; }
                 .list-item { display: flex; justify-content: space-between; padding: 15px; background: white; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-             `}</style>
-             <header><h1>Lexicon</h1><div className="score-pill">{score} pts</div></header>
+                .multiplayer-game { width: 100%; display: flex; flex-direction: column; gap: 15px; }
+                .top-hud { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+                .timer-badge { background: var(--text-main); color: white; padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
+                .turn-indicator { font-weight: 800; color: var(--primary-dark); letter-spacing: 1px; }
+                .players-scroller { display: flex; gap: 10px; overflow-x: auto; padding: 0 20px 10px; scrollbar-width: none; }
+                .player-pill { background: rgba(255,255,255,0.6); padding: 8px 16px; border-radius: 20px; white-space: nowrap; font-size: 0.85rem; font-weight: 600; border: 1px solid transparent; }
+                .player-pill.active { background: white; border-color: var(--primary); color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+                .my-turn .game-card { border: 2px solid var(--primary); box-shadow: 0 0 20px var(--primary-light); }
+                .leaderboard { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+                .leaderboard-item { display: flex; justify-content: space-between; padding: 15px; background: white; border-radius: 12px; font-weight: 600; }
+                .leaderboard-item.winner { background: #fef3c7; border: 1px solid #fbbf24; color: #b45309; }
+                .hint-text { font-size: 0.9rem; color: var(--text-muted); font-style: italic; margin-top: 10px; }
+            `}</style>
+            <header><h1>Lexicon</h1><div className="score-pill">{score} pts</div></header>
              <nav className="nav-pills">
                 <button className={`nav-item ${mode === 'phonetics' ? 'active' : ''}`} onClick={() => setMode('phonetics')}>Sounds</button>
                 <button className={`nav-item ${mode === 'scrabble' ? 'active' : ''}`} onClick={() => setMode('scrabble')}>Scrabble</button>
@@ -942,6 +1205,7 @@ const App = () => {
                  {mode === 'spelling' && <SpellingGame difficulty={difficulty} onScoreUpdate={(p) => setScore(s => s + p)} />}
                  {mode === 'multiplayer' && <MultiplayerGame difficulty={difficulty} />}
              </main>
+             <Analytics />
         </div>
     );
 };
