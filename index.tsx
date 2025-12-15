@@ -729,37 +729,40 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     const [peerId, setPeerId] = useState<string>('');
     const [statusLog, setStatusLog] = useState<string>('Initializing...');
     const peerRef = useRef<any>(null);
+    const peerInstance = useRef<any>(null); // Track instance to prevent double init
     const hostConnectionsRef = useRef<Map<string, any>>(new Map());
     const [gameState, setGameState] = useState<GameState>({ players: [], words: [], currentWordIndex: 0, activePlayerIndex: 0, phase: 'main', timeLeft: 30, scores: {}, status: 'waiting', });
     
+    // We track the current gameState in a ref so event listeners can access it immediately
+    // without waiting for state updates or closure updates.
+    const gameStateRef = useRef(gameState);
+    useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
+
     const [input, setInput] = useState('');
     const [message, setMessage] = useState('');
     const [showDef, setShowDef] = useState(false);
     const speak = useTextToSpeech();
 
-    // -- Callbacks & Refs for Event Listeners --
-    // We use a mutable ref to hold the latest version of our callbacks.
-    // This allows long-lived PeerJS listeners to always execute the CURRENT logic,
-    // avoiding "stale closure" bugs where the game wouldn't respond to events.
     const callbacksRef = useRef({
         handleWordSubmission: (word: string, pid: string) => {},
         handleNewConnection: (conn: any) => {}
     });
 
-    // Update the ref on every render
     useEffect(() => {
         callbacksRef.current.handleWordSubmission = handleWordSubmission;
         callbacksRef.current.handleNewConnection = handleNewConnection;
     });
 
     useEffect(() => {
-        // Initialize PeerJS
+        if (peerInstance.current) return;
+
         const id = Math.random().toString(36).substring(2, 6).toUpperCase();
         let peer: any;
         
         const initPeer = async () => {
              try {
                  peer = new Peer(id, { debug: 1 });
+                 peerInstance.current = peer;
                  peerRef.current = peer;
                  
                  peer.on('open', (pid: string) => {
@@ -773,10 +776,14 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
                  });
 
                  peer.on('connection', (conn: any) => {
-                     conn.on('open', () => {
-                         // Execute the latest version of handleNewConnection
+                     // If connection is already open (rare but possible), handle immediately
+                     if (conn.open) {
                          callbacksRef.current.handleNewConnection(conn);
-                     });
+                     } else {
+                         conn.on('open', () => {
+                             callbacksRef.current.handleNewConnection(conn);
+                         });
+                     }
                  });
              } catch (e) {
                  console.error("Peer Init Failed", e);
@@ -786,7 +793,10 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
         initPeer();
 
         return () => {
-            if (peer) peer.destroy();
+            if (peerInstance.current) {
+                peerInstance.current.destroy();
+                peerInstance.current = null;
+            }
         };
     }, []);
 
@@ -800,12 +810,10 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     }, [gameState, role]);
 
     const handleNewConnection = (conn: any) => {
-         // 1. SIDE EFFECTS: Register connection & Attach listeners
          hostConnectionsRef.current.set(conn.peer, conn);
          
          conn.on('data', (data: any) => { 
              if (data.type === 'CLIENT_SUBMIT') {
-                 // Use ref to ensure we call the latest version of the function
                  callbacksRef.current.handleWordSubmission(data.word, data.playerId); 
              }
          });
@@ -818,7 +826,7 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
              }));
          });
 
-         // 2. STATE UPDATE: Add player to game state
+         // Logic to add player
          setGameState(prev => {
              if (prev.players.length >= 4) { 
                  conn.send({ type: 'ERROR', message: 'Game Full' }); 
@@ -830,7 +838,6 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
              
              const newPlayer = { id: conn.peer, name: `Player ${prev.players.length + 1}` };
              
-             // Ensure host is in list if not already
              let currentPlayers = [...prev.players];
              const myId = peerRef.current?.id;
              if (myId && !currentPlayers.find(p => p.id === myId)) {
@@ -838,6 +845,12 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
              }
 
              const nextState = { ...prev, players: [...currentPlayers, newPlayer], scores: { ...prev.scores, [newPlayer.id]: 0, [myId || '']: 0 } };
+             
+             // IMMEDIATE UPDATE: Send the state right now so the client doesn't hang waiting for the useEffect
+             if (conn.open) {
+                 conn.send({ type: 'STATE_UPDATE', state: nextState });
+             }
+             
              return nextState;
          });
     };
@@ -925,13 +938,11 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
         const selected = Array.from({length: 50}, () => combinedPool[Math.floor(Math.random() * combinedPool.length)]);
         
         setGameState(prev => {
-            // Ensure we are in the players list before starting
             let currentPlayers = [...prev.players];
             if (!currentPlayers.find(p => p.id === peerId)) {
                 currentPlayers.unshift({ id: peerId, name: "Host (You)" });
             }
             
-            // Initialize scores
             const initScores: Record<string, number> = {}; 
             currentPlayers.forEach(p => initScores[p.id] = 0);
 
@@ -956,28 +967,35 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
             return;
         }
         setMessage("Connecting...");
-        const conn = peerRef.current.connect(joinInput.toUpperCase());
+        // Use reliable connection
+        const conn = peerRef.current.connect(joinInput.toUpperCase(), { reliable: true });
         
-        conn.on('open', () => {
+        const onOpen = () => {
             setConnection(conn); 
             setRole('client'); 
-            setStatus('playing'); 
-            setMessage("");
+            setMessage("Waiting for host...");
             
             conn.on('data', (data: any) => { 
                 if (data.type === 'STATE_UPDATE') {
-                    setGameState(data.state); 
+                    setGameState(data.state);
+                    setStatus('playing'); // Switch to playing screen once we have state
                 }
                 if (data.type === 'ERROR') { 
                     setMessage(data.message); 
                     setTimeout(() => setStatus('lobby'), 2000); 
                 }
             });
-        });
+        };
+
+        if (conn.open) {
+            onOpen();
+        } else {
+            conn.on('open', onOpen);
+        }
         
         conn.on('error', (err: any) => {
             console.error("Connection Error", err);
-            setMessage("Could not connect. Check code.");
+            setMessage("Connection failed. Try again.");
             setTimeout(() => setMessage(''), 3000);
         });
         
