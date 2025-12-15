@@ -127,23 +127,56 @@ const LOCAL_DICTIONARY: Record<Difficulty, WordEntry[]> = {
     { word: "MILK", phonetic: "/mɪlk/", definition: "A white drink from animals.", sentence: "Cows produce _____." }
   ],
   Medium: [
-     { word: "BRIDGE", phonetic: "/brɪdʒ/", definition: "A structure carrying a road across a river.", sentence: "We drove across the Golden Gate _____." },
-    { word: "CANYON", phonetic: "/ˈkæn.jən/", definition: "A deep gorge, typically one with a river flowing through it.", sentence: "The Grand _____ is huge." },
-    { word: "GALAXY", phonetic: "/ˈɡæl.ək.si/", definition: "A system of millions or billions of stars.", sentence: "Our solar system is in the Milky Way _____." },
-    { word: "HARBOR", phonetic: "/ˈhɑːr.bər/", definition: "A place on the coast where vessels may find shelter.", sentence: "The boats were docked in the _____." },
-    { word: "MAGNET", phonetic: "/ˈmæɡ.nət/", definition: "A material that exhibits properties of magnetism.", sentence: "He used a _____ to pick up the nails." },
-    { word: "AMBIGUOUS", phonetic: "/æmˈbɪɡ.ju.əs/", definition: "Not clear; can have more than one meaning.", sentence: "The ending was _____." },
-    { word: "PLAUSIBLE", phonetic: "/ˈplɑː.zə.bəl/", definition: "Seems possible or believable.", sentence: "A _____ excuse." },
-    { word: "INEVITABLE", phonetic: "/ˌɪnˈev.ə.t̬ə.bəl/", definition: "Cannot be avoided.", sentence: "War seemed _____." },
-    { word: "METICULOUS", phonetic: "/məˈtɪk.jə.ləs/", definition: "Very careful with details.", sentence: "He is _____ about cleaning." },
-    { word: "TEDIOUS", phonetic: "/ˈtiː.di.əs/", definition: "Boring and long.", sentence: "A _____ lecture." },
-    { word: "HOSTILE", phonetic: "/ˈhɑː.stəl/", definition: "Unfriendly or aggressive.", sentence: "A _____ environment." },
-    { word: "SUBTLE", phonetic: "/ˈsʌt.əl/", definition: "Not obvious.", sentence: "A _____ hint." },
-    { word: "INFER", phonetic: "/ɪnˈfɝː/", definition: "To conclude from clues.", sentence: "I _____ you are busy." },
-    { word: "MUNDANE", phonetic: "/mʌnˈdeɪn/", definition: "Ordinary, not exciting.", sentence: "A _____ routine." },
-    { word: "REFRAIN", phonetic: "/rɪˈfreɪn/", definition: "To stop yourself from doing something.", sentence: "Please _____ from talking." },
-    { word: "ADEQUATE", phonetic: "/ˈæd.ə.kwət/", definition: "Good enough.", sentence: "The food was _____." },
-    { word: "ARBITRARY", phonetic: "/ˈɑːr.bə.trer.i/", definition: "Based on random choice, not reason.", sentence: "An _____ decision." }
+    { word: "PARADIGM", phonetic: "/ˈpærədaɪm/", definition: "A typical example or model.", sentence: "The discovery created a new _____ for scientific research." },
+    { word: "PARADOX", phonetic: "/ˈpærədɒks/", definition: "A statement that seems contradictory but is true.", sentence: "It is a _____ that drinking too much water can be dehydrating." },
+    { word: "PARAMOUNT", phonetic: "/ˈpærəmaʊnt/", definition: "More important than anything else.", sentence: "Safety is of _____ importance." },
+    { word: "PERFUNCTORY", phonetic: "/pəˈfʌŋktəri/", definition: "Done with little care or interest.", sentence: "He gave a _____ nod as he passed." },
+    { word: "PERNICIOUS", phonetic: "/pəˈnɪʃəs/", definition: "Gradually harmful.", sentence: "The _____ weed spread through the garden." },
+    { word: "PERSPICACIOUS", phonetic: "/ˌpɜːspɪˈkeɪʃəs/", definition: "Having sharp understanding.", sentence: "The _____ detective solved the case." },
+    { word: "PERTINENT", phonetic: "/ˈpɜːtɪnənt/", definition: "Relevant to the topic.", sentence: "Please ask questions _____ to the topic." },
+    { word: "PERVASIVE", phonetic: "/pəˈveɪsɪv/", definition: "Spreading widely.", sentence: "The smell of baking was _____ in the house." },
+    { word: "PHLEGMATIC", phonetic: "/flɛɡˈmætɪk/", definition: "Calm and unemotional.", sentence: "His _____ nature meant he never got angry." },
+    { word: "PLAUSIBLE", phonetic: "/ˈplɔːzɪbl/", definition: "Seemingly reasonable.", sentence: "Her excuse sounded _____." },
+    { word: "PLETHORA", phonetic: "/ˈplɛθərə/", definition: "An excessive amount.", sentence: "There was a _____ of food at the party." },
+    { word: "POSTULATE", phonetic: "/ˈpɒstjʊleɪt/", definition: "To assume without proof.", sentence: "Scientists _____ that the universe is expanding." },
+    { word: "PRAGMATIC", phonetic: "/præɡˈmætɪk/", definition: "Practical and realistic.", sentence: "We need a _____ solution to the problem." },
+    { word: "PRECARIOUS", phonetic: "/prɪˈkɛərɪəs/", definition: "Risky or unstable.", sentence: "The ladder was placed in a _____ position." },
+    { word: "PRECLUDE", phonetic: "/prɪˈkluːd/", definition: "To prevent from happening.", sentence: "Bad weather did not _____ the event from happening." },
+    { word: "PRESUMPTUOUS", phonetic: "/prɪˈzʌmptʃʊəs/", definition: "Overconfident or rude.", sentence: "It was _____ of him to arrive early." },
+    { word: "PROCLIVITY", phonetic: "/prəˈklɪvɪti/", definition: "A natural tendency.", sentence: "She has a _____ for hard work." },
+    { word: "PROLIFERATE", phonetic: "/prəˈlɪfəreɪt/", definition: "To increase rapidly.", sentence: "Weeds tend to _____ in the spring." },
+    { word: "PROPENSITY", phonetic: "/prəˈpɛnsɪti/", definition: "A strong inclination.", sentence: "He has a _____ to exaggerate." },
+    { word: "PRUDENT", phonetic: "/ˈpruːdnt/", definition: "Wise and careful.", sentence: "It is _____ to save money for emergencies." },
+    { word: "PUGNACIOUS", phonetic: "/pʌɡˈneɪʃəs/", definition: "Ready to fight.", sentence: "The _____ dog barked at everyone." },
+    { word: "PULCHRITUDE", phonetic: "/ˈpʌlkrɪtjuːd/", definition: "Physical beauty.", sentence: "The _____ of the sunset was breathtaking." },
+    { word: "PUNCTILIOUS", phonetic: "/pʌŋkˈtɪlɪəs/", definition: "Very careful about rules.", sentence: "He was _____ about being on time." },
+    { word: "PYRRHIC", phonetic: "/ˈpɪrɪk/", definition: "Won at too great a cost.", sentence: "It was a _____ victory that left them exhausted." },
+    { word: "PALIMPSEST", phonetic: "/ˈpælɪmpsɛst/", definition: "Something reused with traces of the past.", sentence: "The city is a _____ of old and new buildings." },
+    { word: "PENCHANT", phonetic: "/ˈpɛntʃənt/", definition: "A strong liking.", sentence: "She has a _____ for spicy food." },
+    { word: "PERFIDIOUS", phonetic: "/pəˈfɪdɪəs/", definition: "Deceitful and untrustworthy.", sentence: "The _____ traitor revealed the secrets." },
+    { word: "PERSPICUITY", phonetic: "/ˌpɜːspɪˈkjuːɪti/", definition: "Clarity of expression.", sentence: "His speech was admired for its _____." },
+    { word: "PLATITUDE", phonetic: "/ˈplætɪtjuːd/", definition: "An overused remark.", sentence: "He offered a comforting _____." },
+    { word: "POLYGLOT", phonetic: "/ˈpɒlɪɡlɒt/", definition: "Someone who speaks many languages.", sentence: "The _____ translator spoke five languages." },
+    { word: "PREVARICATE", phonetic: "/prɪˈværɪkeɪt/", definition: "To avoid the truth.", sentence: "Do not _____ when answering the question." },
+    { word: "PROSAIC", phonetic: "/prəˈzeɪɪk/", definition: "Ordinary or dull.", sentence: "The view was rather _____." },
+    { word: "PROTEAN", phonetic: "/ˈprəʊtɪən/", definition: "Able to change easily.", sentence: "He is a _____ actor who plays many roles." },
+    { word: "PROVIDENT", phonetic: "/ˈprɒvɪdənt/", definition: "Preparing wisely for the future.", sentence: "It is _____ to have insurance." },
+    { word: "PROBITY", phonetic: "/ˈprəʊbɪti/", definition: "Integrity and honesty.", sentence: "The judge was known for his _____." },
+    { word: "PEDANTIC", phonetic: "/pɪˈdæntɪk/", definition: "Too concerned with rules.", sentence: "His _____ corrections were annoying." },
+    { word: "PENUMBRA", phonetic: "/pɪˈnʌmbrə/", definition: "Partial shadow.", sentence: "The moon passed through the earth's _____." },
+    { word: "PEREMPTORY", phonetic: "/pəˈrɛmptəri/", definition: "Allowing no argument.", sentence: "She issued a _____ order." },
+    { word: "PEREGRINATE", phonetic: "/ˈpɛrɪɡrɪneɪt/", definition: "To travel from place to place.", sentence: "They plan to _____ across Europe." },
+    { word: "PHILISTINE", phonetic: "/ˈfɪlɪstaɪn/", definition: "Hostile to culture or art.", sentence: "He was a _____ who disliked museums." },
+    { word: "PROGNOSTICATE", phonetic: "/prɒɡˈnɒstɪkeɪt/", definition: "To predict the future.", sentence: "Economists try to _____ market trends." },
+    { word: "PROPITIOUS", phonetic: "/prəˈpɪʃəs/", definition: "Favorable or advantageous.", sentence: "It was a _____ time to start a business." },
+    { word: "PULVERIZE", phonetic: "/ˈpʌlvəraɪz/", definition: "To crush into powder.", sentence: "The machine can _____ rocks." },
+    { word: "PANACEA", phonetic: "/ˌpænəˈsɪə/", definition: "A solution to all problems.", sentence: "There is no _____ for climate change." },
+    { word: "PREROGATIVE", phonetic: "/prɪˈrɒɡətɪv/", definition: "A special right.", sentence: "It is the boss's _____ to change the rules." },
+    { word: "PERSIFLAGE", phonetic: "/ˈpɜːsɪflɑːʒ/", definition: "Light mocking talk.", sentence: "Their conversation was full of _____." },
+    { word: "PROFLIGATE", phonetic: "/ˈprɒflɪɡət/", definition: "Wasteful in spending.", sentence: "He was _____ with his inheritance." },
+    { word: "PALLIATE", phonetic: "/ˈpælɪeɪt/", definition: "To make less severe.", sentence: "Medicine can _____ the symptoms." },
+    { word: "PAUCITY", phonetic: "/ˈpɔːsɪti/", definition: "Scarcity; small amount.", sentence: "There is a _____ of evidence." },
+    { word: "PONTIFICATE", phonetic: "/pɒnˈtɪfɪkeɪt/", definition: "To speak in an arrogant way.", sentence: "He loves to _____ on politics." }
   ],
   Hard: [
     { word: "ECLIPSE", phonetic: "/ɪˈklɪps/", definition: "An obscuring of the light from one celestial body by another.", sentence: "The solar _____ darkened the sky." },
@@ -699,17 +732,28 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     const hostConnectionsRef = useRef<Map<string, any>>(new Map());
     const [gameState, setGameState] = useState<GameState>({ players: [], words: [], currentWordIndex: 0, activePlayerIndex: 0, phase: 'main', timeLeft: 30, scores: {}, status: 'waiting', });
     
-    // We use a ref to track the latest game state to avoid stale closures in PeerJS callbacks
-    const gameStateRef = useRef(gameState); 
-    useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
-
     const [input, setInput] = useState('');
     const [message, setMessage] = useState('');
     const [showDef, setShowDef] = useState(false);
     const speak = useTextToSpeech();
 
+    // -- Callbacks & Refs for Event Listeners --
+    // We use a mutable ref to hold the latest version of our callbacks.
+    // This allows long-lived PeerJS listeners to always execute the CURRENT logic,
+    // avoiding "stale closure" bugs where the game wouldn't respond to events.
+    const callbacksRef = useRef({
+        handleWordSubmission: (word: string, pid: string) => {},
+        handleNewConnection: (conn: any) => {}
+    });
+
+    // Update the ref on every render
     useEffect(() => {
-        // Initialize PeerJS only once
+        callbacksRef.current.handleWordSubmission = handleWordSubmission;
+        callbacksRef.current.handleNewConnection = handleNewConnection;
+    });
+
+    useEffect(() => {
+        // Initialize PeerJS
         const id = Math.random().toString(36).substring(2, 6).toUpperCase();
         let peer: any;
         
@@ -726,15 +770,12 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
                  peer.on('error', (err: any) => {
                      console.error("Peer Error:", err);
                      setStatusLog(`Error: ${err.type}`);
-                     // If ID is taken (rare with random string), try again? 
-                     if (err.type === 'unavailable-id') {
-                        // handle retry if needed
-                     }
                  });
 
                  peer.on('connection', (conn: any) => {
                      conn.on('open', () => {
-                         handleNewConnection(conn); 
+                         // Execute the latest version of handleNewConnection
+                         callbacksRef.current.handleNewConnection(conn);
                      });
                  });
              } catch (e) {
@@ -759,16 +800,26 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
     }, [gameState, role]);
 
     const handleNewConnection = (conn: any) => {
-         setGameState(prev => {
-             // Only accept connections if we have already set ourselves up as a host
-             // Check if we are in the player list (host always adds self first)
-             const isHostSetup = prev.players.some(p => p.id === peerRef.current?.id);
-             
-             if (!isHostSetup) {
-                 // If we receive a connection but haven't created a room, we could auto-create?
-                 // Or reject. For now, let's assume valid flow.
+         // 1. SIDE EFFECTS: Register connection & Attach listeners
+         hostConnectionsRef.current.set(conn.peer, conn);
+         
+         conn.on('data', (data: any) => { 
+             if (data.type === 'CLIENT_SUBMIT') {
+                 // Use ref to ensure we call the latest version of the function
+                 callbacksRef.current.handleWordSubmission(data.word, data.playerId); 
              }
+         });
+         
+         conn.on('close', () => { 
+             hostConnectionsRef.current.delete(conn.peer);
+             setGameState(prev => ({
+                 ...prev,
+                 players: prev.players.filter(p => p.id !== conn.peer)
+             }));
+         });
 
+         // 2. STATE UPDATE: Add player to game state
+         setGameState(prev => {
              if (prev.players.length >= 4) { 
                  conn.send({ type: 'ERROR', message: 'Game Full' }); 
                  setTimeout(() => conn.close(), 500); 
@@ -778,25 +829,14 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
              if (prev.players.find(p => p.id === conn.peer)) return prev;
              
              const newPlayer = { id: conn.peer, name: `Player ${prev.players.length + 1}` };
-             hostConnectionsRef.current.set(conn.peer, conn);
              
-             conn.on('data', (data: any) => { 
-                 if (data.type === 'CLIENT_SUBMIT') {
-                     // Pass payload to handler
-                     handleWordSubmission(data.word, data.playerId); 
-                 }
-             });
-             
-             conn.on('close', () => { hostConnectionsRef.current.delete(conn.peer); });
-             
-             // Ensure host is in list if not already (should be done by start button, but safety net)
+             // Ensure host is in list if not already
              let currentPlayers = [...prev.players];
              const myId = peerRef.current?.id;
              if (myId && !currentPlayers.find(p => p.id === myId)) {
                   currentPlayers.push({ id: myId, name: "Host (You)" });
              }
 
-             // Add new player
              const nextState = { ...prev, players: [...currentPlayers, newPlayer], scores: { ...prev.scores, [newPlayer.id]: 0, [myId || '']: 0 } };
              return nextState;
          });
@@ -937,7 +977,8 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
         
         conn.on('error', (err: any) => {
             console.error("Connection Error", err);
-            setMessage("Could not connect.");
+            setMessage("Could not connect. Check code.");
+            setTimeout(() => setMessage(''), 3000);
         });
         
         conn.on('close', () => {
