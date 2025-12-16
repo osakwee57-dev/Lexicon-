@@ -314,7 +314,7 @@ interface GameState {
   words: WordEntry[];
   currentWordIndex: number;
   activePlayerIndex: number;
-  phase: 'main' | 'steal';
+  phase: 'main' | 'steal' | 'reveal';
   timeLeft: number;
   scores: Record<string, number>;
   status: 'waiting' | 'playing' | 'gameover';
@@ -877,6 +877,19 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
         const playerCount = prev.players.length;
         if (playerCount === 0) return prev;
 
+        // Transition from Reveal to Next Word (always happens on timer timeout)
+        if (prev.phase === 'reveal') {
+             nextState.currentWordIndex += 1; 
+             nextState.phase = 'main'; 
+             nextState.timeLeft = 30;
+             nextState.activePlayerIndex = (prev.activePlayerIndex + 1) % playerCount;
+             
+             if (nextState.currentWordIndex >= nextState.words.length) {
+                nextState.status = 'gameover';
+             }
+             return nextState;
+        }
+
         if (success) {
              const points = prev.phase === 'main' ? 10 : 5;
              const activePlayer = prev.players[prev.activePlayerIndex];
@@ -897,16 +910,17 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
             if (prev.phase === 'main') { 
                 nextState.phase = 'steal'; 
                 nextState.timeLeft = 15; 
-            } else {
-                nextState.currentWordIndex += 1; 
-                nextState.phase = 'main'; 
-                nextState.timeLeft = 30;
-                nextState.activePlayerIndex = (prev.activePlayerIndex + 1) % playerCount;
+            } else if (prev.phase === 'steal') {
+                // Steal failed -> Reveal Answer
+                nextState.phase = 'reveal'; 
+                nextState.timeLeft = 5;
             }
         }
         
-        if (nextState.currentWordIndex >= nextState.words.length) {
-            nextState.status = 'gameover';
+        if (nextState.currentWordIndex >= nextState.words.length && nextState.phase !== 'reveal') {
+             if (nextState.phase === 'main' && nextState.currentWordIndex >= nextState.words.length) {
+                  nextState.status = 'gameover';
+             }
         }
         
         return nextState;
@@ -1094,12 +1108,28 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
         
         if (gameState.status === 'waiting') return <div className="card-center"><h3>Connected</h3><p>Waiting for host...</p><div className="loader"></div></div>;
         
+        // --- CRITICAL FIX: Ensure word data exists before accessing it to prevent crash ---
+        const currentWordData = gameState.words[gameState.currentWordIndex];
+        if (!currentWordData) return <div className="card-center"><div className="loader"></div><p>Loading Game Data...</p></div>;
+
         const activePlayer = gameState.players[gameState.activePlayerIndex];
         if (!activePlayer) return <div className="loader"></div>;
 
         const isMyTurn = (gameState.phase === 'main' && activePlayer.id === peerId) || 
                          (gameState.phase === 'steal' && gameState.players[(gameState.activePlayerIndex + 1) % gameState.players.length]?.id === peerId);
-        
+
+        if (gameState.phase === 'reveal') {
+            return (
+                 <div className="card-center">
+                    <h2 style={{color: '#e11d48'}}>Time's Up!</h2>
+                    <p style={{fontSize: '1.2rem', color: '#64748b'}}>The word was:</p>
+                    <h1 style={{fontSize: '3rem', margin: '10px 0', color: '#7c3aed'}}>{currentWordData.word}</h1>
+                    <div className="phonetic-display-box" style={{ background: '#f0f9ff', padding: '5px 15px', borderRadius: '10px', color: '#0284c7', display:'inline-block' }}>{currentWordData.phonetic}</div>
+                    <p style={{marginTop: '20px', fontStyle: 'italic'}}>Next round in {gameState.timeLeft}...</p>
+                 </div>
+            );
+        }
+
         return (
             <div className={`multiplayer-game ${isMyTurn ? 'my-turn' : ''}`}>
                 <div className="top-hud">
@@ -1115,9 +1145,11 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
                 </div>
                 <div className="game-card">
                     <div className="image-wrapper small">
-                        <ShuffledImage src={getPollinationsImage(gameState.words[gameState.currentWordIndex].word)} isRevealed={false} />
+                        <ShuffledImage src={getPollinationsImage(currentWordData.word)} isRevealed={false} />
                     </div>
-                    <button className="big-play-btn" onClick={() => speak(gameState.words[gameState.currentWordIndex].word)}>▶</button>
+                    <button className="big-play-btn" onClick={() => speak(currentWordData.word)}>▶</button>
+                    
+                    <div className="phonetic-display-box" style={{ background: '#f0f9ff', padding: '10px 20px', borderRadius: '15px', color: '#0284c7', fontSize: '1.4rem', fontWeight: 'bold', fontFamily: 'serif', marginBottom: '15px', border: '1px solid #bae6fd' }}>{currentWordData.phonetic}</div>
                     
                     <input 
                         className="modern-input" 
@@ -1132,7 +1164,7 @@ const MultiplayerGame = ({ difficulty }: { difficulty: Difficulty }) => {
                         }} 
                     />
                     
-                    {showDef && <p className="hint-text">{gameState.words[gameState.currentWordIndex].definition}</p>}
+                    {showDef && <p className="hint-text">{currentWordData.definition}</p>}
                     
                     <div className="action-buttons">
                         <button className="btn btn-primary" onClick={() => role === 'host' ? handleWordSubmission(input, peerId) : submitWordClient()} disabled={!isMyTurn}>Submit</button>
